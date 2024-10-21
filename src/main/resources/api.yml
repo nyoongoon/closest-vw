@@ -1,0 +1,143 @@
+openapi: 3.0.0
+servers:
+  # Added by API Auto Mocking Plugin
+  - description: SwaggerHub API Auto Mocking
+    url: https://virtserver.swaggerhub.com/NYOONGOON/closest/1.0.0
+info:
+  description: Closest의 API 명세서입니다.
+  version: "1.0.0"
+  title: Cloest API Specification
+tags:
+  - name: subscriptions
+    description: 구독 관리
+  - name: blogs
+    description: 블로그 관리
+paths:
+  /subscription:
+    get:
+      tags:
+        - subscriptions
+      summary: 멤버가 구독한 블로그 목록을 요청
+      responses:
+        '200':
+          description: 구독한 블로그 정보 목록
+          content:
+            application/json:
+              schema:
+                type: array
+        '400':
+          description: '올바르지 못한 파라미터로 요청함'
+    post:
+      tags:
+        - subscriptions
+      summary: 멤버가 특정 블로그에 구독 요청
+      parameters:
+        - in: query
+          name: url
+          required: true
+          schema:
+            type: string
+      responses:
+        '200': #201로 하는 것이 좋을지?
+          description: 구독 완료
+        '400':
+          description: '올바르지 못한 객체로 요청함'
+        #'409':
+        #  description: an existing item already exists
+  /subscription/{id}:
+    delete:
+      tags:
+        - subscriptions
+      summary: 구독 해지 요청
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: 구독 해지 성공
+        '404':
+          description: 해당 구독을 찾을 수 없음
+
+  /subscription/{id}/visit:
+    get:
+      tags:
+        - subscriptions
+      summary: 구독한 블로그 방문
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: 블로그 방문 성공
+        '404':
+          description: 블로그를 찾을 수 없음
+
+  /blog/{id}/status:
+    post:
+      tags:
+        - blogs
+      summary: 블로그 상태 메시지 생성
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                message:
+                  type: string
+      responses:
+        '200':
+          description: 상태 메시지 생성 성공
+        '400':
+          description: 올바르지 않은 요청
+
+  /blog/{id}/like:
+    post:
+      tags:
+        - blogs
+      summary: 사용자가 블로그 포스트에 좋아요 생성
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: 좋아요 생성 성공
+        '404':
+          description: 포스트를 찾을 수 없음
+
+  /blog/{id}/auth:
+    post:
+      tags:
+        - blogs
+      summary: 블로그 인증 요청
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: 인증 요청 성공
+        '401':
+          description: 인증 실패
+
+
+
+
