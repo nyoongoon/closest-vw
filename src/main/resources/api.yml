@@ -1,94 +1,155 @@
-openapi: 3.0.0
+openapi: 3.0.1
 servers:
-  # Added by API Auto Mocking Plugin
-  - description: SwaggerHub API Auto Mocking
-    url: https://virtserver.swaggerhub.com/NYOONGOON/closest/1.0.0
+  - description: 로컬 서버
+    url: localhost:8080
 info:
   description: Closest의 API 명세서입니다.
-  version: "1.0.0"
-  title: Cloest API Specification
+  version: 0.0.1
+  title: Closest API Specification
 tags:
   - name: subscriptions
     description: 구독 관리
   - name: blogs
     description: 블로그 관리
 paths:
-  /subscription:
+  /subscriptions/blogs/closest:
     get:
       tags:
         - subscriptions
-      summary: 멤버가 구독한 블로그 목록을 요청
+      summary: 사용자는 친밀도 순위가 높은 20개의 블로그 목록을 요청
       responses:
-        '200':
+        "200":
           description: 구독한 블로그 정보 목록
           content:
             application/json:
               schema:
                 type: array
-        '400':
-          description: '올바르지 못한 파라미터로 요청함'
-    post:
-      tags:
-        - subscriptions
-      summary: 멤버가 특정 블로그에 구독 요청
-      parameters:
-        - in: query
-          name: url
-          required: true
-          schema:
-            type: string
-      responses:
-        '200': #201로 하는 것이 좋을지?
-          description: 구독 완료
-        '400':
-          description: '올바르지 못한 객체로 요청함'
-        #'409':
-        #  description: an existing item already exists
-  /subscription/{id}:
-    delete:
-      tags:
-        - subscriptions
-      summary: 구독 해지 요청
-      parameters:
-        - in: path
-          name: id
-          required: true
-          schema:
-            type: string
-      responses:
-        '200':
-          description: 구독 해지 성공
-        '404':
-          description: 해당 구독을 찾을 수 없음
-
-  /subscription/{id}/visit:
+                items:
+                  $ref: '#/components/schemas/SubscribedBlog'
+        "400":
+          $ref: '#/components/responses/BadRequest'
+        "500":
+          $ref: '#/components/responses/InternalServerError'
+        "502":
+          description: RSS 서버 에러
+  /subscriptions/blogs:
     get:
       tags:
         - subscriptions
-      summary: 구독한 블로그 방문
+      summary: 사용자는 구독한 블로그 목록을 요청
       parameters:
-        - in: path
-          name: id
-          required: true
+        - in: query
+          name: page
+          required: false
           schema:
-            type: string
+            type: integer
+            example: 1
+          description: 페이지 번호
+        - in: query
+          name: size
+          required: false
+          schema:
+            type: integer
+            example: 10
+          description: 페이지당 항목 수
       responses:
-        '200':
-          description: 블로그 방문 성공
-        '404':
-          description: 블로그를 찾을 수 없음
+        "200":
+          description: 구독한 블로그 정보 목록
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/SubscribedBlog'
+        "400":
+          $ref: '#/components/responses/BadRequest'
+        "500":
+          $ref: '#/components/responses/InternalServerError'
+        "502":
+          description: RSS 서버 에러
 
-  /blog/{id}/status:
+  /subscriptions:
     post:
       tags:
-        - blogs
-      summary: 블로그 상태 메시지 생성
+        - subscriptions
+      summary: 사용자가 특정 블로그를 구독 요청
+      description: 블로그 URL을 통해 사용자가 구독을 생성한다.
+      requestBody:
+        description: 구독할 블로그의 URL 정보
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                url:
+                  type: string
+                  format: uri
+                  example: "https://example.com/blog123"
+                  description: 구독할 블로그의 URL
+      responses:
+        "201":
+          description: 구독 생성 성공
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SubscribedBlog'
+        "400":
+          $ref: '#/components/responses/BadRequest'
+        "500":
+          $ref: '#/components/responses/InternalServerError'
+        "502":
+          description: RSS 서버 에러
+
+  /subscriptions/{subscriptionsId}:
+    delete:
+      tags:
+        - subscriptions
+      summary: 사용자가 특정 블로그 구독 해지 요청
+      description: 구독 정보 키로 사용자와 블로그 연관관계 삭제
       parameters:
         - in: path
-          name: id
+          name: subscriptionsId
           required: true
           schema:
-            type: string
+            type: integer
+      responses:
+        "200":
+          description: 구독 해지 성공
+        "403":
+          $ref: '#/components/responses/Forbidden'
+        "404":
+          $ref: '#/components/responses/NotFound'
+        "500":
+          $ref: '#/components/responses/InternalServerError'
+
+  /subscriptions/{subscriptionsId}/visit:
+    patch:
+      tags:
+        - subscriptions
+      summary: 구독한 블로그 방문 및 조회수 증가
+      description: 구독한 블로그는 새창으로 띄우고 해당 구독 정보에 조회수를 1 증가시킨다
+      parameters:
+        - in: path
+          name: subscriptionsId
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: 블로그 방문 성공 및 조회수 증가
+        "403":
+          $ref: '#/components/responses/Forbidden'
+        "404":
+          $ref: '#/components/responses/NotFound'
+        "500":
+          $ref: '#/components/responses/InternalServerError'
+
+  /blogs/status/my:
+    patch:
+      tags:
+        - blogs
+      summary: 자신의 블로그에 다른 유저들이 볼 수 있는 상태 메시지 설정. (변경의 여지가 있다)
       requestBody:
         required: true
         content:
@@ -99,45 +160,119 @@ paths:
                 message:
                   type: string
       responses:
-        '200':
+        "200":
           description: 상태 메시지 생성 성공
-        '400':
-          description: 올바르지 않은 요청
+        "400":
+          $ref: '#/components/responses/BadRequest'
+        "403":
+          $ref: '#/components/responses/Forbidden'
+        "500":
+          $ref: '#/components/responses/InternalServerError'
 
-  /blog/{id}/like:
+  /blogs/posts/{postsId}/like:
     post:
       tags:
         - blogs
-      summary: 사용자가 블로그 포스트에 좋아요 생성
+      summary: 사용자는 블로그 포스트에 좋아요 생성
       parameters:
         - in: path
-          name: id
+          name: postsId
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: 좋아요 생성 성공
+        "404":
+          $ref: '#/components/responses/NotFound'
+        "500":
+          $ref: '#/components/responses/InternalServerError'
+
+  /blog/auth/message:
+    get:
+      tags:
+        - blogs
+      summary: 블로그 인증 메시지 생성
+      description: 블로그 인증을 위해 랜덤 메시지 생성 요청
+      parameters:
+        - in: query
+          name: url
           required: true
           schema:
             type: string
+            format: uri
       responses:
-        '200':
-          description: 좋아요 생성 성공
-        '404':
-          description: 포스트를 찾을 수 없음
+        "200":
+          description: 메시지 생성 성공
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthMessage'
+        "500":
+          $ref: '#/components/responses/InternalServerError'
 
-  /blog/{id}/auth:
+  /blog/auth/verification:
     post:
       tags:
         - blogs
       summary: 블로그 인증 요청
-      parameters:
-        - in: path
-          name: id
-          required: true
-          schema:
-            type: string
+      description: 본인 블로그 구독한 사람을 추적하거나 본인의 블로그에 해당하는 좋아하는 것 추적하기 위해. 나의 블로그를 구독한 사람들에 대한 기능을 만들기 어렵다. 나의 블로그임을 입증한다. 상태메세지나 나를 구독한 사람을 알기 위해서 필요.
+      requestBody:
+        description: 인증을 위한 URL 정보
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                url:
+                  type: string
+                  format: uri
+                  example: "https://example.com/myblog"
       responses:
-        '200':
+        "200":
           description: 인증 요청 성공
-        '401':
-          description: 인증 실패
+        "401":
+          $ref: '#/components/responses/Unauthorized'
+        "500":
+          $ref: '#/components/responses/InternalServerError'
 
+components:
+  schemas:
+    SubscribedBlog:
+      type: object
+      properties:
+        subscriptionId:
+          type: integer
+          example: 1
+        intimacyRank:
+          type: integer
+          example: 2
+        nickName:
+          type: string
+          example: 개발자123
+        url:
+          type: string
+          example: https://example.com/blog1
+        newPostsCnt:
+          type: integer
+          example: 5
 
+    AuthMessage:
+      type: object
+      properties:
+        authMessage:
+          type: string
+          example: "AB12CD34EF56"
 
-
+  responses:
+    BadRequest:
+      description: 올바르지 않은 요청
+    Unauthorized:
+      description: 인증 실패
+    Forbidden:
+      description: 요청한 사용자 정보가 일치하지 않음
+    NotFound:
+      description: 리소스를 찾을 수 없음
+    InternalServerError:
+      description: 서버 에러
