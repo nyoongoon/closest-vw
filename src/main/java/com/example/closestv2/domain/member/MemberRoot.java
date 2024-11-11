@@ -6,13 +6,16 @@ import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
+
+import java.net.URL;
 
 @Getter
 @Entity
 @Table(name = "member")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class Member {
+public class MemberRoot {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -25,7 +28,7 @@ public class Member {
     private MyBlog myBlog;
 
     @Builder(access = AccessLevel.PRIVATE)
-    private Member(
+    private MemberRoot(
             String userEmail,
             String password,
             String nickName
@@ -37,23 +40,32 @@ public class Member {
                 .build();
     }
 
-    public static Member create(
+    public static MemberRoot create(
             String userEmail,
             String password,
             String nickName
     ) {
-        return Member.builder()
+        return MemberRoot.builder()
                 .userEmail(userEmail)
                 .password(password)
                 .nickName(nickName)
                 .build();
     }
 
-    public boolean hasBlog() {
-        String url = myBlog.getUrl();
-        if (StringUtils.isBlank(url)) { //url이 존재하면 나의 블로그 존재
+    public boolean hasMyBlog() {
+        if (ObjectUtils.isEmpty(myBlog)) {
+            return false;
+        }
+        URL url = myBlog.url();
+        if (ObjectUtils.isEmpty(url)) { //url이 존재하면 나의 블로그 존재
             return false;
         }
         return true;
+    }
+
+    public void createMyBlog(
+
+    ){
+
     }
 }

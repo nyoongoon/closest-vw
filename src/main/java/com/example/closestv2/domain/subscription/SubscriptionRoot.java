@@ -1,4 +1,4 @@
 package com.example.closestv2.domain.subscription;
 
-public class Subscription {
+public class SubscriptionRoot {
 }
