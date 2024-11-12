@@ -32,4 +32,9 @@ public final class ExceptionMessageConstants {
 
     /* 토큰 */
     public static final String EXPIRED_TOKEN = "토큰이 만료되었습니다.";
+
+    /* 나의 블로그 */
+    public static final String NOT_EXISTS_MY_BLOG = "나의 블로그가 존재하지 않습니다.";
+    public static final String ALREADY_EXISTS_MY_BLOG = "나의 블로그가 이미 존재합니다.";
+
 }

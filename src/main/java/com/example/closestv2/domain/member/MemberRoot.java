@@ -1,5 +1,7 @@
 package com.example.closestv2.domain.member;
 
+import com.example.closestv2.domain.Events;
+import com.example.closestv2.domain.member.event.StatusMessageChangeEvent;
 import jakarta.persistence.*;
 import jakarta.validation.Valid;
 import lombok.AccessLevel;
@@ -9,6 +11,9 @@ import lombok.NoArgsConstructor;
 import org.apache.commons.lang3.ObjectUtils;
 
 import java.net.URL;
+
+import static com.example.closestv2.api.exception.ExceptionMessageConstants.ALREADY_EXISTS_MY_BLOG;
+import static com.example.closestv2.api.exception.ExceptionMessageConstants.NOT_EXISTS_MY_BLOG;
 
 @Getter
 @Entity
@@ -65,12 +70,27 @@ public class MemberRoot {
     public void addMyBlog(
             URL url
     ) {
-        if (!ObjectUtils.isEmpty(myBlog)) {
-            throw new IllegalStateException("나의 블로그가 이미 존재합니다."); //블로그 변경 시 변경 메서드 사용
+        if (hasMyBlog()) {
+            throw new IllegalStateException(ALREADY_EXISTS_MY_BLOG); //블로그 변경 시 변경 메서드 사용
         }
 
         myBlog = MyBlog.builder()
                 .url(url)
                 .build();
+    }
+
+    // 이벤트 발생
+    public void withStatusMessage(String statusMessage) {
+        if (!hasMyBlog()) {
+            throw new IllegalStateException(NOT_EXISTS_MY_BLOG);
+        }
+        URL url = myBlog.url();
+        myBlog = MyBlog.builder()
+                .url(url)
+                .statusMessage(statusMessage)
+                .build();
+
+        //todo 블로그 도메인에서 이벤트 받아 처리..
+        Events.raise(new StatusMessageChangeEvent(url, statusMessage));
     }
 }

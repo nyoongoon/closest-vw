@@ -52,4 +52,26 @@ class MemberRootTest extends RepositoryTestSupport {
         //then
         assertThat(memberRoot.hasMyBlog()).isTrue();
     }
+
+    @DisplayName("Member는 myBlog의 상태메시지를 변경할 수 있다.")
+    @Test
+    void memberRootWithStatusMessage() throws MalformedURLException {
+        //given
+        String userEmail = "abc@naver.com";
+        String password = "Ab1234!!";
+        String nickName = null;
+        MemberRoot memberRoot = MemberRoot.create(
+                userEmail,
+                password,
+                nickName
+        );
+        URL url = new URL("https://goalinnext.tistory.com/rss");
+        memberRoot.addMyBlog(url);
+        //상태 메시지
+        String statusMessage = "상태 메시지입니다.";
+        //when
+        memberRoot.withStatusMessage(statusMessage);
+        //then
+        assertThat(memberRoot.getMyBlog().statusMessage()).isEqualTo("상태 메시지입니다.");
+    }
 }
