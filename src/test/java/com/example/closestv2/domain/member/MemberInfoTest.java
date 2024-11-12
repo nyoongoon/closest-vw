@@ -25,7 +25,7 @@ class MemberInfoTest extends RepositoryTestSupport {
                 validPassword,
                 nickName
         );
-        //then
+        //expected
         assertThatThrownBy(() -> memberRepository.save(memberRoot))
                 .isInstanceOf(ConstraintViolationException.class);
     }
@@ -43,7 +43,7 @@ class MemberInfoTest extends RepositoryTestSupport {
                 validPassword,
                 nickName
         );
-        //then
+        //expected
         assertThatThrownBy(() -> memberRepository.save(memberRoot))
                 .isInstanceOf(ConstraintViolationException.class);
     }
@@ -59,7 +59,7 @@ class MemberInfoTest extends RepositoryTestSupport {
                 "Abc1234!",
                 "닉네임"
         );
-        //then
+        //expected
         assertThatThrownBy(() -> memberRepository.save(memberRoot))
                 .isInstanceOf(ConstraintViolationException.class);
     }
@@ -75,7 +75,7 @@ class MemberInfoTest extends RepositoryTestSupport {
                 notValidPassword,
                 "닉네임"
         );
-        //then
+        //expected
         assertThatThrownBy(() -> memberRepository.save(memberRoot))
                 .isInstanceOf(ConstraintViolationException.class);
     }
