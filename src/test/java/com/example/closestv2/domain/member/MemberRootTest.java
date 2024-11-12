@@ -5,6 +5,9 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import java.net.MalformedURLException;
+import java.net.URL;
+
 import static org.assertj.core.api.Assertions.assertThat;
 
 class MemberRootTest extends RepositoryTestSupport {
@@ -33,20 +36,20 @@ class MemberRootTest extends RepositoryTestSupport {
 
     @DisplayName("Member 루트의 myBlog가 존재하고 url값이 존재하면 hasMyBlog()가 true를 리턴한다.")
     @Test
-    void hasMyBlogWithMyBlog() {
+    void hasMyBlogWithMyBlog() throws MalformedURLException {
         //given
         String userEmail = "abc@naver.com";
         String password = "Ab1234!!";
         String nickName = null;
-
-        //when
         MemberRoot memberRoot = MemberRoot.create(
                 userEmail,
                 password,
                 nickName
         );
-
+        URL url = new URL("https://goalinnext.tistory.com/rss");
+        //when
+        memberRoot.addMyBlog(url);
         //then
-        assertThat(memberRoot.hasMyBlog()).isFalse();
+        assertThat(memberRoot.hasMyBlog()).isTrue();
     }
 }

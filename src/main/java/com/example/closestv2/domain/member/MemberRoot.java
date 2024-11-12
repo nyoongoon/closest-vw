@@ -7,7 +7,6 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.apache.commons.lang3.ObjectUtils;
-import org.apache.commons.lang3.StringUtils;
 
 import java.net.URL;
 
@@ -63,9 +62,15 @@ public class MemberRoot {
         return true;
     }
 
-    public void createMyBlog(
+    public void addMyBlog(
+            URL url
+    ) {
+        if (!ObjectUtils.isEmpty(myBlog)) {
+            throw new IllegalStateException("나의 블로그가 이미 존재합니다."); //블로그 변경 시 변경 메서드 사용
+        }
 
-    ){
-
+        myBlog = MyBlog.builder()
+                .url(url)
+                .build();
     }
 }
