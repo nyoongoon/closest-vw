@@ -20,6 +20,9 @@ record PostInfo(
         String postTitle,
 
         @NotNull(message = POST_PUBLISHED_DATETIME_IS_REQUIRED)
-        LocalDateTime publishedDateTime
+        LocalDateTime publishedDateTime,
+
+        @NotNull
+        Long postVisitCount
 ) {
 }

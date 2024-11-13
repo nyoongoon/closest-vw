@@ -29,7 +29,7 @@ class MyBlogTest extends RepositoryTestSupport {
                 nickName
         );
         URL blogUrl = null;
-        memberRoot.addMyBlog(blogUrl);
+        memberRoot.saveMyBlog(blogUrl, 0L);
         //expected
         assertThatThrownBy(() -> memberRepository.save(memberRoot))
                 .isInstanceOf(ConstraintViolationException.class);

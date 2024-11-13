@@ -69,8 +69,9 @@ public class MemberRoot {
         return true;
     }
 
-    public void addMyBlog(
-            URL blogUrl
+    public void saveMyBlog(
+            URL blogUrl,
+            Long myBlogVisitCount
     ) {
         if (hasMyBlog()) {
             throw new IllegalStateException(ALREADY_EXISTS_MY_BLOG); //블로그 변경 시 변경 메서드 사용
@@ -78,6 +79,19 @@ public class MemberRoot {
 
         myBlog = MyBlog.builder()
                 .blogUrl(blogUrl)
+                .myBlogVisitCount(myBlogVisitCount)
+                .build();
+    }
+
+    public void visitMyBlog() {
+        if (!hasMyBlog()) {
+            throw new IllegalStateException(ALREADY_EXISTS_MY_BLOG); //블로그 변경 시 변경 메서드 사용
+        }
+        Long plusedMyBlogVisitCount = myBlog.myBlogVisitCount() + 1;
+        myBlog = MyBlog.builder()
+                .blogUrl(myBlog.blogUrl())
+                .myBlogVisitCount(plusedMyBlogVisitCount)
+                .statusMessage(myBlog.statusMessage())
                 .build();
     }
 
@@ -87,9 +101,11 @@ public class MemberRoot {
             throw new IllegalStateException(NOT_EXISTS_MY_BLOG);
         }
         URL blogUrl = myBlog.blogUrl();
+        Long myBlogVisitCount = myBlog.myBlogVisitCount();
         myBlog = MyBlog.builder()
                 .blogUrl(blogUrl)
                 .statusMessage(statusMessage)
+                .myBlogVisitCount(myBlogVisitCount)
                 .build();
 
         //todo 블로그 도메인에서 이벤트 받아 처리..

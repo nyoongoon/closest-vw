@@ -15,7 +15,7 @@ import java.time.LocalDateTime;
 @Entity
 @Table(name = "post")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-class Post {
+public class Post {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "post_id")
@@ -30,11 +30,12 @@ class Post {
             URL postUrl,
             String postTitle,
             LocalDateTime publishedDateTime
-    ){
+    ) {
         postInfo = PostInfo.builder()
                 .postUrl(postUrl)
                 .postTitle(postTitle)
                 .publishedDateTime(publishedDateTime)
+                .postVisitCount(0L)
                 .build();
     }
 }

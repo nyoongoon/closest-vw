@@ -17,6 +17,9 @@ record MyBlog(
         @Column(unique = true)
         URL blogUrl,
 
+        @NotNull
+        Long myBlogVisitCount,
+
         String statusMessage
 ) {
 }

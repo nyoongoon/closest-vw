@@ -45,6 +45,7 @@ public class BlogRoot {
                 .blogTitle(blogTitle)
                 .author(author)
                 .publishedDateTime(publishedDateTime)
+                .blogVisitCount(0L)
                 .build();
     }
 

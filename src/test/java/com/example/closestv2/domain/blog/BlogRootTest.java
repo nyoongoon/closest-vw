@@ -69,4 +69,41 @@ class BlogRootTest extends RepositoryTestSupport {
                 )
                 .isInstanceOf(NoSuchElementException.class);
     }
+
+
+    @Test
+    @DisplayName("Blog 생성 시 BlogInfo의 blogVisitCount는 0이 된다.")
+    void createBlogByBlogInfoWithZeroBlogVisitCount() throws MalformedURLException {
+        //given
+        BlogRoot blogRoot = BlogRoot.create(
+                new URL("https://example.com/blog123"),
+                "제목",
+                "작가",
+                LocalDateTime.of(2022, 1, 1, 12, 3, 31)
+        );
+        //when
+        blogRepository.save(blogRoot);
+        //then
+        assertThat(blogRoot.getBlogInfo().blogVisitCount())
+                .isEqualTo(0L);
+    }
+
+    @Test
+    @DisplayName("Post 생성 시 PostInfo의 postVisitCount는 0이 된다.")
+    void createPostByPostInfoWithZeroPostVisitCount() throws MalformedURLException {
+        //given
+        BlogRoot blogRoot = BlogRoot.create(
+                new URL("https://example.com/blog123"),
+                "제목",
+                "작가",
+                LocalDateTime.of(2022, 1, 1, 12, 3, 31)
+        );
+        Post post = blogRoot.createPost(new URL("https://example.com/blog123/post/2"), "포스트 제목", LocalDateTime.of(2030, 1, 1, 12, 3, 31));
+        blogRoot.getPosts().add(post);
+        //when
+        blogRepository.save(blogRoot);
+        //then
+        assertThat(post.getPostInfo().postVisitCount())
+                .isEqualTo(0L);
+    }
 }

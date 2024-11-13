@@ -50,7 +50,7 @@ class MemberRootTest extends RepositoryTestSupport {
         );
         URL url = new URL("https://goalinnext.tistory.com/rss");
         //when
-        memberRoot.addMyBlog(url);
+        memberRoot.saveMyBlog(url, 0L);
         //then
         assertThat(memberRoot.hasMyBlog()).isTrue();
     }
@@ -68,12 +68,47 @@ class MemberRootTest extends RepositoryTestSupport {
                 nickName
         );
         URL url = new URL("https://goalinnext.tistory.com/rss");
-        memberRoot.addMyBlog(url);
+        memberRoot.saveMyBlog(url, 0L);
         //상태 메시지
         String statusMessage = "상태 메시지입니다.";
         //when
         memberRoot.withStatusMessage(statusMessage);
         //then
         assertThat(memberRoot.getMyBlog().statusMessage()).isEqualTo("상태 메시지입니다.");
+    }
+
+    @Test
+    @DisplayName("MyBlog 생성 시 myBlogVisitCount는 외부에서 전달받아 생성된다.")
+    void createMyBlogWithMyBlogVisitCount() throws MalformedURLException {
+        //given
+        Long blogVisitCount = 11L; // 기존에 blog가 존재하면 해당 블로그의 visitCount를 가져오고 존재하지 않으면 0L으로 생성
+        MemberRoot memberRoot = MemberRoot.create(
+                "abc@naver.com",
+                "Ab1234!!",
+                "닉네임"
+        );
+        //when
+        memberRoot.saveMyBlog(new URL("https://goalinnext.tistory.com/rss"), blogVisitCount);
+        //then
+        assertThat(memberRoot.getMyBlog().myBlogVisitCount())
+                .isEqualTo(11L);
+    }
+
+    @Test
+    @DisplayName("MyBlog 가 방문될 경우 visitMyBlog()로 방문횟수를 1 증가시킨다.")
+    void visitMyBlog() throws MalformedURLException {
+        //given
+        Long blogVisitCount = 11L; // 기존에 blog가 존재하면 해당 블로그의 visitCount를 가져오고 존재하지 않으면 0L으로 생성
+        MemberRoot memberRoot = MemberRoot.create(
+                "abc@naver.com",
+                "Ab1234!!",
+                "닉네임"
+        );
+        //when
+        memberRoot.saveMyBlog(new URL("https://goalinnext.tistory.com/rss"), blogVisitCount);
+        memberRoot.visitMyBlog();
+        //then
+        assertThat(memberRoot.getMyBlog().myBlogVisitCount())
+                .isEqualTo(12L);
     }
 }

@@ -7,6 +7,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 @Transactional
@@ -21,22 +22,24 @@ class MemberInfoTest extends RepositoryTestSupport {
         String validEmail = "abc@naver.com";
         String validPassword = "Abc1234!!";
         String nickName = "닉네임";
-        //when
         MemberRoot memberRoot = MemberRoot.create(
                 validEmail,
                 validPassword,
                 nickName
         );
-        //expected
-        assertThatThrownBy(() -> memberRepository.save(memberRoot))
-                .isInstanceOf(ConstraintViolationException.class);
+        //when
+        memberRepository.save(memberRoot);
+        //then
+        assertThat(memberRoot)
+                .extracting(e -> e.getMemberInfo().userEmail(), e -> e.getMemberInfo().password(), e -> e.getMemberInfo().nickName())
+                .containsExactly("abc@naver.com", "Abc1234!!", "닉네임");
     }
 
     @DisplayName("Member 생성 시 MemberInfo의 이메일 값이 이메일 형식이 아니면 에러가 발생한다.")
     @Test
     void createMemberByNotValidEmail() {
         //given
-        String validEmail = "abc@naver.com";
+        String validEmail = "@naver.com";
         String validPassword = "Abc1234!!";
         String nickName = "닉네임";
         //when

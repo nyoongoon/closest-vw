@@ -25,6 +25,9 @@ record BlogInfo(
         @NotNull(message = BLOG_PUBLISHED_DATETIME_IS_REQUIRED)
         LocalDateTime publishedDateTime,
 
+        @NotNull
+        Long blogVisitCount,
+
         String statusMessage
 ) {
 }
