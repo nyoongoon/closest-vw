@@ -37,4 +37,13 @@ public final class ExceptionMessageConstants {
     public static final String NOT_EXISTS_MY_BLOG = "나의 블로그가 존재하지 않습니다.";
     public static final String ALREADY_EXISTS_MY_BLOG = "나의 블로그가 이미 존재합니다.";
 
+    /* 블로그 */
+    public static final String BLOG_TITLE_IS_REQUIRED = "블로그명은 필수값입니다.";
+    public static final String BLOG_AUTHOR_IS_REQUIRED = "블로그 저자명은 필수값입니다.";
+    public static final String BLOG_PUBLISHED_DATETIME_IS_REQUIRED = "블로그 발행 시간은 필수값입니다.";
+    public static final String CHANGED_STATUS_MESSAGE_IS_NULL = "변경할 상태메시지의 값이 존재하지 않습니다.";
+
+    /* 포스트 */
+    public static final String POST_TITLE_IS_REQUIRED = "포스트명은 필수값입니다.";
+    public static final String POST_PUBLISHED_DATETIME_IS_REQUIRED = "포스트 발행 시간은 필수값입니다.";
 }

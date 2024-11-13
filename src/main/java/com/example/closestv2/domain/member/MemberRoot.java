@@ -22,12 +22,14 @@ import static com.example.closestv2.api.exception.ExceptionMessageConstants.NOT_
 public class MemberRoot {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "member_id")
     private Long id;
 
     @Valid
     @Embedded
     private MemberInfo memberInfo;
 
+    @Valid
     @Embedded
     private MyBlog myBlog;
 
@@ -60,22 +62,22 @@ public class MemberRoot {
         if (ObjectUtils.isEmpty(myBlog)) {
             return false;
         }
-        URL url = myBlog.url();
-        if (ObjectUtils.isEmpty(url)) { //url이 존재하면 나의 블로그 존재
+        URL blogUrl = myBlog.blogUrl();
+        if (ObjectUtils.isEmpty(blogUrl)) { //url이 존재하면 나의 블로그 존재
             return false;
         }
         return true;
     }
 
     public void addMyBlog(
-            URL url
+            URL blogUrl
     ) {
         if (hasMyBlog()) {
             throw new IllegalStateException(ALREADY_EXISTS_MY_BLOG); //블로그 변경 시 변경 메서드 사용
         }
 
         myBlog = MyBlog.builder()
-                .url(url)
+                .blogUrl(blogUrl)
                 .build();
     }
 
@@ -84,13 +86,13 @@ public class MemberRoot {
         if (!hasMyBlog()) {
             throw new IllegalStateException(NOT_EXISTS_MY_BLOG);
         }
-        URL url = myBlog.url();
+        URL blogUrl = myBlog.blogUrl();
         myBlog = MyBlog.builder()
-                .url(url)
+                .blogUrl(blogUrl)
                 .statusMessage(statusMessage)
                 .build();
 
         //todo 블로그 도메인에서 이벤트 받아 처리..
-        Events.raise(new StatusMessageChangeEvent(url, statusMessage));
+        Events.raise(new StatusMessageChangeEvent(blogUrl, statusMessage));
     }
 }

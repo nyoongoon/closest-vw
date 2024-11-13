@@ -1,5 +1,6 @@
 package com.example.closestv2.domain.member;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Embeddable;
 import jakarta.validation.constraints.NotNull;
 import lombok.AccessLevel;
@@ -11,9 +12,11 @@ import static com.example.closestv2.api.exception.ExceptionMessageConstants.URL_
 
 @Builder(access = AccessLevel.PROTECTED)
 @Embeddable
-public record MyBlog(
+record MyBlog(
         @NotNull(message = URL_IS_REQUIRED)
-        URL url,
+        @Column(unique = true)
+        URL blogUrl,
+
         String statusMessage
 ) {
 }

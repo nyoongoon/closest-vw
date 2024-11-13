@@ -5,9 +5,11 @@ import jakarta.validation.ConstraintViolationException;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.annotation.Transactional;
 
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
+@Transactional
 class MemberInfoTest extends RepositoryTestSupport {
     @Autowired
     private MemberRepository memberRepository;
@@ -85,13 +87,13 @@ class MemberInfoTest extends RepositoryTestSupport {
     void createMemberByNotValidPassword() {
         //given
         String notValidPassword = "abc1234!"; // 대문자 없음
-        //when
+        //expected
         MemberRoot memberRoot = MemberRoot.create(
                 "abc@Email.com",
                 notValidPassword,
                 "닉네임"
         );
-        //then
+        //expected
         assertThatThrownBy(() -> memberRepository.save(memberRoot))
                 .isInstanceOf(ConstraintViolationException.class);
     }
@@ -107,7 +109,7 @@ class MemberInfoTest extends RepositoryTestSupport {
                 passwordUnder8Length,
                 "닉네임"
         );
-        //then
+        //expected
         assertThatThrownBy(() -> memberRepository.save(memberRoot))
                 .isInstanceOf(ConstraintViolationException.class);
     }
@@ -123,7 +125,7 @@ class MemberInfoTest extends RepositoryTestSupport {
                 "Ab1234!!",
                 nickName
         );
-        //then
+        //expected
         assertThatThrownBy(() -> memberRepository.save(memberRoot))
                 .isInstanceOf(ConstraintViolationException.class);
     }
@@ -139,7 +141,7 @@ class MemberInfoTest extends RepositoryTestSupport {
                 "Ab1234!!",
                 nickName
         );
-        //then
+        //expected
         assertThatThrownBy(() -> memberRepository.save(memberRoot))
                 .isInstanceOf(ConstraintViolationException.class);
     }

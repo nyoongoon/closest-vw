@@ -5,14 +5,13 @@ import jakarta.validation.ConstraintViolationException;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.annotation.Transactional;
 
-import java.net.MalformedURLException;
 import java.net.URL;
 
-import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.junit.jupiter.api.Assertions.*;
 
+@Transactional
 class MyBlogTest extends RepositoryTestSupport {
     @Autowired
     private MemberRepository memberRepository;
@@ -23,14 +22,14 @@ class MyBlogTest extends RepositoryTestSupport {
         //given
         String userEmail = "abc@naver.com";
         String password = "Ab1234!!";
-        String nickName = null;
+        String nickName = "닉네임";
         MemberRoot memberRoot = MemberRoot.create(
                 userEmail,
                 password,
                 nickName
         );
-        URL url = null;
-        memberRoot.addMyBlog(url);
+        URL blogUrl = null;
+        memberRoot.addMyBlog(blogUrl);
         //expected
         assertThatThrownBy(() -> memberRepository.save(memberRoot))
                 .isInstanceOf(ConstraintViolationException.class);

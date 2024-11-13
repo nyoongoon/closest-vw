@@ -4,12 +4,14 @@ import com.example.closestv2.support.RepositoryTestSupport;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.net.MalformedURLException;
 import java.net.URL;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+@Transactional
 class MemberRootTest extends RepositoryTestSupport {
     @Autowired
     private MemberRepository memberRepository;
