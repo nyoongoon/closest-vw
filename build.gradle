@@ -26,10 +26,26 @@ repositories {
 dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
     implementation 'org.springframework.boot:spring-boot-starter-web'
-    compileOnly 'org.projectlombok:lombok'
-    developmentOnly 'org.springframework.boot:spring-boot-devtools'
-    annotationProcessor 'org.projectlombok:lombok'
+
+    /* utils */
+    implementation 'org.apache.commons:commons-lang3:3.17.0'
+
+    /* validation */
+    implementation 'org.springframework.boot:spring-boot-starter-validation:3.3.5'
+
+    /* rss */
+    implementation 'com.rometools:rome:2.1.0'
+
+    /* DB */
+    runtimeOnly 'com.h2database:h2'
+
+    /* test */
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
+    testImplementation 'org.springframework.security:spring-security-test'
+
+    compileOnly 'org.projectlombok:lombok'
+    annotationProcessor 'org.projectlombok:lombok'
+    developmentOnly 'org.springframework.boot:spring-boot-devtools'
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 }
 
