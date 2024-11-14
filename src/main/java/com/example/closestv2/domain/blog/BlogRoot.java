@@ -26,7 +26,6 @@ public class BlogRoot {
     @Embedded
     private BlogInfo blogInfo;
 
-    @Getter(value = AccessLevel.PROTECTED)
     @OneToMany(cascade = {CascadeType.PERSIST, CascadeType.REMOVE}, orphanRemoval = true)
     @JoinColumn(name = "blog_id")
     private List<Post> posts = new ArrayList<>();
@@ -38,6 +37,7 @@ public class BlogRoot {
         this.blogInfo = blogInfo;
     }
 
+    //todo 이게 여기 있는게 맞나? BlogFactory에 있어야할거같음..
     public static BlogRoot create(
             URL blogUrl,
             String blogTitle,
@@ -67,9 +67,10 @@ public class BlogRoot {
                 .publishedDateTime(publishedDateTime)
                 .postVisitCount(0L)
                 .build();
-        return Post.builder()
+        Post post = Post.builder()
                 .postInfo(postInfo)
                 .build();
+        return post;
     }
 
     public void withStatusMessage(String statusMessage) {

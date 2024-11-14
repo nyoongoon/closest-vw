@@ -12,7 +12,7 @@ import static com.example.closestv2.api.exception.ExceptionMessageConstants.*;
 
 @Embeddable
 @Builder(access = AccessLevel.PROTECTED)
-record PostInfo(
+public record PostInfo(
         @NotNull(message = POST_URL_IS_REQUIRED)
         URL postUrl,
 
