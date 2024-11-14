@@ -4,6 +4,10 @@ package com.example.closestv2.api.exception;
  * @Valid에 직접 삽입하기 위해 문자열 상수로 선언
  */
 public final class ExceptionMessageConstants {
+    private ExceptionMessageConstants() {
+        throw new IllegalStateException();
+    }
+
     /* 이메일 */
     public static final String EMAIL_IS_REQUIRED = "이메일은 필수값입니다.";
     public static final String NOT_VALID_EMAIL = "올바른 이메일 형식이 아닙니다.";
@@ -37,14 +41,13 @@ public final class ExceptionMessageConstants {
     public static final String BLOG_VISIT_COUNT_IS_REQUIRED = "블로그 방문 횟수가 존재하지 않습니다.";
     /* 포스트 */
     public static final String POST_TITLE_IS_REQUIRED = "포스트명은 필수값입니다.";
+    public static final String POST_URL_IS_REQUIRED = "포스트 URL은 필수값입니다.";
     public static final String POST_PUBLISHED_DATETIME_IS_REQUIRED = "포스트 발행 시간은 필수값입니다.";
     public static final String POST_VISIT_COUNT_IS_REQUIRED = "포스트 방문 횟수가 존재하지 않습니다.";
     /* 구독 */
-    public static final String SUBSCRIPTION_VISIT_COUNT_IS_REQUIRED = "포스트 방문 횟수가 존재하지 않습니다.";
-    public static final String NEW_POST_COUNT_IS_REQUIRED = "구독의 새 포스트 개수가 존재하지 않습니다.";
+    public static final String SUBSCRIPTION_VISIT_COUNT_IS_REQUIRED = "포스트 방문 횟수는 필수값입니다.";
+    public static final String NEW_POST_COUNT_IS_REQUIRED = "구독의 새 포스트 개수는 필수값입니다.";
     public static final String SUBSCRIPTION_PUBLISHED_DATETIME_IS_REQUIRED = "구독 발생 시간은 필수값입니다.";
     public static final String RECENT_PUBLISHED_DATETIME_IS_PAST = "구독의 최근 발행 시각은 현재 값보다 과거일 수 없습니다.";
-    private ExceptionMessageConstants() {
-        throw new IllegalStateException();
-    }
+
 }
