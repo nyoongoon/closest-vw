@@ -69,6 +69,22 @@ class MemberInfoTest extends RepositoryTestSupport {
                 .isInstanceOf(ConstraintViolationException.class);
     }
 
+    @DisplayName("Member 생성 시 MemberInfo의 이메일 값이 공백이면 에러가 발생한다.")
+    @Test
+    void createMemberByBlankEmail() {
+        //given
+        String blankEmail = " ";
+        //when
+        MemberRoot memberRoot = MemberRoot.create(
+                blankEmail,
+                "Abc1234!",
+                "닉네임"
+        );
+        //expected
+        assertThatThrownBy(() -> memberRepository.save(memberRoot))
+                .isInstanceOf(ConstraintViolationException.class);
+    }
+
     @DisplayName("Member 생성 시 MemberInfo의 비밀번호 값이 null이면 에러가 발생한다.")
     @Test
     void createMemberByNullPassword() {
@@ -78,6 +94,22 @@ class MemberInfoTest extends RepositoryTestSupport {
         MemberRoot memberRoot = MemberRoot.create(
                 "abc@Email.com",
                 notValidPassword,
+                "닉네임"
+        );
+        //expected
+        assertThatThrownBy(() -> memberRepository.save(memberRoot))
+                .isInstanceOf(ConstraintViolationException.class);
+    }
+
+    @DisplayName("Member 생성 시 MemberInfo의 비밀번호 값이 공백이면 에러가 발생한다.")
+    @Test
+    void createMemberByBlankPassword() {
+        //given
+        String blankPassword = " ";
+        //when
+        MemberRoot memberRoot = MemberRoot.create(
+                "abc@Email.com",
+                blankPassword,
                 "닉네임"
         );
         //expected
@@ -133,11 +165,11 @@ class MemberInfoTest extends RepositoryTestSupport {
                 .isInstanceOf(ConstraintViolationException.class);
     }
 
-    @DisplayName("Member 생성 시 MemberInfo의 닉네임이 비어있으면 에러가 발생한다.")
+    @DisplayName("Member 생성 시 MemberInfo의 닉네임이 공백이면 에러가 발생한다.")
     @Test
     void createMemberByBlankNickname() {
         //given
-        String nickName = ""; //blank
+        String nickName = " "; //blank
         //when
         MemberRoot memberRoot = MemberRoot.create(
                 "abc@Email.com",

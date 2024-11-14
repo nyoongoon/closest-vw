@@ -35,15 +35,9 @@ public class MemberRoot {
 
     @Builder(access = AccessLevel.PRIVATE)
     private MemberRoot(
-            String userEmail,
-            String password,
-            String nickName
+            MemberInfo memberInfo
     ) {
-        this.memberInfo = MemberInfo.builder()
-                .userEmail(userEmail)
-                .password(password)
-                .nickName(nickName)
-                .build();
+        this.memberInfo = memberInfo;
     }
 
     public static MemberRoot create(
@@ -51,10 +45,13 @@ public class MemberRoot {
             String password,
             String nickName
     ) {
-        return MemberRoot.builder()
+        MemberInfo memberInfo = MemberInfo.builder()
                 .userEmail(userEmail)
                 .password(password)
                 .nickName(nickName)
+                .build();
+        return MemberRoot.builder()
+                .memberInfo(memberInfo)
                 .build();
     }
 

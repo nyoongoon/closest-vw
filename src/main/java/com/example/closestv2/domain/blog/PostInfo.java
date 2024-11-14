@@ -22,7 +22,7 @@ record PostInfo(
         @NotNull(message = POST_PUBLISHED_DATETIME_IS_REQUIRED)
         LocalDateTime publishedDateTime,
 
-        @NotNull
+        @NotNull(message = POST_VISIT_COUNT_IS_REQUIRED)
         Long postVisitCount
 ) {
 }

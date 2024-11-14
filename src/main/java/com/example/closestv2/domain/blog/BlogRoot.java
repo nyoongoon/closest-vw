@@ -12,8 +12,6 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.example.closestv2.api.exception.ExceptionMessageConstants.CHANGED_STATUS_MESSAGE_IS_NULL;
-
 @Getter
 @Entity
 @Table(name = "blog")
@@ -35,50 +33,46 @@ public class BlogRoot {
 
     @Builder(access = AccessLevel.PRIVATE)
     private BlogRoot(
+            BlogInfo blogInfo
+    ) {
+        this.blogInfo = blogInfo;
+    }
+
+    public static BlogRoot create(
             URL blogUrl,
             String blogTitle,
             String author,
             LocalDateTime publishedDateTime
     ) {
-        blogInfo = BlogInfo.builder()
+        BlogInfo blogInfo = BlogInfo.builder()
                 .blogUrl(blogUrl)
                 .blogTitle(blogTitle)
                 .author(author)
                 .publishedDateTime(publishedDateTime)
                 .blogVisitCount(0L)
                 .build();
-    }
-
-    public static BlogRoot create(
-            URL url,
-            String blogTitle,
-            String author,
-            LocalDateTime publishedDateTime
-    ) {
         return BlogRoot.builder()
-                .blogUrl(url)
-                .blogTitle(blogTitle)
-                .author(author)
-                .publishedDateTime(publishedDateTime)
+                .blogInfo(blogInfo)
                 .build();
     }
 
-    public Post createPost (
+    public Post createPost(
             URL postUrl,
             String postTitle,
             LocalDateTime publishedDateTime
-    ){
-        return Post.builder()
+    ) {
+        PostInfo postInfo = PostInfo.builder()
                 .postUrl(postUrl)
                 .postTitle(postTitle)
                 .publishedDateTime(publishedDateTime)
+                .postVisitCount(0L)
+                .build();
+        return Post.builder()
+                .postInfo(postInfo)
                 .build();
     }
 
-    public void withStatusMessage(String statusMessage){
-        if(statusMessage == null){
-            throw new IllegalStateException(CHANGED_STATUS_MESSAGE_IS_NULL);
-        }
+    public void withStatusMessage(String statusMessage) {
         blogInfo = BlogInfo.builder()
                 .blogUrl(blogInfo.blogUrl())
                 .blogTitle(blogInfo.blogTitle())

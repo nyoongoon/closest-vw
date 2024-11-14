@@ -27,15 +27,8 @@ public class Post {
 
     @Builder(access = AccessLevel.PROTECTED)
     private Post(
-            URL postUrl,
-            String postTitle,
-            LocalDateTime publishedDateTime
+            PostInfo postInfo
     ) {
-        postInfo = PostInfo.builder()
-                .postUrl(postUrl)
-                .postTitle(postTitle)
-                .publishedDateTime(publishedDateTime)
-                .postVisitCount(0L)
-                .build();
+        this.postInfo = postInfo;
     }
 }

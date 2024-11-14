@@ -8,6 +8,7 @@ import lombok.Builder;
 
 import java.net.URL;
 
+import static com.example.closestv2.api.exception.ExceptionMessageConstants.MY_BLOG_VISIT_COUNT_IS_REQUIRED;
 import static com.example.closestv2.api.exception.ExceptionMessageConstants.URL_IS_REQUIRED;
 
 @Builder(access = AccessLevel.PROTECTED)
@@ -17,7 +18,7 @@ record MyBlog(
         @Column(unique = true)
         URL blogUrl,
 
-        @NotNull
+        @NotNull(message = MY_BLOG_VISIT_COUNT_IS_REQUIRED)
         Long myBlogVisitCount,
 
         String statusMessage
