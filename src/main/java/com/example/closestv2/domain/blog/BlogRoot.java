@@ -29,7 +29,7 @@ public class BlogRoot {
     @Getter(value = AccessLevel.PROTECTED)
     @OneToMany(cascade = {CascadeType.PERSIST, CascadeType.REMOVE}, orphanRemoval = true)
     @JoinColumn(name = "blog_id")
-    private List<Post> posts = new ArrayList<>();
+    private List<Post> posts;
 
     @Builder(access = AccessLevel.PRIVATE)
     private BlogRoot(
