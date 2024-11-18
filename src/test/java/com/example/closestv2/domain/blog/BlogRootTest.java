@@ -10,6 +10,7 @@ import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URL;
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.NoSuchElementException;
 
 import static org.assertj.core.api.Assertions.*;
@@ -208,11 +209,13 @@ class BlogRootTest extends RepositoryTestSupport {
     void updatePosts() throws MalformedURLException {
         //given
         BlogRoot sut = BlogRoot.create(ANY_BLOG_URL, ANY_BLOG_TITLE, ANY_AUTHOR, ANY_PUBLISHED_DATE_TIME);
-        sut.createPost(URI.create("https://example.com/blog123/1").toURL(), "포스트 제목1", ANY_PUBLISHED_DATE_TIME.plusSeconds(1));
+        List<Post> posts = sut.getPosts();
+        posts.add(sut.createPost(URI.create("https://example.com/blog123/1").toURL(), "포스트 제목1", ANY_PUBLISHED_DATE_TIME.plusSeconds(1)));
         BlogRoot compared = BlogRoot.create(ANY_BLOG_URL, ANY_BLOG_TITLE, ANY_AUTHOR, ANY_PUBLISHED_DATE_TIME.plusSeconds(4));
-        compared.createPost(URI.create("https://example.com/blog123/2").toURL(), "포스트 제목2", ANY_PUBLISHED_DATE_TIME.plusSeconds(2));
-        compared.createPost(URI.create("https://example.com/blog123/3").toURL(), "포스트 제목3", ANY_PUBLISHED_DATE_TIME.plusSeconds(3));
-        compared.createPost(URI.create("https://example.com/blog123/4").toURL(), "포스트 제목4", ANY_PUBLISHED_DATE_TIME.plusSeconds(4));
+        List<Post> comparedPosts = compared.getPosts();
+        comparedPosts.add(compared.createPost(URI.create("https://example.com/blog123/2").toURL(), "포스트 제목2", ANY_PUBLISHED_DATE_TIME.plusSeconds(2)));
+        comparedPosts.add(compared.createPost(URI.create("https://example.com/blog123/3").toURL(), "포스트 제목3", ANY_PUBLISHED_DATE_TIME.plusSeconds(3)));
+        comparedPosts.add(compared.createPost(URI.create("https://example.com/blog123/4").toURL(), "포스트 제목4", ANY_PUBLISHED_DATE_TIME.plusSeconds(4)));
         //when
         sut.updatePosts(compared);
         //then
@@ -228,8 +231,20 @@ class BlogRootTest extends RepositoryTestSupport {
     }
 
     @Test
-    @DisplayName("포스트 업데이트 시 post의 마지막 publishedDate가 publishedDate로 등록된다. ")
-    void updatePostsWithLastPublishedDateTime()  {
-        throw new IllegalStateException();
+    @DisplayName("포스트 업데이트 시 post의 마지막 publishedDate가 publishedDate로 등록된다.")
+    void updatePostsWithLastPublishedDateTime() throws MalformedURLException {
+        //given
+        BlogRoot sut = BlogRoot.create(ANY_BLOG_URL, ANY_BLOG_TITLE, ANY_AUTHOR, ANY_PUBLISHED_DATE_TIME);
+        List<Post> posts = sut.getPosts();
+        posts.add(sut.createPost(URI.create("https://example.com/blog123/1").toURL(), "포스트 제목1", ANY_PUBLISHED_DATE_TIME.plusSeconds(1)));
+        BlogRoot compared = BlogRoot.create(ANY_BLOG_URL, ANY_BLOG_TITLE, ANY_AUTHOR, ANY_PUBLISHED_DATE_TIME.plusSeconds(4));
+        List<Post> comparedPosts = compared.getPosts();
+        comparedPosts.add(compared.createPost(URI.create("https://example.com/blog123/2").toURL(), "포스트 제목2", ANY_PUBLISHED_DATE_TIME.plusSeconds(2)));
+        comparedPosts.add(compared.createPost(URI.create("https://example.com/blog123/3").toURL(), "포스트 제목3", ANY_PUBLISHED_DATE_TIME.plusSeconds(4)));
+        comparedPosts.add(compared.createPost(URI.create("https://example.com/blog123/4").toURL(), "포스트 제목4", ANY_PUBLISHED_DATE_TIME.plusSeconds(3)));
+        //when
+        sut.updatePosts(compared);
+        //then
+        assertThat(sut.getBlogInfo().publishedDateTime()).isEqualTo(ANY_PUBLISHED_DATE_TIME.plusSeconds(4));
     }
 }

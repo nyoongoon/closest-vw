@@ -145,7 +145,7 @@ public class BlogRoot {
         List<Post> updatPosts = comparedBlogRoot.getPosts();
         for (Post updatePost : updatPosts) {
             LocalDateTime updatePostPublishedDateTime = updatePost.getPostInfo().publishedDateTime();
-            lastPublishedDateTime.isBefore(updatePostPublishedDateTime) {
+            if (lastPublishedDateTime.isBefore(updatePostPublishedDateTime)) {
                 lastPublishedDateTime = updatePostPublishedDateTime;
             }
             posts.add(updatePost);
@@ -168,7 +168,7 @@ public class BlogRoot {
         }
         // blogInfo의 발행시간이 더 이후면 예외
         if (blogInfo.publishedDateTime().isAfter(comparedBlogInfo.publishedDateTime())) {
-//            log.error();
+            log.error("블로그 업데이트는 발행시간이 더 과거인 블로그로 업데이트 할 수 없다. 기존:{}, 업데이트 시도:{} ", blogInfo.publishedDateTime(), comparedBlogInfo.publishedDateTime());
             throw new IllegalStateException(BLOG_NON_UPDATABLE_BY_PAST_PUBLISHED_DATETIME);
         }
     }
