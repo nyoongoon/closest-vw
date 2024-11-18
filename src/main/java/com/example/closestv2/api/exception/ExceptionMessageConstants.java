@@ -39,6 +39,10 @@ public final class ExceptionMessageConstants {
     public static final String BLOG_AUTHOR_IS_REQUIRED = "블로그 저자명은 필수값입니다.";
     public static final String BLOG_PUBLISHED_DATETIME_IS_REQUIRED = "블로그 발행 시간은 필수값입니다.";
     public static final String BLOG_VISIT_COUNT_IS_REQUIRED = "블로그 방문 횟수가 존재하지 않습니다.";
+    public static final String BLOG_URL_IS_NOT_CHANGEABLE = "블로그 URL은 변경될 수 없습니다.";
+    public static final String BLOG_UPDATABLE_BY_SAME_URL = "블로그는 같은 URL 정보로 업데이트가 가능합니다";
+    public static final String BLOG_NON_UPDATABLE_BY_PAST_PUBLISHED_DATETIME = "블로그는 이전 발행시간 정보로 업데이트할 수 없습니다.";
+
     /* 포스트 */
     public static final String POST_TITLE_IS_REQUIRED = "포스트명은 필수값입니다.";
     public static final String POST_URL_IS_REQUIRED = "포스트 URL은 필수값입니다.";

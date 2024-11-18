@@ -5,12 +5,13 @@ import com.rometools.rome.feed.synd.SyndFeed;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.net.MalformedURLException;
 import java.net.URL;
 
 import static org.assertj.core.api.Assertions.assertThat;
-
+@Transactional
 class RssFeedClientTest extends IntegrationTestSupport {
     @Autowired
     private RssFeedClient rssFeedClient;

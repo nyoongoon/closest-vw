@@ -109,4 +109,27 @@ class BlogInfoTest extends RepositoryTestSupport {
         assertThatThrownBy(() -> blogRepository.save(blogRoot))
                 .isInstanceOf(ConstraintViolationException.class);
     }
+
+    @Test
+    @DisplayName("BlogInfo는 값객체로서 동등성 비교를 할 수 있다.")
+    void hasBlogInfoEquality() throws MalformedURLException {
+        //given
+        BlogRoot blogRoot1 = BlogRoot.create(
+                new URL("https://example.com/blog123"),
+                "제목",
+                "작가",
+                LocalDateTime.of(2022, 1, 1, 12, 3, 31)
+        );
+        BlogRoot blogRoot2 = BlogRoot.create(
+                new URL("https://example.com/blog123"),
+                "제목",
+                "작가",
+                LocalDateTime.of(2022, 1, 1, 12, 3, 31)
+        );
+        //expected
+        assertThat(blogRoot1.getBlogInfo() == blogRoot2.getBlogInfo())
+                .isFalse(); // 동일성(identity)
+        assertThat(blogRoot1.getBlogInfo().equals(blogRoot2.getBlogInfo()))
+                .isTrue(); // 동등성(equality)
+    }
 }

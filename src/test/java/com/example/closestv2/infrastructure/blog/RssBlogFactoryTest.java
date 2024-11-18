@@ -2,6 +2,7 @@ package com.example.closestv2.infrastructure.blog;
 
 import com.example.closestv2.clients.RssFeedClient;
 import com.example.closestv2.domain.blog.BlogInfo;
+import com.example.closestv2.domain.blog.BlogRepository;
 import com.example.closestv2.domain.blog.BlogRoot;
 import com.example.closestv2.domain.blog.Post;
 import com.example.closestv2.support.IntegrationTestSupport;
@@ -14,6 +15,7 @@ import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -27,9 +29,12 @@ import java.util.List;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.tuple;
 
+@Transactional
 class RssBlogFactoryTest extends IntegrationTestSupport {
     @Autowired
     private RssBlogFactory rssBlogFactory;
+    @Autowired
+    private BlogRepository blogRepository;
     @MockBean
     private RssFeedClient rssFeedClient;
 
@@ -83,7 +88,7 @@ class RssBlogFactoryTest extends IntegrationTestSupport {
         );
         Mockito.when(rssFeedClient.getSyndFeed(url)).thenReturn(mockSyndFeed); //mockking
         //when
-        BlogRoot blog = rssBlogFactory.createBlogWithPosts(url);
+        BlogRoot blog = rssBlogFactory.createRecentBlogRoot(url);
         //then
         BlogInfo blogInfo = blog.getBlogInfo();
         assertThat(blogInfo.blogUrl())
@@ -98,7 +103,7 @@ class RssBlogFactoryTest extends IntegrationTestSupport {
 
     @Test
     @DisplayName("SyndFeed에 SyndEntry가 존재하면 BlogRoot에 Post로 포함된다.")
-    void createBlogWithPosts() throws MalformedURLException {
+    void createRecentBlogRoot() throws MalformedURLException {
         //given
         URL url = new URL("https://goalinnext.tistory.com/rss");
         LocalDateTime localDateTime = LocalDateTime.of(2022, 1, 1, 12, 3, 31);
@@ -116,7 +121,7 @@ class RssBlogFactoryTest extends IntegrationTestSupport {
         mockSyndFeed.setEntries(mockEntrys);
         Mockito.when(rssFeedClient.getSyndFeed(url)).thenReturn(mockSyndFeed); //mockking
         //when
-        BlogRoot blog = rssBlogFactory.createBlogWithPosts(url);
+        BlogRoot blog = rssBlogFactory.createRecentBlogRoot(url);
         //then
         List<Post> posts = blog.getPosts();
         assertThat(posts)
@@ -128,4 +133,5 @@ class RssBlogFactoryTest extends IntegrationTestSupport {
                         tuple(new URL("https://goalinnext.tistory.com/3"), "포스트 제목3", LocalDateTime.of(2022, 1, 1, 12, 6, 31))
                 );
     }
+
 }

@@ -6,17 +6,23 @@ import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.net.URL;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.example.closestv2.api.exception.ExceptionMessageConstants.BLOG_NON_UPDATABLE_BY_PAST_PUBLISHED_DATETIME;
+import static com.example.closestv2.api.exception.ExceptionMessageConstants.BLOG_UPDATABLE_BY_SAME_URL;
+
 @Getter
 @Entity
 @Table(name = "blog")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class BlogRoot {
+    private static final Logger log = LoggerFactory.getLogger(BlogRoot.class);
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "blog_id")
@@ -81,5 +87,89 @@ public class BlogRoot {
                 .publishedDateTime(blogInfo.publishedDateTime())
                 .statusMessage(statusMessage)
                 .build();
+    }
+
+    public boolean isBlogUpdated(
+            BlogRoot comparedBlogRoot
+    ) {
+        BlogInfo comparedBlogInfo = comparedBlogRoot.blogInfo;
+
+        if (blogInfo.blogTitle() != comparedBlogInfo.blogTitle()) {
+            return true;
+        }
+        if (blogInfo.author() != comparedBlogInfo.author()) {
+            return true;
+        }
+        if (blogInfo.publishedDateTime().isBefore(comparedBlogInfo.publishedDateTime())) {
+            return true;
+        }
+
+        return false;
+    }
+
+    public void updateBlog(
+            BlogRoot comparedBlogRoot
+    ) {
+        BlogInfo comparedBlogInfo = comparedBlogRoot.blogInfo;
+        checkValidUpdate(comparedBlogInfo);
+
+        blogInfo = BlogInfo.builder()
+                .blogUrl(blogInfo.blogUrl())
+                .blogTitle(comparedBlogInfo.blogTitle())
+                .author(comparedBlogInfo.author())
+                .publishedDateTime(comparedBlogInfo.publishedDateTime())
+                .blogVisitCount(blogInfo.blogVisitCount())
+                .statusMessage(blogInfo.statusMessage())
+                .build();
+    }
+
+    public boolean isPostsUpdated(
+            BlogRoot comparedBlogRoot
+    ) {
+        BlogInfo comparedBlogInfo = comparedBlogRoot.blogInfo;
+        checkValidUpdate(comparedBlogInfo);
+
+        if (blogInfo.publishedDateTime().isBefore(comparedBlogInfo.publishedDateTime())) {
+            return true;
+        }
+
+        return false;
+    }
+
+    public void updatePosts(
+            BlogRoot comparedBlogRoot //feed로 받아온 블로그..
+    ) {
+        checkValidUpdate(comparedBlogRoot.blogInfo);
+        LocalDateTime lastPublishedDateTime = LocalDateTime.MIN;
+
+        List<Post> updatPosts = comparedBlogRoot.getPosts();
+        for (Post updatePost : updatPosts) {
+            LocalDateTime updatePostPublishedDateTime = updatePost.getPostInfo().publishedDateTime();
+            lastPublishedDateTime.isBefore(updatePostPublishedDateTime) {
+                lastPublishedDateTime = updatePostPublishedDateTime;
+            }
+            posts.add(updatePost);
+        }
+
+        blogInfo = BlogInfo.builder()
+                .blogUrl(blogInfo.blogUrl())
+                .blogTitle(blogInfo.blogTitle())
+                .author(blogInfo.author())
+                .publishedDateTime(lastPublishedDateTime)
+                .blogVisitCount(blogInfo.blogVisitCount())
+                .statusMessage(blogInfo.statusMessage())
+                .build();
+    }
+
+    private void checkValidUpdate(BlogInfo comparedBlogInfo) {
+        if (!blogInfo.blogUrl().equals(comparedBlogInfo.blogUrl())) {
+            log.error("URL이 다른 블로그 정보로 업데이트 시도 - 기존: {}, 업데이트 시도: {}", blogInfo.blogUrl(), comparedBlogInfo.blogUrl());
+            throw new IllegalStateException(BLOG_UPDATABLE_BY_SAME_URL);
+        }
+        // blogInfo의 발행시간이 더 이후면 예외
+        if (blogInfo.publishedDateTime().isAfter(comparedBlogInfo.publishedDateTime())) {
+//            log.error();
+            throw new IllegalStateException(BLOG_NON_UPDATABLE_BY_PAST_PUBLISHED_DATETIME);
+        }
     }
 }

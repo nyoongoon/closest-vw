@@ -5,5 +5,5 @@ import java.net.URISyntaxException;
 import java.net.URL;
 
 public interface BlogFactory {
-    BlogRoot createBlogWithPosts(URL url) throws URISyntaxException, MalformedURLException;
+    BlogRoot createRecentBlogRoot(URL url) throws URISyntaxException, MalformedURLException;
 }

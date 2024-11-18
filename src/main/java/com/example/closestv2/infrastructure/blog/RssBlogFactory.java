@@ -23,7 +23,7 @@ public class RssBlogFactory implements BlogFactory {
     private final RssFeedClient rssFeedClient;
 
     @Override
-    public BlogRoot createBlogWithPosts(URL url) throws MalformedURLException {
+    public BlogRoot createRecentBlogRoot(URL url) throws MalformedURLException {
         SyndFeed syndFeed = rssFeedClient.getSyndFeed(url);
 
         BlogRoot blogRoot = translate(syndFeed);
