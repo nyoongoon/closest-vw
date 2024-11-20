@@ -43,10 +43,9 @@ class BlogSchedulerServiceTest extends IntegrationTestSupport {
                     LocalDateTime.of(2022, 1, 1, 12, 10, 31).plusMinutes(i) //11, 12, 13분
             );
         }
-
-
         //when
         //then
+        throw new IllegalArgumentException();
     }
 
     private BlogRoot saveBlog(

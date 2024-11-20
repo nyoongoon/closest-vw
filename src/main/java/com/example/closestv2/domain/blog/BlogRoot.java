@@ -6,13 +6,16 @@ import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.apache.logging.log4j.util.Strings;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.util.Assert;
 
 import java.net.URL;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 import static com.example.closestv2.api.exception.ExceptionMessageConstants.BLOG_NON_UPDATABLE_BY_PAST_PUBLISHED_DATETIME;
 import static com.example.closestv2.api.exception.ExceptionMessageConstants.BLOG_UPDATABLE_BY_SAME_URL;
@@ -81,10 +84,10 @@ public class BlogRoot {
 
     public void withStatusMessage(String statusMessage) {
         blogInfo = BlogInfo.builder()
-                .blogUrl(blogInfo.blogUrl())
-                .blogTitle(blogInfo.blogTitle())
-                .author(blogInfo.author())
-                .publishedDateTime(blogInfo.publishedDateTime())
+                .blogUrl(blogInfo.getBlogUrl())
+                .blogTitle(blogInfo.getBlogTitle())
+                .author(blogInfo.getAuthor())
+                .publishedDateTime(blogInfo.getPublishedDateTime())
                 .statusMessage(statusMessage)
                 .build();
     }
@@ -94,13 +97,13 @@ public class BlogRoot {
     ) {
         BlogInfo comparedBlogInfo = comparedBlogRoot.blogInfo;
 
-        if (blogInfo.blogTitle() != comparedBlogInfo.blogTitle()) {
+        if (blogInfo.getBlogTitle() != comparedBlogInfo.getBlogTitle()) {
             return true;
         }
-        if (blogInfo.author() != comparedBlogInfo.author()) {
+        if (blogInfo.getAuthor() != comparedBlogInfo.getAuthor()) {
             return true;
         }
-        if (blogInfo.publishedDateTime().isBefore(comparedBlogInfo.publishedDateTime())) {
+        if (blogInfo.getPublishedDateTime().isBefore(comparedBlogInfo.getPublishedDateTime())) {
             return true;
         }
 
@@ -114,12 +117,12 @@ public class BlogRoot {
         checkValidUpdate(comparedBlogInfo);
 
         blogInfo = BlogInfo.builder()
-                .blogUrl(blogInfo.blogUrl())
-                .blogTitle(comparedBlogInfo.blogTitle())
-                .author(comparedBlogInfo.author())
-                .publishedDateTime(comparedBlogInfo.publishedDateTime())
-                .blogVisitCount(blogInfo.blogVisitCount())
-                .statusMessage(blogInfo.statusMessage())
+                .blogUrl(blogInfo.getBlogUrl())
+                .blogTitle(comparedBlogInfo.getBlogTitle())
+                .author(comparedBlogInfo.getAuthor())
+                .publishedDateTime(comparedBlogInfo.getPublishedDateTime())
+                .blogVisitCount(blogInfo.getBlogVisitCount())
+                .statusMessage(blogInfo.getStatusMessage())
                 .build();
     }
 
@@ -129,7 +132,7 @@ public class BlogRoot {
         BlogInfo comparedBlogInfo = comparedBlogRoot.blogInfo;
         checkValidUpdate(comparedBlogInfo);
 
-        if (blogInfo.publishedDateTime().isBefore(comparedBlogInfo.publishedDateTime())) {
+        if (blogInfo.getPublishedDateTime().isBefore(comparedBlogInfo.getPublishedDateTime())) {
             return true;
         }
 
@@ -152,23 +155,23 @@ public class BlogRoot {
         }
 
         blogInfo = BlogInfo.builder()
-                .blogUrl(blogInfo.blogUrl())
-                .blogTitle(blogInfo.blogTitle())
-                .author(blogInfo.author())
+                .blogUrl(blogInfo.getBlogUrl())
+                .blogTitle(blogInfo.getBlogTitle())
+                .author(blogInfo.getAuthor())
                 .publishedDateTime(lastPublishedDateTime)
-                .blogVisitCount(blogInfo.blogVisitCount())
-                .statusMessage(blogInfo.statusMessage())
+                .blogVisitCount(blogInfo.getBlogVisitCount())
+                .statusMessage(blogInfo.getStatusMessage())
                 .build();
     }
 
     private void checkValidUpdate(BlogInfo comparedBlogInfo) {
-        if (!blogInfo.blogUrl().equals(comparedBlogInfo.blogUrl())) {
-            log.error("URL이 다른 블로그 정보로 업데이트 시도 - 기존: {}, 업데이트 시도: {}", blogInfo.blogUrl(), comparedBlogInfo.blogUrl());
+        if (!blogInfo.getBlogUrl().equals(comparedBlogInfo.getBlogUrl())) {
+            log.error("URL이 다른 블로그 정보로 업데이트 시도 - 기존: {}, 업데이트 시도: {}", blogInfo.getBlogUrl(), comparedBlogInfo.getBlogUrl());
             throw new IllegalStateException(BLOG_UPDATABLE_BY_SAME_URL);
         }
         // blogInfo의 발행시간이 더 이후면 예외
-        if (blogInfo.publishedDateTime().isAfter(comparedBlogInfo.publishedDateTime())) {
-            log.error("블로그 업데이트는 발행시간이 더 과거인 블로그로 업데이트 할 수 없다. 기존:{}, 업데이트 시도:{} ", blogInfo.publishedDateTime(), comparedBlogInfo.publishedDateTime());
+        if (blogInfo.getPublishedDateTime().isAfter(comparedBlogInfo.getPublishedDateTime())) {
+            log.error("블로그 업데이트는 발행시간이 더 과거인 블로그로 업데이트 할 수 없다. 기존:{}, 업데이트 시도:{} ", blogInfo.getPublishedDateTime(), comparedBlogInfo.getPublishedDateTime());
             throw new IllegalStateException(BLOG_NON_UPDATABLE_BY_PAST_PUBLISHED_DATETIME);
         }
     }

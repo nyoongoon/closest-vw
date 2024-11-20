@@ -38,7 +38,7 @@ class BlogInfoTest extends RepositoryTestSupport {
         // then
         BlogInfo blogInfo = blogRoot.getBlogInfo();
         assertThat(blogInfo)
-                .extracting(BlogInfo::blogUrl, BlogInfo::blogTitle, BlogInfo::author, BlogInfo::publishedDateTime)
+                .extracting(BlogInfo::getBlogUrl, BlogInfo::getBlogTitle, BlogInfo::getAuthor, BlogInfo::getPublishedDateTime)
                 .containsExactly(new URL("https://example.com/blog123"), "제목", "작가", LocalDateTime.of(2022, 1, 1, 12, 3, 31));
     }
 
@@ -57,6 +57,7 @@ class BlogInfoTest extends RepositoryTestSupport {
         //expected
         assertThatThrownBy(() -> blogRepository.save(blogRoot))
                 .isInstanceOf(ConstraintViolationException.class);
+        throw new IllegalArgumentException("일원화하기");
     }
 
     @Test
@@ -74,6 +75,7 @@ class BlogInfoTest extends RepositoryTestSupport {
         //expected
         assertThatThrownBy(() -> blogRepository.save(blogRoot))
                 .isInstanceOf(ConstraintViolationException.class);
+        throw new IllegalArgumentException("일원화하기");
     }
 
     @Test
@@ -91,6 +93,7 @@ class BlogInfoTest extends RepositoryTestSupport {
         //expected
         assertThatThrownBy(() -> blogRepository.save(blogRoot))
                 .isInstanceOf(ConstraintViolationException.class);
+        throw new IllegalArgumentException("일원화하기");
     }
 
     @Test
@@ -108,6 +111,7 @@ class BlogInfoTest extends RepositoryTestSupport {
         //expected
         assertThatThrownBy(() -> blogRepository.save(blogRoot))
                 .isInstanceOf(ConstraintViolationException.class);
+        throw new IllegalArgumentException("일원화하기");
     }
 
     @Test

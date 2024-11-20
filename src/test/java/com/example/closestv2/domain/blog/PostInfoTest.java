@@ -63,6 +63,7 @@ class PostInfoTest extends RepositoryTestSupport {
         //expected
         assertThatThrownBy(() -> blogRepository.save(blogRoot))
                 .isInstanceOf(ConstraintViolationException.class);
+        throw new IllegalArgumentException("일원화하기");
     }
 
     @Test
@@ -82,6 +83,7 @@ class PostInfoTest extends RepositoryTestSupport {
         //expected
         assertThatThrownBy(() -> blogRepository.save(blogRoot))
                 .isInstanceOf(ConstraintViolationException.class);
+        throw new IllegalArgumentException("일원화하기");
     }
 
     @Test
@@ -101,5 +103,6 @@ class PostInfoTest extends RepositoryTestSupport {
         //expected
         assertThatThrownBy(() -> blogRepository.save(blogRoot))
                 .isInstanceOf(ConstraintViolationException.class);
+        throw new IllegalArgumentException("일원화하기");
     }
 }

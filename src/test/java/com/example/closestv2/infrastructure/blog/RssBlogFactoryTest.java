@@ -91,13 +91,13 @@ class RssBlogFactoryTest extends IntegrationTestSupport {
         BlogRoot blog = rssBlogFactory.createRecentBlogRoot(url);
         //then
         BlogInfo blogInfo = blog.getBlogInfo();
-        assertThat(blogInfo.blogUrl())
+        assertThat(blogInfo.getBlogUrl())
                 .isEqualTo(new URL("https://goalinnext.tistory.com/"));
-        assertThat(blogInfo.blogTitle())
+        assertThat(blogInfo.getBlogTitle())
                 .isEqualTo("블로그 제목");
-        assertThat(blogInfo.author())
+        assertThat(blogInfo.getAuthor())
                 .isEqualTo("블로그 작가");
-        assertThat(blogInfo.publishedDateTime())
+        assertThat(blogInfo.getPublishedDateTime())
                 .isEqualTo(LocalDateTime.of(2022, 1, 1, 12, 3, 31));
     }
 

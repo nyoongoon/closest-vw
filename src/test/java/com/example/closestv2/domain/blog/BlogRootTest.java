@@ -48,7 +48,7 @@ class BlogRootTest extends RepositoryTestSupport {
         //when
         sut.withStatusMessage(statusMessage);
         //then
-        assertThat(sut.getBlogInfo().statusMessage())
+        assertThat(sut.getBlogInfo().getStatusMessage())
                 .isEqualTo("변경할 상태 메시지");
     }
 
@@ -98,7 +98,7 @@ class BlogRootTest extends RepositoryTestSupport {
         //when
         blogRepository.save(sut);
         //then
-        assertThat(sut.getBlogInfo().blogVisitCount())
+        assertThat(sut.getBlogInfo().getBlogVisitCount())
                 .isEqualTo(0L);
     }
 
@@ -188,9 +188,9 @@ class BlogRootTest extends RepositoryTestSupport {
         BlogRoot compared = BlogRoot.create(ANY_BLOG_URL, "변경 제목", "변경 작가", ANY_PUBLISHED_DATE_TIME.plusSeconds(1));
         //when
         sut.updateBlog(compared);
-        assertThat(sut.getBlogInfo().blogTitle()).isEqualTo("변경 제목");
-        assertThat(sut.getBlogInfo().author()).isEqualTo("변경 작가");
-        assertThat(sut.getBlogInfo().publishedDateTime()).isEqualTo(ANY_PUBLISHED_DATE_TIME.plusSeconds(1));
+        assertThat(sut.getBlogInfo().getBlogTitle()).isEqualTo("변경 제목");
+        assertThat(sut.getBlogInfo().getAuthor()).isEqualTo("변경 작가");
+        assertThat(sut.getBlogInfo().getPublishedDateTime()).isEqualTo(ANY_PUBLISHED_DATE_TIME.plusSeconds(1));
     }
 
     @Test
@@ -231,7 +231,7 @@ class BlogRootTest extends RepositoryTestSupport {
     }
 
     @Test
-    @DisplayName("포스트 업데이트 시 post의 마지막 publishedDate가 publishedDate로 등록된다.")
+    @DisplayName("포스트 업데이트 시 post의 마지막 publishedDate가 BlogInfo의 publishedDate로 등록된다.")
     void updatePostsWithLastPublishedDateTime() throws MalformedURLException {
         //given
         BlogRoot sut = BlogRoot.create(ANY_BLOG_URL, ANY_BLOG_TITLE, ANY_AUTHOR, ANY_PUBLISHED_DATE_TIME);
@@ -245,6 +245,6 @@ class BlogRootTest extends RepositoryTestSupport {
         //when
         sut.updatePosts(compared);
         //then
-        assertThat(sut.getBlogInfo().publishedDateTime()).isEqualTo(ANY_PUBLISHED_DATE_TIME.plusSeconds(4));
+        assertThat(sut.getBlogInfo().getPublishedDateTime()).isEqualTo(ANY_PUBLISHED_DATE_TIME.plusSeconds(4));
     }
 }

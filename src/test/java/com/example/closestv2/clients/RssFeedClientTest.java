@@ -26,7 +26,5 @@ class RssFeedClientTest extends IntegrationTestSupport {
         //then
         System.out.println(syndFeed.getLink());
         assertThat(syndFeed).isNotNull();
-
-
     }
 }

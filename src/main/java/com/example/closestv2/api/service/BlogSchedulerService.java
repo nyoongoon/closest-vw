@@ -27,7 +27,7 @@ public class BlogSchedulerService {
 
     private void pollingIfUpdated(BlogRoot blogRoot) throws MalformedURLException, URISyntaxException {
 
-        BlogRoot recentBlogRoot = blogFactory.createRecentBlogRoot(blogRoot.getBlogInfo().blogUrl());
+        BlogRoot recentBlogRoot = blogFactory.createRecentBlogRoot(blogRoot.getBlogInfo().getBlogUrl());
         boolean isUpdated = blogRoot.isBlogUpdated(recentBlogRoot);
         if(!isUpdated){
             return;

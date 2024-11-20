@@ -1,33 +1,53 @@
 package com.example.closestv2.domain.blog;
 
 import jakarta.persistence.Embeddable;
-import jakarta.validation.constraints.NotNull;
 import lombok.AccessLevel;
 import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import org.springframework.util.Assert;
 
 import java.net.URL;
 import java.time.LocalDateTime;
 
 import static com.example.closestv2.api.exception.ExceptionMessageConstants.*;
 
+@Getter
 @Embeddable
-@Builder(access = AccessLevel.PROTECTED)
-public record BlogInfo(
-        @NotNull(message = URL_IS_REQUIRED)
-        URL blogUrl,
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
+public class BlogInfo {
 
-        @NotNull(message = BLOG_TITLE_IS_REQUIRED)
-        String blogTitle,
+    private URL blogUrl;
 
-        @NotNull(message = BLOG_AUTHOR_IS_REQUIRED)
-        String author,
+    private String blogTitle;
 
-        @NotNull(message = BLOG_PUBLISHED_DATETIME_IS_REQUIRED)
-        LocalDateTime publishedDateTime,
+    private String author;
 
-        @NotNull(message = BLOG_VISIT_COUNT_IS_REQUIRED)
-        Long blogVisitCount,
+    private LocalDateTime publishedDateTime;
 
-        String statusMessage
-) {
+    private Long blogVisitCount;
+
+    private String statusMessage;
+
+    @Builder(access = AccessLevel.PROTECTED)
+    private BlogInfo(URL blogUrl,
+                       String blogTitle,
+                       String author,
+                       LocalDateTime publishedDateTime,
+                       Long blogVisitCount,
+                       String statusMessage
+    ) {
+        Assert.notNull(blogUrl, URL_IS_REQUIRED);
+        Assert.hasText(blogTitle, BLOG_TITLE_IS_REQUIRED);
+        Assert.hasText(author, BLOG_AUTHOR_IS_REQUIRED);
+        Assert.notNull(publishedDateTime, BLOG_PUBLISHED_DATETIME_IS_REQUIRED);
+        Assert.notNull(blogVisitCount, BLOG_VISIT_COUNT_IS_REQUIRED);
+
+        this.blogUrl = blogUrl;
+        this.blogTitle = blogTitle;
+        this.author = author;
+        this.publishedDateTime = publishedDateTime;
+        this.blogVisitCount = blogVisitCount;
+        this.statusMessage = statusMessage;
+    }
 }

@@ -51,6 +51,7 @@ class MemberInfoTest extends RepositoryTestSupport {
         //expected
         assertThatThrownBy(() -> memberRepository.save(memberRoot))
                 .isInstanceOf(ConstraintViolationException.class);
+        throw new IllegalArgumentException("일원화하기");
     }
 
     @DisplayName("Member 생성 시 MemberInfo의 이메일 값이 null이면 에러가 발생한다.")
@@ -67,6 +68,7 @@ class MemberInfoTest extends RepositoryTestSupport {
         //expected
         assertThatThrownBy(() -> memberRepository.save(memberRoot))
                 .isInstanceOf(ConstraintViolationException.class);
+        throw new IllegalArgumentException("일원화하기");
     }
 
     @DisplayName("Member 생성 시 MemberInfo의 이메일 값이 공백이면 에러가 발생한다.")
@@ -83,6 +85,7 @@ class MemberInfoTest extends RepositoryTestSupport {
         //expected
         assertThatThrownBy(() -> memberRepository.save(memberRoot))
                 .isInstanceOf(ConstraintViolationException.class);
+        throw new IllegalArgumentException("일원화하기");
     }
 
     @DisplayName("Member 생성 시 MemberInfo의 비밀번호 값이 null이면 에러가 발생한다.")
@@ -99,6 +102,7 @@ class MemberInfoTest extends RepositoryTestSupport {
         //expected
         assertThatThrownBy(() -> memberRepository.save(memberRoot))
                 .isInstanceOf(ConstraintViolationException.class);
+        throw new IllegalArgumentException("일원화하기");
     }
 
     @DisplayName("Member 생성 시 MemberInfo의 비밀번호 값이 공백이면 에러가 발생한다.")
@@ -115,6 +119,7 @@ class MemberInfoTest extends RepositoryTestSupport {
         //expected
         assertThatThrownBy(() -> memberRepository.save(memberRoot))
                 .isInstanceOf(ConstraintViolationException.class);
+        throw new IllegalArgumentException("일원화하기");
     }
 
     @DisplayName("Member 생성 시 MemberInfo의 비밀번호 값이 대소문자숫자특수문자 하나 이상 포함한 형식이 아니면 에러가 발생한다.")
@@ -131,6 +136,7 @@ class MemberInfoTest extends RepositoryTestSupport {
         //expected
         assertThatThrownBy(() -> memberRepository.save(memberRoot))
                 .isInstanceOf(ConstraintViolationException.class);
+        throw new IllegalArgumentException("일원화하기");
     }
 
     @DisplayName("Member 생성 시 MemberInfo의 비밀번호 값이 8자 이하면 에러가 발생한다.")
@@ -147,6 +153,7 @@ class MemberInfoTest extends RepositoryTestSupport {
         //expected
         assertThatThrownBy(() -> memberRepository.save(memberRoot))
                 .isInstanceOf(ConstraintViolationException.class);
+        throw new IllegalArgumentException("일원화하기");
     }
 
     @DisplayName("Member 생성 시 MemberInfo의 닉네임이 null이면 에러가 발생한다.")
@@ -163,6 +170,7 @@ class MemberInfoTest extends RepositoryTestSupport {
         //expected
         assertThatThrownBy(() -> memberRepository.save(memberRoot))
                 .isInstanceOf(ConstraintViolationException.class);
+        throw new IllegalArgumentException("일원화하기");
     }
 
     @DisplayName("Member 생성 시 MemberInfo의 닉네임이 공백이면 에러가 발생한다.")
@@ -179,5 +187,6 @@ class MemberInfoTest extends RepositoryTestSupport {
         //expected
         assertThatThrownBy(() -> memberRepository.save(memberRoot))
                 .isInstanceOf(ConstraintViolationException.class);
+        throw new IllegalArgumentException("일원화하기");
     }
 }

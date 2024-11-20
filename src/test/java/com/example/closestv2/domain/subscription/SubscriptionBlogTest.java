@@ -31,6 +31,7 @@ class SubscriptionBlogTest extends RepositoryTestSupport {
         //expected
         assertThatThrownBy(() -> subscriptionRepository.save(subscriptionRoot))
                 .isInstanceOf(ConstraintViolationException.class);
+        throw new IllegalArgumentException("일원화하기");
     }
 
     @Test
@@ -47,6 +48,7 @@ class SubscriptionBlogTest extends RepositoryTestSupport {
         //expected
         assertThatThrownBy(() -> subscriptionRepository.save(subscriptionRoot))
                 .isInstanceOf(ConstraintViolationException.class);
+        throw new IllegalArgumentException("일원화하기");
     }
 
     @Test
@@ -63,6 +65,7 @@ class SubscriptionBlogTest extends RepositoryTestSupport {
         //expected
         assertThatThrownBy(() -> subscriptionRepository.save(subscriptionRoot))
                 .isInstanceOf(ConstraintViolationException.class);
+        throw new IllegalArgumentException("일원화하기");
     }
 
     @Test
@@ -79,5 +82,6 @@ class SubscriptionBlogTest extends RepositoryTestSupport {
         //expected
         assertThatThrownBy(() -> subscriptionRepository.save(subscriptionRoot))
                 .isInstanceOf(ConstraintViolationException.class);
+        throw new IllegalArgumentException("일원화하기");
     }
 }
