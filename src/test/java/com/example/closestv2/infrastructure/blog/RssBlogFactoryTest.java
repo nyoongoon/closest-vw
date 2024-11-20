@@ -126,7 +126,7 @@ class RssBlogFactoryTest extends IntegrationTestSupport {
         List<Post> posts = blog.getPosts();
         assertThat(posts)
                 .hasSize(3)
-                .extracting(e -> e.getPostInfo().postUrl(), e -> e.getPostInfo().postTitle(), e -> e.getPostInfo().publishedDateTime())
+                .extracting(e -> e.getPostInfo().getPostUrl(), e -> e.getPostInfo().getPostTitle(), e -> e.getPostInfo().getPublishedDateTime())
                 .containsExactly(
                         tuple(new URL("https://goalinnext.tistory.com/1"), "포스트 제목1", LocalDateTime.of(2022, 1, 1, 12, 4, 31)), //1분씩 증가
                         tuple(new URL("https://goalinnext.tistory.com/2"), "포스트 제목2", LocalDateTime.of(2022, 1, 1, 12, 5, 31)),

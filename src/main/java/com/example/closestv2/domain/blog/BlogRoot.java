@@ -6,16 +6,13 @@ import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.apache.logging.log4j.util.Strings;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.util.Assert;
 
 import java.net.URL;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 
 import static com.example.closestv2.api.exception.ExceptionMessageConstants.BLOG_NON_UPDATABLE_BY_PAST_PUBLISHED_DATETIME;
 import static com.example.closestv2.api.exception.ExceptionMessageConstants.BLOG_UPDATABLE_BY_SAME_URL;
@@ -46,7 +43,6 @@ public class BlogRoot {
         this.blogInfo = blogInfo;
     }
 
-    //todo 이게 여기 있는게 맞나? BlogFactory에 있어야할거같음..
     public static BlogRoot create(
             URL blogUrl,
             String blogTitle,
@@ -82,12 +78,13 @@ public class BlogRoot {
         return post;
     }
 
-    public void withStatusMessage(String statusMessage) {
+    public void editStatusMessage(String statusMessage) {
         blogInfo = BlogInfo.builder()
                 .blogUrl(blogInfo.getBlogUrl())
                 .blogTitle(blogInfo.getBlogTitle())
                 .author(blogInfo.getAuthor())
                 .publishedDateTime(blogInfo.getPublishedDateTime())
+                .blogVisitCount(blogInfo.getBlogVisitCount())
                 .statusMessage(statusMessage)
                 .build();
     }
@@ -140,14 +137,14 @@ public class BlogRoot {
     }
 
     public void updatePosts(
-            BlogRoot comparedBlogRoot //feed로 받아온 블로그..
+            BlogRoot comparedBlogRoot
     ) {
         checkValidUpdate(comparedBlogRoot.blogInfo);
         LocalDateTime lastPublishedDateTime = LocalDateTime.MIN;
 
         List<Post> updatPosts = comparedBlogRoot.getPosts();
         for (Post updatePost : updatPosts) {
-            LocalDateTime updatePostPublishedDateTime = updatePost.getPostInfo().publishedDateTime();
+            LocalDateTime updatePostPublishedDateTime = updatePost.getPostInfo().getPublishedDateTime();
             if (lastPublishedDateTime.isBefore(updatePostPublishedDateTime)) {
                 lastPublishedDateTime = updatePostPublishedDateTime;
             }
@@ -158,7 +155,7 @@ public class BlogRoot {
                 .blogUrl(blogInfo.getBlogUrl())
                 .blogTitle(blogInfo.getBlogTitle())
                 .author(blogInfo.getAuthor())
-                .publishedDateTime(lastPublishedDateTime)
+                .publishedDateTime(lastPublishedDateTime) //최근 발생시간
                 .blogVisitCount(blogInfo.getBlogVisitCount())
                 .statusMessage(blogInfo.getStatusMessage())
                 .build();

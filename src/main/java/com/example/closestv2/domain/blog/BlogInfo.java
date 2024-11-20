@@ -1,6 +1,8 @@
 package com.example.closestv2.domain.blog;
 
 import jakarta.persistence.Embeddable;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
@@ -16,32 +18,35 @@ import static com.example.closestv2.api.exception.ExceptionMessageConstants.*;
 @Embeddable
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class BlogInfo {
-
+    @NotNull(message = URL_IS_REQUIRED)
     private URL blogUrl;
 
+    @NotBlank(message = BLOG_TITLE_IS_REQUIRED)
     private String blogTitle;
 
+    @NotBlank(message = BLOG_AUTHOR_IS_REQUIRED)
     private String author;
 
+    @NotNull(message = BLOG_PUBLISHED_DATETIME_IS_REQUIRED)
     private LocalDateTime publishedDateTime;
 
-    private Long blogVisitCount;
+    @NotNull(message = BLOG_VISIT_COUNT_IS_REQUIRED)
+    private long blogVisitCount;
 
     private String statusMessage;
 
     @Builder(access = AccessLevel.PROTECTED)
     private BlogInfo(URL blogUrl,
-                       String blogTitle,
-                       String author,
-                       LocalDateTime publishedDateTime,
-                       Long blogVisitCount,
-                       String statusMessage
+                     String blogTitle,
+                     String author,
+                     LocalDateTime publishedDateTime,
+                     long blogVisitCount,
+                     String statusMessage
     ) {
         Assert.notNull(blogUrl, URL_IS_REQUIRED);
         Assert.hasText(blogTitle, BLOG_TITLE_IS_REQUIRED);
         Assert.hasText(author, BLOG_AUTHOR_IS_REQUIRED);
         Assert.notNull(publishedDateTime, BLOG_PUBLISHED_DATETIME_IS_REQUIRED);
-        Assert.notNull(blogVisitCount, BLOG_VISIT_COUNT_IS_REQUIRED);
 
         this.blogUrl = blogUrl;
         this.blogTitle = blogTitle;

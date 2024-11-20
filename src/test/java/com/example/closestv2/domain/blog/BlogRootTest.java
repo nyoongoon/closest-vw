@@ -35,7 +35,7 @@ class BlogRootTest extends RepositoryTestSupport {
 
     @Test
     @DisplayName("Blog는 BlogInfo의 상태메시지를 변경할 수 있다.")
-    void withStatusMessage() throws MalformedURLException {
+    void editStatusMessage() throws MalformedURLException {
         //given
         BlogRoot sut = BlogRoot.create(
                 new URL("https://example.com/blog123"),
@@ -46,7 +46,7 @@ class BlogRootTest extends RepositoryTestSupport {
         blogRepository.save(sut);
         String statusMessage = "변경할 상태 메시지";
         //when
-        sut.withStatusMessage(statusMessage);
+        sut.editStatusMessage(statusMessage);
         //then
         assertThat(sut.getBlogInfo().getStatusMessage())
                 .isEqualTo("변경할 상태 메시지");
@@ -69,7 +69,7 @@ class BlogRootTest extends RepositoryTestSupport {
         //when
         URL findUrl = new URL("https://example.com/blog123/post/2");
         Post foundPost = sut.getPosts().stream()
-                .filter(e -> e.getPostInfo().postUrl().equals(findUrl))
+                .filter(e -> e.getPostInfo().getPostUrl().equals(findUrl))
                 .findFirst()
                 .orElseThrow();
         sut.getPosts().remove(foundPost);
@@ -77,7 +77,7 @@ class BlogRootTest extends RepositoryTestSupport {
         //then
         assertThatThrownBy(() ->
                 sut.getPosts().stream()
-                        .filter(e -> e.getPostInfo().postUrl().equals(findUrl))
+                        .filter(e -> e.getPostInfo().getPostUrl().equals(findUrl))
                         .findFirst()
                         .orElseThrow()
         )
@@ -117,7 +117,7 @@ class BlogRootTest extends RepositoryTestSupport {
         //when
         blogRepository.save(sut);
         //then
-        assertThat(post.getPostInfo().postVisitCount())
+        assertThat(post.getPostInfo().getPostVisitCount())
                 .isEqualTo(0L);
     }
 
@@ -221,7 +221,7 @@ class BlogRootTest extends RepositoryTestSupport {
         //then
         assertThat(sut.getPosts())
                 .hasSize(4)
-                .extracting(e -> e.getPostInfo().postUrl(), e -> e.getPostInfo().postTitle(), e -> e.getPostInfo().publishedDateTime())
+                .extracting(e -> e.getPostInfo().getPostUrl(), e -> e.getPostInfo().getPostTitle(), e -> e.getPostInfo().getPublishedDateTime())
                 .containsExactly(
                         tuple(URI.create("https://example.com/blog123/1").toURL(), "포스트 제목1", ANY_PUBLISHED_DATE_TIME.plusSeconds(1)),
                         tuple(URI.create("https://example.com/blog123/2").toURL(), "포스트 제목2", ANY_PUBLISHED_DATE_TIME.plusSeconds(2)),

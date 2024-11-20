@@ -42,7 +42,7 @@ class PostInfoTest extends RepositoryTestSupport {
         Post savedPost = blogRoot.getPosts().getFirst();
         PostInfo postInfo = savedPost.getPostInfo();
         assertThat(postInfo)
-                .extracting(PostInfo::postUrl, PostInfo::postTitle, PostInfo::publishedDateTime)
+                .extracting(PostInfo::getPostUrl, PostInfo::getPostTitle, PostInfo::getPublishedDateTime)
                 .containsExactly(new URL("https://example.com/blog123/post/2"), "포스트 제목", LocalDateTime.of(2030, 1, 1, 12, 3, 31));
     }
 
