@@ -1,10 +1,7 @@
 package com.example.closestv2.domain.blog;
 
-import com.example.closestv2.support.RepositoryTestSupport;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.net.MalformedURLException;
 import java.net.URI;
@@ -15,12 +12,15 @@ import java.util.NoSuchElementException;
 
 import static org.assertj.core.api.Assertions.*;
 
-@Transactional
-class BlogRootTest extends RepositoryTestSupport {
+class BlogRootTest {
+    //Blog
     private final static URL ANY_BLOG_URL;
     private final static String ANY_BLOG_TITLE = "제목";
     private final static String ANY_AUTHOR = "작가";
     private final static LocalDateTime ANY_PUBLISHED_DATE_TIME = LocalDateTime.of(2022, 1, 1, 12, 3, 31);
+    //Post
+    private final static URL ANY_POST_URL;
+    private final static String ANY_POST_TITLE = "포스트 제목";
 
     static {
         try {
@@ -30,48 +30,41 @@ class BlogRootTest extends RepositoryTestSupport {
         }
     }
 
-    @Autowired
-    private BlogRepository blogRepository;
+    static {
+        try {
+            ANY_POST_URL = URI.create("https://example.com/blog123/123").toURL();
+        } catch (MalformedURLException e) {
+            throw new RuntimeException(e);
+        }
+    }
 
     @Test
     @DisplayName("Blog는 BlogInfo의 상태메시지를 변경할 수 있다.")
-    void editStatusMessage() throws MalformedURLException {
+    void editStatusMessage() {
         //given
-        BlogRoot sut = BlogRoot.create(
-                new URL("https://example.com/blog123"),
-                "제목",
-                "작가",
-                LocalDateTime.of(2022, 1, 1, 12, 3, 31)
-        );
-        blogRepository.save(sut);
+        BlogRoot sut = BlogRoot.create(ANY_BLOG_URL, ANY_BLOG_TITLE, ANY_AUTHOR, ANY_PUBLISHED_DATE_TIME);
         String statusMessage = "변경할 상태 메시지";
         //when
         sut.editStatusMessage(statusMessage);
         //then
-        assertThat(sut.getBlogInfo().getStatusMessage())
-                .isEqualTo("변경할 상태 메시지");
+        assertThat(sut.getBlogInfo().getStatusMessage()).isEqualTo("변경할 상태 메시지");
     }
 
     @Test
     @DisplayName("블로그가 자신이 참조하고 있는 포스트를 postUrl을 기준으로 제거할 수 있다.")
-    void blogDeletePost() throws MalformedURLException {
+    void blogDeletePost() {
         //given
-        BlogRoot sut = BlogRoot.create(
-                new URL("https://example.com/blog123"),
-                "제목",
-                "작가",
-                LocalDateTime.of(2022, 1, 1, 12, 3, 31)
-        );
-        Post post = sut.createPost(new URL("https://example.com/blog123/post/2"), "포스트 제목", LocalDateTime.of(2030, 1, 1, 12, 3, 31));
+        BlogRoot sut = BlogRoot.create(ANY_BLOG_URL, ANY_BLOG_TITLE, ANY_AUTHOR, ANY_PUBLISHED_DATE_TIME);
+        Post post = sut.createPost(ANY_POST_URL, ANY_POST_TITLE, ANY_PUBLISHED_DATE_TIME);
         sut.getPosts().add(post);
-        blogRepository.save(sut);
 
-        //when
-        URL findUrl = new URL("https://example.com/blog123/post/2");
+        URL findUrl = ANY_POST_URL;
         Post foundPost = sut.getPosts().stream()
                 .filter(e -> e.getPostInfo().getPostUrl().equals(findUrl))
                 .findFirst()
                 .orElseThrow();
+
+        //when
         sut.getPosts().remove(foundPost);
 
         //then
@@ -80,8 +73,7 @@ class BlogRootTest extends RepositoryTestSupport {
                         .filter(e -> e.getPostInfo().getPostUrl().equals(findUrl))
                         .findFirst()
                         .orElseThrow()
-        )
-                .isInstanceOf(NoSuchElementException.class);
+        ).isInstanceOf(NoSuchElementException.class);
     }
 
 
@@ -89,36 +81,19 @@ class BlogRootTest extends RepositoryTestSupport {
     @DisplayName("Blog 생성 시 BlogInfo의 blogVisitCount는 0이 된다.")
     void createBlogByBlogInfoWithZeroBlogVisitCount() throws MalformedURLException {
         //given
-        BlogRoot sut = BlogRoot.create(
-                new URL("https://example.com/blog123"),
-                "제목",
-                "작가",
-                LocalDateTime.of(2022, 1, 1, 12, 3, 31)
-        );
-        //when
-        blogRepository.save(sut);
-        //then
-        assertThat(sut.getBlogInfo().getBlogVisitCount())
-                .isEqualTo(0L);
+        BlogRoot sut = BlogRoot.create(ANY_BLOG_URL, ANY_BLOG_TITLE, ANY_AUTHOR, ANY_PUBLISHED_DATE_TIME);
+        //expected
+        assertThat(sut.getBlogInfo().getBlogVisitCount()).isEqualTo(0L);
     }
 
     @Test
     @DisplayName("Post 생성 시 PostInfo의 postVisitCount는 0이 된다.")
-    void createPostByPostInfoWithZeroPostVisitCount() throws MalformedURLException {
+    void createPostByPostInfoWithZeroPostVisitCount() {
         //given
-        BlogRoot sut = BlogRoot.create(
-                new URL("https://example.com/blog123"),
-                "제목",
-                "작가",
-                LocalDateTime.of(2022, 1, 1, 12, 3, 31)
-        );
-        Post post = sut.createPost(new URL("https://example.com/blog123/post/2"), "포스트 제목", LocalDateTime.of(2030, 1, 1, 12, 3, 31));
-        sut.getPosts().add(post);
-        //when
-        blogRepository.save(sut);
-        //then
-        assertThat(post.getPostInfo().getPostVisitCount())
-                .isEqualTo(0L);
+        BlogRoot sut = BlogRoot.create(ANY_BLOG_URL, ANY_BLOG_TITLE, ANY_AUTHOR, ANY_PUBLISHED_DATE_TIME);
+        Post post = sut.createPost(ANY_POST_URL, ANY_POST_TITLE, ANY_PUBLISHED_DATE_TIME);
+        //expected
+        assertThat(post.getPostInfo().getPostVisitCount()).isEqualTo(0L);
     }
 
 
@@ -145,17 +120,11 @@ class BlogRootTest extends RepositoryTestSupport {
     void isUpdatedByEqualBlogInfoFalseTest() {
         //given
         BlogRoot sut = BlogRoot.create(ANY_BLOG_URL, ANY_BLOG_TITLE, ANY_AUTHOR, ANY_PUBLISHED_DATE_TIME);
-        BlogRoot updatedRecentBlogRoot1 = BlogRoot.create(ANY_BLOG_URL, ANY_BLOG_TITLE, ANY_AUTHOR, ANY_PUBLISHED_DATE_TIME);
-        BlogRoot updatedRecentBlogRoot2 = BlogRoot.create(ANY_BLOG_URL, ANY_BLOG_TITLE, ANY_AUTHOR, ANY_PUBLISHED_DATE_TIME);
-        BlogRoot updatedRecentBlogRoot3 = BlogRoot.create(ANY_BLOG_URL, ANY_BLOG_TITLE, ANY_AUTHOR, ANY_PUBLISHED_DATE_TIME);
+        BlogRoot updatedRecentBlogRoot = BlogRoot.create(ANY_BLOG_URL, ANY_BLOG_TITLE, ANY_AUTHOR, ANY_PUBLISHED_DATE_TIME);
         //when
-        boolean isUpdated1 = sut.isBlogUpdated(updatedRecentBlogRoot1);
-        boolean isUpdated2 = sut.isBlogUpdated(updatedRecentBlogRoot2);
-        boolean isUpdated3 = sut.isBlogUpdated(updatedRecentBlogRoot3);
+        boolean isUpdated = sut.isBlogUpdated(updatedRecentBlogRoot);
         //then
-        assertThat(isUpdated1).isFalse();
-        assertThat(isUpdated2).isFalse();
-        assertThat(isUpdated3).isFalse();
+        assertThat(isUpdated).isFalse();
     }
 
     @Test
@@ -165,8 +134,7 @@ class BlogRootTest extends RepositoryTestSupport {
         BlogRoot blogRoot = BlogRoot.create(ANY_BLOG_URL, ANY_BLOG_TITLE, ANY_AUTHOR, ANY_PUBLISHED_DATE_TIME);
         BlogRoot notSameUrlBlog = BlogRoot.create(URI.create("https://example.com/blog123X").toURL(), ANY_BLOG_TITLE, ANY_AUTHOR, ANY_PUBLISHED_DATE_TIME);
         //expected
-        assertThatThrownBy(() -> blogRoot.updateBlog(notSameUrlBlog))
-                .isInstanceOf(IllegalStateException.class);
+        assertThatThrownBy(() -> blogRoot.updateBlog(notSameUrlBlog)).isInstanceOf(IllegalStateException.class);
     }
 
     @Test
@@ -176,8 +144,7 @@ class BlogRootTest extends RepositoryTestSupport {
         BlogRoot blogRoot = BlogRoot.create(ANY_BLOG_URL, ANY_BLOG_TITLE, ANY_AUTHOR, ANY_PUBLISHED_DATE_TIME);
         BlogRoot pastBlogRoot = BlogRoot.create(ANY_BLOG_URL, ANY_BLOG_TITLE, ANY_AUTHOR, ANY_PUBLISHED_DATE_TIME.minusSeconds(1));
         //expected
-        assertThatThrownBy(() -> blogRoot.updateBlog(pastBlogRoot))
-                .isInstanceOf(IllegalStateException.class);
+        assertThatThrownBy(() -> blogRoot.updateBlog(pastBlogRoot)).isInstanceOf(IllegalStateException.class);
     }
 
     @Test
@@ -188,6 +155,7 @@ class BlogRootTest extends RepositoryTestSupport {
         BlogRoot compared = BlogRoot.create(ANY_BLOG_URL, "변경 제목", "변경 작가", ANY_PUBLISHED_DATE_TIME.plusSeconds(1));
         //when
         sut.updateBlog(compared);
+        //then
         assertThat(sut.getBlogInfo().getBlogTitle()).isEqualTo("변경 제목");
         assertThat(sut.getBlogInfo().getAuthor()).isEqualTo("변경 작가");
         assertThat(sut.getBlogInfo().getPublishedDateTime()).isEqualTo(ANY_PUBLISHED_DATE_TIME.plusSeconds(1));
@@ -209,8 +177,8 @@ class BlogRootTest extends RepositoryTestSupport {
     void updatePosts() throws MalformedURLException {
         //given
         BlogRoot sut = BlogRoot.create(ANY_BLOG_URL, ANY_BLOG_TITLE, ANY_AUTHOR, ANY_PUBLISHED_DATE_TIME);
-        List<Post> posts = sut.getPosts();
-        posts.add(sut.createPost(URI.create("https://example.com/blog123/1").toURL(), "포스트 제목1", ANY_PUBLISHED_DATE_TIME.plusSeconds(1)));
+        List<Post> sutPosts = sut.getPosts();
+        sutPosts.add(sut.createPost(URI.create("https://example.com/blog123/1").toURL(), "포스트 제목1", ANY_PUBLISHED_DATE_TIME.plusSeconds(1)));
         BlogRoot compared = BlogRoot.create(ANY_BLOG_URL, ANY_BLOG_TITLE, ANY_AUTHOR, ANY_PUBLISHED_DATE_TIME.plusSeconds(4));
         List<Post> comparedPosts = compared.getPosts();
         comparedPosts.add(compared.createPost(URI.create("https://example.com/blog123/2").toURL(), "포스트 제목2", ANY_PUBLISHED_DATE_TIME.plusSeconds(2)));

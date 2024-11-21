@@ -64,25 +64,25 @@ public class SubscriptionRoot {
                 .build();
     }
 
-    // 구독 방문 이벤트 발생 !
+    // TODO 구독 방문 이벤트 발생 !
     public void increaseVisitCount() {
-        Long plusedVisitCount = subscriptionInfo.subscriptionVisitCount() + 1;
+        Long plusedVisitCount = subscriptionInfo.getSubscriptionVisitCount() + 1;
 
         subscriptionInfo = SubscriptionInfo.builder()
-                .memberId(subscriptionInfo.memberId())
+                .memberId(subscriptionInfo.getMemberId())
                 .subscriptionVisitCount(plusedVisitCount)
                 .build();
-        Events.raise(new SubscriptionVisitEvent(subscriptionBlog.blogUrl()));
+        Events.raise(new SubscriptionVisitEvent(subscriptionBlog.getBlogUrl()));
     }
 
     public void putRecentBlogInfo(LocalDateTime publishedDateTime, Long newPostCount) {
-        if (subscriptionBlog.publishedDateTime().isAfter(publishedDateTime)) {
+        if (subscriptionBlog.getPublishedDateTime().isAfter(publishedDateTime)) {
             throw new IllegalArgumentException(RECENT_PUBLISHED_DATETIME_IS_PAST);
         }
 
         subscriptionBlog = SubscriptionBlog.builder()
-                .blogUrl(subscriptionBlog.blogUrl())
-                .blogTitle(subscriptionBlog.blogTitle())
+                .blogUrl(subscriptionBlog.getBlogUrl())
+                .blogTitle(subscriptionBlog.getBlogTitle())
                 .publishedDateTime(publishedDateTime)
                 .newPostCount(newPostCount)
                 .build();
@@ -90,9 +90,9 @@ public class SubscriptionRoot {
 
     public void editSubscriptionNickName(String editNickName) {
         subscriptionInfo = SubscriptionInfo.builder()
-                .memberId(subscriptionInfo.memberId())
+                .memberId(subscriptionInfo.getMemberId())
                 .subscriptionNickName(editNickName)
-                .subscriptionVisitCount(subscriptionInfo.subscriptionVisitCount())
+                .subscriptionVisitCount(subscriptionInfo.getSubscriptionVisitCount())
                 .build();
     }
 }

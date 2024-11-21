@@ -42,8 +42,8 @@ class BlogInfoTest {
     }
 
     @Test
-    @DisplayName("블로그 생성 예외 케이스 - 필수값 검증")
-    void createFailTest() {
+    @DisplayName("BlogInfo 생성 예외 케이스 - 필수값 검증")
+    void createBlogInfoFailTest() {
         assertThatThrownBy(() -> sut = builder.blogUrl(null).build()).isInstanceOf(IllegalArgumentException.class);
         assertThatThrownBy(() -> sut = builder.blogTitle(null).build()).isInstanceOf(IllegalArgumentException.class);
         assertThatThrownBy(() -> sut = builder.author(null).build()).isInstanceOf(IllegalArgumentException.class);
@@ -51,8 +51,8 @@ class BlogInfoTest {
     }
 
     @Test
-    @DisplayName("블로그 생성 성공 케이스")
-    void createSuccessTest() {
+    @DisplayName("BlogInfo 생성 성공 케이스")
+    void createBlogInfoSuccessTest() {
         sut = builder.build();
         assertThat(sut.getBlogUrl()).isEqualTo(ANY_BLOG_URL);
         assertThat(sut.getAuthor()).isEqualTo(ANY_AUTHOR);
