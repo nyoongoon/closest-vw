@@ -27,6 +27,7 @@ public final class ExceptionMessageConstants {
     /* 회원 */
     public static final String MEMBER_NOT_FOUND = "존재하지 않는 회원입니다.";
     public static final String MEMBER_ID_IS_REQUIRED = "회원 아이디는 필수값입니다.";
+    public static final String NICK_NAME_IS_REQUIRED = "닉네임은 필수값입니다.";
     /* 토큰 */
     public static final String EXPIRED_TOKEN = "토큰이 만료되었습니다.";
     /* 나의 블로그 */
