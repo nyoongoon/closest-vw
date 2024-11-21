@@ -8,8 +8,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 class SubscriptionInfoTest {
-    private final static Long ANY_MEMBER_ID = 1L;
-    private final static Long ANY_SUBSCRIPTION_VISIT_COUNT = 0L;
+    private final Long ANY_MEMBER_ID = 1L;
+    private final Long ANY_SUBSCRIPTION_VISIT_COUNT = 0L;
 
     private SubscriptionInfo sut;
     private SubscriptionInfo.SubscriptionInfoBuilder builder;

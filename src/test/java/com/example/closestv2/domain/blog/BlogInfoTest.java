@@ -13,22 +13,18 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 class BlogInfoTest {
-    private final static URL ANY_BLOG_URL;
-    private final static String ANY_BLOG_TITLE = "제목";
-    private final static String ANY_AUTHOR = "작가";
-    private final static LocalDateTime ANY_PUBLISHED_DATE_TIME = LocalDateTime.of(2022, 1, 1, 12, 3, 31);
-    private final static String ANY_STATUS_MESSAGE = "ANY_STATUS_MESSAGE";
-
-    static {
-        try {
-            ANY_BLOG_URL = URI.create("https://example.com/blog123").toURL();
-        } catch (MalformedURLException e) {
-            throw new RuntimeException(e);
-        }
-    }
+    private final URL ANY_BLOG_URL = URI.create("https://example.com/blog123").toURL();
+    private final String ANY_BLOG_TITLE = "제목";
+    private final String ANY_AUTHOR = "작가";
+    private final LocalDateTime ANY_PUBLISHED_DATE_TIME = LocalDateTime.of(2022, 1, 1, 12, 3, 31);
+    private final String ANY_STATUS_MESSAGE = "ANY_STATUS_MESSAGE";
 
     private BlogInfo sut;
     private BlogInfo.BlogInfoBuilder builder;
+
+    BlogInfoTest() throws MalformedURLException {
+    }
+
 
     @BeforeEach
     void setUp() {

@@ -6,8 +6,7 @@ import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 
 import java.net.URL;
 import java.time.LocalDateTime;
@@ -17,12 +16,12 @@ import java.util.List;
 import static com.example.closestv2.api.exception.ExceptionMessageConstants.BLOG_NON_UPDATABLE_BY_PAST_PUBLISHED_DATETIME;
 import static com.example.closestv2.api.exception.ExceptionMessageConstants.BLOG_UPDATABLE_BY_SAME_URL;
 
+@Slf4j
 @Getter
 @Entity
 @Table(name = "blog")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class BlogRoot {
-    private static final Logger log = LoggerFactory.getLogger(BlogRoot.class);
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "blog_id")

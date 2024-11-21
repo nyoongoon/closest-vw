@@ -13,20 +13,15 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 class SubscriptionBlogTest {
-    private final static URL ANY_BLOG_URL;
-    private final static String ANY_BLOG_TITLE = "블로그 제목";
-    private final static LocalDateTime ANY_PUBLISHED_DATE_TIME = LocalDateTime.of(2022, 1, 1, 12, 3, 31);
-
-    static {
-        try {
-            ANY_BLOG_URL = URI.create("https://example.com/blog123").toURL();
-        } catch (MalformedURLException e) {
-            throw new RuntimeException(e);
-        }
-    }
+    private final URL ANY_BLOG_URL = URI.create("https://example.com/blog123").toURL();
+    private final String ANY_BLOG_TITLE = "블로그 제목";
+    private final LocalDateTime ANY_PUBLISHED_DATE_TIME = LocalDateTime.of(2022, 1, 1, 12, 3, 31);
 
     private SubscriptionBlog sut;
     private SubscriptionBlog.SubscriptionBlogBuilder builder;
+
+    SubscriptionBlogTest() throws MalformedURLException {
+    }
 
     @BeforeEach
     void setUp() {

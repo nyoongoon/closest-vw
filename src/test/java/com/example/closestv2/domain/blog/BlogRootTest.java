@@ -14,29 +14,17 @@ import static org.assertj.core.api.Assertions.*;
 
 class BlogRootTest {
     //Blog
-    private final static URL ANY_BLOG_URL;
-    private final static String ANY_BLOG_TITLE = "제목";
-    private final static String ANY_AUTHOR = "작가";
-    private final static LocalDateTime ANY_PUBLISHED_DATE_TIME = LocalDateTime.of(2022, 1, 1, 12, 3, 31);
+    private final URL ANY_BLOG_URL = URI.create("https://example.com/blog123").toURL();
+    private final String ANY_BLOG_TITLE = "제목";
+    private final String ANY_AUTHOR = "작가";
+    private final LocalDateTime ANY_PUBLISHED_DATE_TIME = LocalDateTime.of(2022, 1, 1, 12, 3, 31);
     //Post
-    private final static URL ANY_POST_URL;
-    private final static String ANY_POST_TITLE = "포스트 제목";
+    private final URL ANY_POST_URL = URI.create("https://example.com/blog123/123").toURL();
+    private final String ANY_POST_TITLE = "포스트 제목";
 
-    static {
-        try {
-            ANY_BLOG_URL = URI.create("https://example.com/blog123").toURL();
-        } catch (MalformedURLException e) {
-            throw new RuntimeException(e);
-        }
+    BlogRootTest() throws MalformedURLException {
     }
 
-    static {
-        try {
-            ANY_POST_URL = URI.create("https://example.com/blog123/123").toURL();
-        } catch (MalformedURLException e) {
-            throw new RuntimeException(e);
-        }
-    }
 
     @Test
     @DisplayName("Blog는 BlogInfo의 상태메시지를 변경할 수 있다.")

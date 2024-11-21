@@ -9,9 +9,9 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 class MemberInfoTest {
 
-    private static final String ANY_USER_EMAIL = "abc@naver.com";
-    private static final String ANY_PASSWORD = "Abc1234!!";
-    private static final String ANY_NICK_NAME = "닉네임";
+    private final String ANY_USER_EMAIL = "abc@naver.com";
+    private final String ANY_PASSWORD = "Abc1234!!";
+    private final String ANY_NICK_NAME = "닉네임";
 
     private MemberInfo sut;
     private MemberInfo.MemberInfoBuilder builder;
