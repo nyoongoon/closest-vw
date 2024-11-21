@@ -113,5 +113,4 @@ class RssBlogFactoryTest extends IntegrationTestSupport {
                         tuple(URI.create(ANY_LINK + "/3").toURL(), ANY_TITLE+"3", ANY_PUBLISHED_DATE_TIME.plusMinutes(3))
                 );
     }
-
 }

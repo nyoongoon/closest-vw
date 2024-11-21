@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
 import java.net.MalformedURLException;
+import java.net.URI;
 import java.net.URL;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
@@ -34,7 +35,7 @@ public class RssBlogFactory implements BlogFactory {
 
         List<Post> posts = blogRoot.getPosts();
         for (SyndEntry entry : syndFeed.getEntries()) {
-            URL postUrl = new URL(entry.getLink());
+            URL postUrl = URI.create(entry.getLink()).toURL();
             String postTitle = entry.getTitle();
             LocalDateTime publishedDate = toLocalDateTime(entry.getPublishedDate());
             Post post = blogRoot.createPost(
@@ -49,7 +50,7 @@ public class RssBlogFactory implements BlogFactory {
     }
 
     private BlogRoot translate(SyndFeed syndFeed) throws MalformedURLException {
-        URL blogUrl = new URL(syndFeed.getLink());
+        URL blogUrl = URI.create(syndFeed.getLink()).toURL();
         String blogTitle = syndFeed.getTitle();
         String author = syndFeed.getAuthor();
         LocalDateTime blogPublishedDateTime = toLocalDateTime(syndFeed.getPublishedDate());
