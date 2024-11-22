@@ -76,15 +76,15 @@ class BlogSchedulerServiceTest extends IntegrationTestSupport {
     void pollingUpdatedBlogsWithBulkUpdate() throws MalformedURLException, URISyntaxException {
         //given
         for (int i = 0; i < 100_000; i++) {
-            BlogRoot blogRoot = createBlog(URI.create(ANY_LINK + i).toURL(), ANY_BLOG_TITLE, ANY_AUTHOR, ANY_PUBLISHED_DATE_TIME);
+            BlogRoot blogRoot = createBlog(URI.create(ANY_LINK + "/" + i).toURL(), ANY_BLOG_TITLE, ANY_AUTHOR, ANY_PUBLISHED_DATE_TIME);
             blogRepository.save(blogRoot);
 
             BlogRoot updatedBlog = createBlog(URI.create(ANY_LINK + i).toURL(), ANY_BLOG_TITLE, ANY_AUTHOR, ANY_PUBLISHED_DATE_TIME.plusMinutes(3));
-            String path = blogRoot.getBlogInfo().getBlogUrl().getPath();
+            String link = blogRoot.getBlogInfo().getBlogUrl().toString();
             for (int j = 1; j < 1_000; j++) {
                 savePost(
                         updatedBlog,
-                        URI.create(path + "/" + i).toURL(),
+                        URI.create(link + "/" + i).toURL(),
                         ANY_POST_TITLE + i,
                         ANY_PUBLISHED_DATE_TIME.plusMinutes(i) //11, 12, 13분
                 );
@@ -92,11 +92,9 @@ class BlogSchedulerServiceTest extends IntegrationTestSupport {
             Mockito.when(blogFactory.createRecentBlogRoot(URI.create(ANY_LINK + i).toURL())).thenReturn(updatedBlog); //mockking
         }
 
-
         //when
         blogSchedulerService.pollingUpdatedBlogs();
         //then
-
     }
 
     private BlogRoot createBlog(
