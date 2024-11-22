@@ -6,6 +6,7 @@ import com.example.closestv2.domain.blog.BlogRoot;
 import lombok.RequiredArgsConstructor;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.net.MalformedURLException;
 import java.net.URISyntaxException;
@@ -18,6 +19,7 @@ public class BlogSchedulerService {
     private final BlogRepository blogRepository;
 
     @Scheduled(fixedDelay = 5000)
+    @Transactional
     public void pollingUpdatedBlogs() throws MalformedURLException, URISyntaxException {
         List<BlogRoot> blogRoots = blogRepository.findAll();
         for (BlogRoot blogRoot : blogRoots) {
@@ -26,11 +28,11 @@ public class BlogSchedulerService {
     }
 
     private void pollingIfUpdated(BlogRoot blogRoot) throws MalformedURLException, URISyntaxException {
-
         BlogRoot recentBlogRoot = blogFactory.createRecentBlogRoot(blogRoot.getBlogInfo().getBlogUrl());
-        boolean isUpdated = blogRoot.isBlogUpdated(recentBlogRoot);
-        if(!isUpdated){
+        boolean isBlogUpdated = blogRoot.isBlogUpdated(recentBlogRoot);
+        if(!isBlogUpdated){
             return;
         }
+        blogRoot.updateBlogRoot(recentBlogRoot);
     }
 }

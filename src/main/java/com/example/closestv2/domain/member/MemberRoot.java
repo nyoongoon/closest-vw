@@ -59,7 +59,7 @@ public class MemberRoot {
         if (ObjectUtils.isEmpty(myBlog)) {
             return false;
         }
-        URL blogUrl = myBlog.blogUrl();
+        URL blogUrl = myBlog.getBlogUrl();
         if (ObjectUtils.isEmpty(blogUrl)) { //url이 존재하면 나의 블로그 존재
             return false;
         }
@@ -84,11 +84,11 @@ public class MemberRoot {
         if (!hasMyBlog()) {
             throw new IllegalStateException(ALREADY_EXISTS_MY_BLOG); //블로그 변경 시 변경 메서드 사용
         }
-        Long plusedMyBlogVisitCount = myBlog.myBlogVisitCount() + 1;
+        Long plusedMyBlogVisitCount = myBlog.getMyBlogVisitCount() + 1;
         myBlog = MyBlog.builder()
-                .blogUrl(myBlog.blogUrl())
+                .blogUrl(myBlog.getBlogUrl())
                 .myBlogVisitCount(plusedMyBlogVisitCount)
-                .statusMessage(myBlog.statusMessage())
+                .statusMessage(myBlog.getStatusMessage())
                 .build();
     }
 
@@ -97,8 +97,8 @@ public class MemberRoot {
         if (!hasMyBlog()) {
             throw new IllegalStateException(NOT_EXISTS_MY_BLOG);
         }
-        URL blogUrl = myBlog.blogUrl();
-        Long myBlogVisitCount = myBlog.myBlogVisitCount();
+        URL blogUrl = myBlog.getBlogUrl();
+        Long myBlogVisitCount = myBlog.getMyBlogVisitCount();
         myBlog = MyBlog.builder()
                 .blogUrl(blogUrl)
                 .statusMessage(statusMessage)

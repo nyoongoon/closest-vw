@@ -3,10 +3,7 @@ package com.example.closestv2.domain.subscription;
 import jakarta.persistence.Embeddable;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
-import lombok.AccessLevel;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.springframework.util.Assert;
 
 import java.net.URL;
@@ -17,6 +14,7 @@ import static com.example.closestv2.api.exception.ExceptionMessageConstants.*;
 @Getter
 @Embeddable
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@EqualsAndHashCode
 public class SubscriptionBlog {
     @NotNull(message = BLOG_URL_IS_REQUIRED)
     URL blogUrl;

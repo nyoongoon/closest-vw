@@ -30,7 +30,7 @@ class MemberRootTest {
 
     @DisplayName("Member 루트의 myBlog가 존재하고 url값이 존재하면 hasMyBlog()가 true를 리턴한다.")
     @Test
-    void hasMyBlogWithMyBlog() throws MalformedURLException {
+    void hasMyBlogWithMyBlog() {
         //given
         MemberRoot memberRoot = MemberRoot.create(ANY_USER_EMAIL, ANY_PASSWORD, ANY_NICK_NAME);
         //when
@@ -41,7 +41,7 @@ class MemberRootTest {
 
     @DisplayName("Member는 myBlog의 상태메시지를 변경할 수 있다.")
     @Test
-    void memberRootWithStatusMessage() throws MalformedURLException {
+    void memberRootWithStatusMessage() {
         //given
         MemberRoot memberRoot = MemberRoot.create(ANY_USER_EMAIL, ANY_PASSWORD, ANY_NICK_NAME);
         memberRoot.saveMyBlog(ANY_URL, 0L);
@@ -49,7 +49,7 @@ class MemberRootTest {
         //when
         memberRoot.withStatusMessage(statusMessage);
         //then
-        assertThat(memberRoot.getMyBlog().statusMessage()).isEqualTo("상태 메시지입니다.");
+        assertThat(memberRoot.getMyBlog().getStatusMessage()).isEqualTo("상태 메시지입니다.");
     }
 
     @Test
@@ -60,7 +60,7 @@ class MemberRootTest {
         MemberRoot memberRoot = MemberRoot.create(ANY_USER_EMAIL, ANY_PASSWORD, ANY_NICK_NAME);
         memberRoot.saveMyBlog(ANY_URL, blogVisitCount);
         //then
-        assertThat(memberRoot.getMyBlog().myBlogVisitCount()).isEqualTo(blogVisitCount);
+        assertThat(memberRoot.getMyBlog().getMyBlogVisitCount()).isEqualTo(blogVisitCount);
     }
 
     @Test
@@ -73,7 +73,7 @@ class MemberRootTest {
         //when
         memberRoot.visitMyBlog();
         //then
-        assertThat(memberRoot.getMyBlog().myBlogVisitCount())
+        assertThat(memberRoot.getMyBlog().getMyBlogVisitCount())
                 .isEqualTo(blogVisitCount + 1);
     }
 }

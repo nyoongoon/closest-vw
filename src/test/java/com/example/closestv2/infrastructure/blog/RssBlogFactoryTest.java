@@ -106,7 +106,7 @@ class RssBlogFactoryTest extends IntegrationTestSupport {
         List<Post> posts = blog.getPosts();
         assertThat(posts)
                 .hasSize(3)
-                .extracting(e -> e.getPostInfo().getPostUrl(), e -> e.getPostInfo().getPostTitle(), e -> e.getPostInfo().getPublishedDateTime())
+                .extracting(e -> e.getPostUrl(), e -> e.getPostTitle(), e -> e.getPublishedDateTime())
                 .containsExactly(
                         tuple(URI.create(ANY_LINK + "/1").toURL(), ANY_TITLE+"1", ANY_PUBLISHED_DATE_TIME.plusMinutes(1)), //1분씩 증가
                         tuple(URI.create(ANY_LINK + "/2").toURL(), ANY_TITLE+"2", ANY_PUBLISHED_DATE_TIME.plusMinutes(2)),

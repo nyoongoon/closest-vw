@@ -2,10 +2,7 @@ package com.example.closestv2.domain.subscription;
 
 import jakarta.persistence.Embeddable;
 import jakarta.validation.constraints.NotNull;
-import lombok.AccessLevel;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.springframework.util.Assert;
 
 import static com.example.closestv2.api.exception.ExceptionMessageConstants.MEMBER_ID_IS_REQUIRED;
@@ -14,6 +11,7 @@ import static com.example.closestv2.api.exception.ExceptionMessageConstants.SUBS
 @Getter
 @Embeddable
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@EqualsAndHashCode
 public class SubscriptionInfo {
     @NotNull(message = MEMBER_ID_IS_REQUIRED)
     Long memberId;

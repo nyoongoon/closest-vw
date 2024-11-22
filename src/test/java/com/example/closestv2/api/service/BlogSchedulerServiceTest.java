@@ -7,16 +7,28 @@ import com.example.closestv2.domain.blog.Post;
 import com.example.closestv2.support.IntegrationTestSupport;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.net.MalformedURLException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.time.LocalDateTime;
+import java.util.List;
+
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.tuple;
 
 @Transactional
 class BlogSchedulerServiceTest extends IntegrationTestSupport {
+    private final String ANY_LINK = "https://example.com";
+    private final String ANY_BLOG_TITLE = "블로그 제목";
+    private final String ANY_AUTHOR = "블로그 작가";
+    private final String ANY_POST_TITLE = "블로그 제목";
+    private final LocalDateTime ANY_PUBLISHED_DATE_TIME = LocalDateTime.of(2022, 1, 1, 12, 10, 31); //기존 시간 10분
     @Autowired
     private BlogSchedulerService blogSchedulerService;
     @Autowired
@@ -27,28 +39,39 @@ class BlogSchedulerServiceTest extends IntegrationTestSupport {
 
     @Test
     @DisplayName("업데이트 된 블로그를 확인 후 블로그 정보를 업데이트한다.")
-    void pollingUpdatedBlogs() throws MalformedURLException {
+    void pollingUpdatedBlogs() throws MalformedURLException, URISyntaxException {
         //given
-        BlogRoot blogRoot = saveBlog(
-                new URL("https://example.com/"),
-                "블로그 제목",
-                "블로그 작가",
-                LocalDateTime.of(2022, 1, 1, 12, 13, 31) //마지막 포스트 업데이트 시간 13분
-        );
+        BlogRoot blogRoot = createBlog(URI.create(ANY_LINK).toURL(), ANY_BLOG_TITLE, ANY_AUTHOR, ANY_PUBLISHED_DATE_TIME);
+        blogRepository.save(blogRoot);
+
+        BlogRoot updatedBlog = createBlog(URI.create(ANY_LINK).toURL(), ANY_BLOG_TITLE, ANY_AUTHOR, ANY_PUBLISHED_DATE_TIME.plusMinutes(3));
         for (int i = 1; i < 4; i++) {
             savePost(
-                    blogRoot,
-                    new URL("https://example.com/" + i),
-                    "포스트 제목" + i,
-                    LocalDateTime.of(2022, 1, 1, 12, 10, 31).plusMinutes(i) //11, 12, 13분
+                    updatedBlog,
+                    URI.create(ANY_LINK + "/" + i).toURL(),
+                    ANY_POST_TITLE + i,
+                    ANY_PUBLISHED_DATE_TIME.plusMinutes(i) //11, 12, 13분
             );
         }
+        Mockito.when(blogFactory.createRecentBlogRoot(URI.create(ANY_LINK).toURL())).thenReturn(updatedBlog); //mockking
+
         //when
+        blogSchedulerService.pollingUpdatedBlogs();
         //then
-        throw new IllegalArgumentException();
+        //발행시간 업데이트
+        blogRoot.getBlogInfo().getPublishedDateTime().isEqual(ANY_PUBLISHED_DATE_TIME.plusMinutes(3));
+        List<Post> posts = blogRoot.getPosts();
+        assertThat(posts)
+                .hasSize(3)
+                .extracting(Post::getPostUrl, Post::getPostTitle, Post::getPublishedDateTime)
+                .containsExactly(
+                        tuple(URI.create(ANY_LINK + "/" + 1), ANY_POST_TITLE + "1", ANY_PUBLISHED_DATE_TIME.plusMinutes(1)),
+                        tuple(URI.create(ANY_LINK + "/" + 2), ANY_POST_TITLE + "2", ANY_PUBLISHED_DATE_TIME.plusMinutes(2)),
+                        tuple(URI.create(ANY_LINK + "/" + 3), ANY_POST_TITLE + "3", ANY_PUBLISHED_DATE_TIME.plusMinutes(3))
+                );
     }
 
-    private BlogRoot saveBlog(
+    private BlogRoot createBlog(
             URL blogUrl,
             String blogTitle,
             String author,
@@ -60,7 +83,6 @@ class BlogSchedulerServiceTest extends IntegrationTestSupport {
                 author,
                 blogPusblishedDateTime
         );
-        blogRepository.save(blogRoot);
         return blogRoot;
     }
 

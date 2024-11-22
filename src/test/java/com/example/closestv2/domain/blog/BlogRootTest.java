@@ -48,7 +48,7 @@ class BlogRootTest {
 
         URL findUrl = ANY_POST_URL;
         Post foundPost = sut.getPosts().stream()
-                .filter(e -> e.getPostInfo().getPostUrl().equals(findUrl))
+                .filter(e -> e.getPostUrl().equals(findUrl))
                 .findFirst()
                 .orElseThrow();
 
@@ -58,7 +58,7 @@ class BlogRootTest {
         //then
         assertThatThrownBy(() ->
                 sut.getPosts().stream()
-                        .filter(e -> e.getPostInfo().getPostUrl().equals(findUrl))
+                        .filter(e -> e.getPostUrl().equals(findUrl))
                         .findFirst()
                         .orElseThrow()
         ).isInstanceOf(NoSuchElementException.class);
@@ -81,7 +81,7 @@ class BlogRootTest {
         BlogRoot sut = BlogRoot.create(ANY_BLOG_URL, ANY_BLOG_TITLE, ANY_AUTHOR, ANY_PUBLISHED_DATE_TIME);
         Post post = sut.createPost(ANY_POST_URL, ANY_POST_TITLE, ANY_PUBLISHED_DATE_TIME);
         //expected
-        assertThat(post.getPostInfo().getPostVisitCount()).isEqualTo(0L);
+        assertThat(post.getPostVisitCount()).isEqualTo(0L);
     }
 
 
@@ -117,32 +117,32 @@ class BlogRootTest {
 
     @Test
     @DisplayName("블로그 업데이트 시 BlogInfo의 값들을 비교할 때 URL이 일치하지 않으면 에러를 반환한다.")
-    void updateBlogByUnEqualUrlThrowError() throws MalformedURLException {
+    void updateBlogRootByUnEqualUrlThrowError() throws MalformedURLException {
         //given
         BlogRoot blogRoot = BlogRoot.create(ANY_BLOG_URL, ANY_BLOG_TITLE, ANY_AUTHOR, ANY_PUBLISHED_DATE_TIME);
         BlogRoot notSameUrlBlog = BlogRoot.create(URI.create("https://example.com/blog123X").toURL(), ANY_BLOG_TITLE, ANY_AUTHOR, ANY_PUBLISHED_DATE_TIME);
         //expected
-        assertThatThrownBy(() -> blogRoot.updateBlog(notSameUrlBlog)).isInstanceOf(IllegalStateException.class);
+        assertThatThrownBy(() -> blogRoot.updateBlogRoot(notSameUrlBlog)).isInstanceOf(IllegalStateException.class);
     }
 
     @Test
     @DisplayName("블로그 업데이트 시 발생시간 비교 시 기존 블로그 발행시간보다 조회한 발행시간이 과거일 경우 에러가 발생한다.")
-    void updateBlogWithPostPublishedDateTime() {
+    void updateBlogRootWithPostPublishedDateTime() {
         //given
         BlogRoot blogRoot = BlogRoot.create(ANY_BLOG_URL, ANY_BLOG_TITLE, ANY_AUTHOR, ANY_PUBLISHED_DATE_TIME);
         BlogRoot pastBlogRoot = BlogRoot.create(ANY_BLOG_URL, ANY_BLOG_TITLE, ANY_AUTHOR, ANY_PUBLISHED_DATE_TIME.minusSeconds(1));
         //expected
-        assertThatThrownBy(() -> blogRoot.updateBlog(pastBlogRoot)).isInstanceOf(IllegalStateException.class);
+        assertThatThrownBy(() -> blogRoot.updateBlogRoot(pastBlogRoot)).isInstanceOf(IllegalStateException.class);
     }
 
     @Test
     @DisplayName("블로그 업데이트 시 blogTitle, author, publishedDateTime이 다르다면 해당 값들이 변경된다.")
-    void updateBlog() {
+    void updateBlogRoot() {
         //given
         BlogRoot sut = BlogRoot.create(ANY_BLOG_URL, ANY_BLOG_TITLE, ANY_AUTHOR, ANY_PUBLISHED_DATE_TIME);
         BlogRoot compared = BlogRoot.create(ANY_BLOG_URL, "변경 제목", "변경 작가", ANY_PUBLISHED_DATE_TIME.plusSeconds(1));
         //when
-        sut.updateBlog(compared);
+        sut.updateBlogRoot(compared);
         //then
         assertThat(sut.getBlogInfo().getBlogTitle()).isEqualTo("변경 제목");
         assertThat(sut.getBlogInfo().getAuthor()).isEqualTo("변경 작가");
@@ -150,14 +150,14 @@ class BlogRootTest {
     }
 
     @Test
-    @DisplayName("포스트 업데이트 확인 시 BlogInfo의 PublishedDate가 변경되었다면 포스트 정보가 변경된 것이다.")
+    @DisplayName("블로그 업데이트 시 BlogInfo의 PublishedDate가 변경되었다면 포스트 정보도 변경된 것이다.")
     void isUpdatedPostsByPublishedDate() {
         //given
         BlogRoot sut = BlogRoot.create(ANY_BLOG_URL, ANY_BLOG_TITLE, ANY_AUTHOR, ANY_PUBLISHED_DATE_TIME);
         //when
         BlogRoot compared = BlogRoot.create(ANY_BLOG_URL, ANY_BLOG_TITLE, ANY_AUTHOR, ANY_PUBLISHED_DATE_TIME.plusSeconds(1));
         //then
-        assertThat(sut.isPostsUpdated(compared)).isTrue();
+        assertThat(sut.isBlogUpdated(compared)).isTrue();
     }
 
     @Test
@@ -173,11 +173,11 @@ class BlogRootTest {
         comparedPosts.add(compared.createPost(URI.create("https://example.com/blog123/3").toURL(), "포스트 제목3", ANY_PUBLISHED_DATE_TIME.plusSeconds(3)));
         comparedPosts.add(compared.createPost(URI.create("https://example.com/blog123/4").toURL(), "포스트 제목4", ANY_PUBLISHED_DATE_TIME.plusSeconds(4)));
         //when
-        sut.updatePosts(compared);
+        sut.updateBlogRoot(compared);
         //then
         assertThat(sut.getPosts())
                 .hasSize(4)
-                .extracting(e -> e.getPostInfo().getPostUrl(), e -> e.getPostInfo().getPostTitle(), e -> e.getPostInfo().getPublishedDateTime())
+                .extracting(Post::getPostUrl, Post::getPostTitle, Post::getPublishedDateTime)
                 .containsExactly(
                         tuple(URI.create("https://example.com/blog123/1").toURL(), "포스트 제목1", ANY_PUBLISHED_DATE_TIME.plusSeconds(1)),
                         tuple(URI.create("https://example.com/blog123/2").toURL(), "포스트 제목2", ANY_PUBLISHED_DATE_TIME.plusSeconds(2)),
@@ -186,21 +186,20 @@ class BlogRootTest {
                 );
     }
 
+
     @Test
-    @DisplayName("포스트 업데이트 시 post의 마지막 publishedDate가 BlogInfo의 publishedDate로 등록된다.")
-    void updatePostsWithLastPublishedDateTime() throws MalformedURLException {
+    @DisplayName("Post 생성 시 Blog의 posts 리스트에 추가되어 생성된다.")
+    void createPost() {
         //given
-        BlogRoot sut = BlogRoot.create(ANY_BLOG_URL, ANY_BLOG_TITLE, ANY_AUTHOR, ANY_PUBLISHED_DATE_TIME);
-        List<Post> posts = sut.getPosts();
-        posts.add(sut.createPost(URI.create("https://example.com/blog123/1").toURL(), "포스트 제목1", ANY_PUBLISHED_DATE_TIME.plusSeconds(1)));
-        BlogRoot compared = BlogRoot.create(ANY_BLOG_URL, ANY_BLOG_TITLE, ANY_AUTHOR, ANY_PUBLISHED_DATE_TIME.plusSeconds(4));
-        List<Post> comparedPosts = compared.getPosts();
-        comparedPosts.add(compared.createPost(URI.create("https://example.com/blog123/2").toURL(), "포스트 제목2", ANY_PUBLISHED_DATE_TIME.plusSeconds(2)));
-        comparedPosts.add(compared.createPost(URI.create("https://example.com/blog123/3").toURL(), "포스트 제목3", ANY_PUBLISHED_DATE_TIME.plusSeconds(4)));
-        comparedPosts.add(compared.createPost(URI.create("https://example.com/blog123/4").toURL(), "포스트 제목4", ANY_PUBLISHED_DATE_TIME.plusSeconds(3)));
+        BlogRoot blogRoot = BlogRoot.create(ANY_BLOG_URL, ANY_BLOG_TITLE, ANY_AUTHOR, ANY_PUBLISHED_DATE_TIME);
         //when
-        sut.updatePosts(compared);
+        Post post = blogRoot.createPost(ANY_POST_URL, ANY_POST_TITLE, ANY_PUBLISHED_DATE_TIME);
+        blogRoot.getPosts().add(post);
         //then
-        assertThat(sut.getBlogInfo().getPublishedDateTime()).isEqualTo(ANY_PUBLISHED_DATE_TIME.plusSeconds(4));
+        Post savedPost = blogRoot.getPosts().getFirst();
+
+        assertThat(savedPost)
+                .extracting(Post::getPostUrl, Post::getPostTitle, Post::getPublishedDateTime)
+                .containsExactly(ANY_POST_URL, ANY_POST_TITLE, ANY_PUBLISHED_DATE_TIME);
     }
 }

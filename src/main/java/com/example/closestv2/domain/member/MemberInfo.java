@@ -4,10 +4,7 @@ import jakarta.persistence.Embeddable;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
-import lombok.AccessLevel;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.springframework.util.Assert;
 
 import static com.example.closestv2.api.exception.ExceptionMessageConstants.*;
@@ -17,6 +14,7 @@ import static com.example.closestv2.util.validation.Pattern.PASSWORD;
 @Getter
 @Embeddable
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@EqualsAndHashCode
 public class MemberInfo {
 
     @NotBlank(message = EMAIL_IS_REQUIRED)

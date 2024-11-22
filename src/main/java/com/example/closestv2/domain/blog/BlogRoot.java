@@ -31,8 +31,9 @@ public class BlogRoot {
     @Embedded
     private BlogInfo blogInfo;
 
-    @OneToMany(cascade = {CascadeType.PERSIST, CascadeType.REMOVE}, orphanRemoval = true)
-    @JoinColumn(name = "blog_id")
+    @ElementCollection(fetch=FetchType.EAGER)
+    @CollectionTable(name="post", joinColumns = @JoinColumn(name="blog_id"))
+//    @OrderColumn(name="post_id") // 꼭 필요한지?
     private List<Post> posts = new ArrayList<>();
 
     @Builder(access = AccessLevel.PRIVATE)
@@ -65,14 +66,11 @@ public class BlogRoot {
             String postTitle,
             LocalDateTime publishedDateTime
     ) {
-        PostInfo postInfo = PostInfo.builder()
+        Post post = Post.builder()
                 .postUrl(postUrl)
                 .postTitle(postTitle)
                 .publishedDateTime(publishedDateTime)
                 .postVisitCount(0L)
-                .build();
-        Post post = Post.builder()
-                .postInfo(postInfo)
                 .build();
         return post;
     }
@@ -106,11 +104,13 @@ public class BlogRoot {
         return false;
     }
 
-    public void updateBlog(
+    public void updateBlogRoot(
             BlogRoot comparedBlogRoot
     ) {
         BlogInfo comparedBlogInfo = comparedBlogRoot.blogInfo;
         checkValidUpdate(comparedBlogInfo);
+
+        boolean isPostUpdated = isPostsUpdated(comparedBlogRoot);
 
         blogInfo = BlogInfo.builder()
                 .blogUrl(blogInfo.getBlogUrl())
@@ -120,9 +120,17 @@ public class BlogRoot {
                 .blogVisitCount(blogInfo.getBlogVisitCount())
                 .statusMessage(blogInfo.getStatusMessage())
                 .build();
+
+        // 포스트 업데이트 여부는 블로그 발행시간을 비교하므로, 메서드 호출 시 미리 변경할 대상의 블로그 발행시간을 업데이트하면 안된다.
+        if(isPostUpdated){
+            updatePosts(comparedBlogRoot);
+        }
     }
 
-    public boolean isPostsUpdated(
+    /**
+     * 블로그 발행시간을 비교하므로, 메서드 호출 시 미리 변경할 대상의 블로그 발행시간을 업데이트하면 안된다.
+     */
+    private boolean isPostsUpdated(
             BlogRoot comparedBlogRoot
     ) {
         BlogInfo comparedBlogInfo = comparedBlogRoot.blogInfo;
@@ -135,29 +143,18 @@ public class BlogRoot {
         return false;
     }
 
-    public void updatePosts(
+    private void updatePosts(
             BlogRoot comparedBlogRoot
     ) {
         checkValidUpdate(comparedBlogRoot.blogInfo);
-        LocalDateTime lastPublishedDateTime = LocalDateTime.MIN;
 
         List<Post> updatPosts = comparedBlogRoot.getPosts();
         for (Post updatePost : updatPosts) {
-            LocalDateTime updatePostPublishedDateTime = updatePost.getPostInfo().getPublishedDateTime();
-            if (lastPublishedDateTime.isBefore(updatePostPublishedDateTime)) {
-                lastPublishedDateTime = updatePostPublishedDateTime;
+            // 기존 포스트와 URL 중복되면 안됨 //TODO post는 엔티티이므로 식별자로 동등성하는가?
+            if(!posts.contains(updatePost)){
+                posts.add(updatePost);
             }
-            posts.add(updatePost);
         }
-
-        blogInfo = BlogInfo.builder()
-                .blogUrl(blogInfo.getBlogUrl())
-                .blogTitle(blogInfo.getBlogTitle())
-                .author(blogInfo.getAuthor())
-                .publishedDateTime(lastPublishedDateTime) //최근 발생시간
-                .blogVisitCount(blogInfo.getBlogVisitCount())
-                .statusMessage(blogInfo.getStatusMessage())
-                .build();
     }
 
     private void checkValidUpdate(BlogInfo comparedBlogInfo) {
