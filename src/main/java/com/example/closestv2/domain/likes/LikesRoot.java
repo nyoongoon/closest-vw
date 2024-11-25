@@ -6,6 +6,7 @@ import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.springframework.util.Assert;
 
 import java.net.URL;
 
@@ -30,6 +31,8 @@ public class LikesRoot {
 
     @Builder(access = AccessLevel.PRIVATE)
     private LikesRoot(Long memberId, URL postUrl) {
+        Assert.notNull(memberId, MEMBER_ID_IS_REQUIRED);
+        Assert.notNull(postUrl, POST_URL_IS_REQUIRED);
         this.memberId = memberId;
         this.postUrl = postUrl;
     }

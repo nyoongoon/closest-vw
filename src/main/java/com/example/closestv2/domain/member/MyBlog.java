@@ -4,6 +4,7 @@ import jakarta.persistence.Column;
 import jakarta.persistence.Embeddable;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
+import org.springframework.util.Assert;
 
 import java.net.URL;
 
@@ -30,6 +31,9 @@ class MyBlog {
             Long myBlogVisitCount,
             String statusMessage
     ) {
+        Assert.notNull(blogUrl, URL_IS_REQUIRED);
+        Assert.notNull(myBlogVisitCount, MY_BLOG_VISIT_COUNT_IS_REQUIRED);
+
         this.blogUrl = blogUrl;
         this.myBlogVisitCount = myBlogVisitCount;
         this.statusMessage = statusMessage;

@@ -51,7 +51,7 @@ public class BlogSchedulerService { // 이런 서비스 레이어의 테스트 -
 
             if (isBlogUpdated) {
                 blogRoot.updateBlogRoot(recentBlogRoot);
-                blogRepository.save(blogRoot); // 업데이트 내용을 저장
+                blogRepository.save(blogRoot);
             }
         } catch (MalformedURLException | URISyntaxException e) {
             // 에러 로그 처리, 로깅 사용 권장
