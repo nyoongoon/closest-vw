@@ -46,6 +46,10 @@ public class BlogSchedulerService { // 이런 서비스 레이어의 테스트 -
         }
     }
 
+    /**
+     * @Async 하면 테스트 코드도 비동기로 처리?
+     *
+     */
     @Async
     @Transactional
     public void pollingIfUpdated(BlogRoot blogRoot) {
