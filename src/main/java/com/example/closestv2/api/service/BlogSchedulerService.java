@@ -1,8 +1,10 @@
 package com.example.closestv2.api.service;
 
+import com.example.closestv2.clients.RssFeedClient;
 import com.example.closestv2.domain.blog.BlogFactory;
 import com.example.closestv2.domain.blog.BlogRepository;
 import com.example.closestv2.domain.blog.BlogRoot;
+import com.rometools.rome.feed.synd.SyndFeed;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -14,6 +16,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.net.MalformedURLException;
 import java.net.URISyntaxException;
+import java.net.URL;
 import java.util.List;
 
 @Slf4j
@@ -22,6 +25,7 @@ import java.util.List;
 public class BlogSchedulerService { // 이런 서비스 레이어의 테스트 -> 통합테스트 -> mock을 잘 안쓰나..?
     private final BlogFactory blogFactory;
     private final BlogRepository blogRepository;
+    private final RssFeedClient rssFeedClient;
 
     private static final int PAGE_SIZE = 100;
 
@@ -46,7 +50,9 @@ public class BlogSchedulerService { // 이런 서비스 레이어의 테스트 -
     @Transactional
     public void pollingIfUpdated(BlogRoot blogRoot) {
         try {
-            BlogRoot recentBlogRoot = blogFactory.createRecentBlogRoot(blogRoot.getBlogInfo().getBlogUrl());
+            URL blogUrl = blogRoot.getBlogInfo().getBlogUrl();
+            SyndFeed syndFeed = rssFeedClient.getSyndFeed(blogUrl);
+            BlogRoot recentBlogRoot = blogFactory.createRecentBlogRoot(syndFeed);
             boolean isBlogUpdated = blogRoot.isBlogUpdated(recentBlogRoot);
 
             if (isBlogUpdated) {

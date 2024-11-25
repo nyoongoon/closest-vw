@@ -21,12 +21,9 @@ import java.util.List;
 @Service
 @RequiredArgsConstructor
 public class RssBlogFactory implements BlogFactory {
-    private final RssFeedClient rssFeedClient;
 
     @Override
-    public BlogRoot createRecentBlogRoot(URL url) throws MalformedURLException {
-        SyndFeed syndFeed = rssFeedClient.getSyndFeed(url);
-
+    public BlogRoot createRecentBlogRoot(SyndFeed syndFeed) throws MalformedURLException {
         BlogRoot blogRoot = translate(syndFeed);
 
         if (CollectionUtils.isEmpty(syndFeed.getEntries())) {
