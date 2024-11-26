@@ -36,7 +36,7 @@ class RssBlogFactoryTest {
         return Date.from(instant);
     }
 
-    private SyndFeed getMockSyndFeed(
+    private SyndFeed getSyndFeed(
             String link,
             String title,
             String author,
@@ -50,31 +50,31 @@ class RssBlogFactoryTest {
         return syndFeedMock;
     }
 
-    private void setMockEntries(
+    private void setEntries(
             SyndFeed syndFeed,
             String link,
             String title,
             LocalDateTime publishedDateTime
     ) {
-        List<SyndEntry> mockEntries = new ArrayList<>();
+        List<SyndEntry> entries = new ArrayList<>();
         for (int i = 1; i < 4; i++) {
             SyndEntryImpl entryMock = new SyndEntryImpl();
-            entryMock.setLink(link + "/"+i);
+            entryMock.setLink(link + "/" + i);
             entryMock.setTitle(title + i);
             entryMock.setPublishedDate(toDate(publishedDateTime.plusMinutes(i)));
-            mockEntries.add(entryMock);
+            entries.add(entryMock);
         }
-        syndFeed.setEntries(mockEntries);
+        syndFeed.setEntries(entries);
     }
 
     @Test
     @DisplayName("URL로 RssClient를 통해서 Blog 객체를 얻을 수 있다.")
     void createBlog() throws MalformedURLException {
         //given
-        SyndFeed mockSyndFeed = getMockSyndFeed(ANY_LINK, ANY_TITLE, ANY_AUTHOR, ANY_PUBLISHED_DATE_TIME);
+        SyndFeed syndFeed = getSyndFeed(ANY_LINK, ANY_TITLE, ANY_AUTHOR, ANY_PUBLISHED_DATE_TIME);
         sut = new RssBlogFactory();
         //when
-        BlogRoot blog = sut.createRecentBlogRoot(mockSyndFeed);
+        BlogRoot blog = sut.createRecentBlogRoot(syndFeed);
         BlogInfo blogInfo = blog.getBlogInfo();
         //then
         assertThat(blogInfo.getBlogUrl()).isEqualTo(new URL(ANY_LINK));
@@ -87,20 +87,20 @@ class RssBlogFactoryTest {
     @DisplayName("SyndFeed에 SyndEntry가 존재하면 BlogRoot에 Post로 포함된다.")
     void createRecentBlogRoot() throws MalformedURLException {
         //given
-        SyndFeed mockSyndFeed = getMockSyndFeed(ANY_LINK, ANY_TITLE, ANY_AUTHOR, ANY_PUBLISHED_DATE_TIME);
-        setMockEntries(mockSyndFeed, ANY_LINK, ANY_TITLE, ANY_PUBLISHED_DATE_TIME);
+        SyndFeed syndFeed = getSyndFeed(ANY_LINK, ANY_TITLE, ANY_AUTHOR, ANY_PUBLISHED_DATE_TIME);
+        setEntries(syndFeed, ANY_LINK, ANY_TITLE, ANY_PUBLISHED_DATE_TIME);
         sut = new RssBlogFactory();
         //when
-        BlogRoot blog = sut.createRecentBlogRoot(mockSyndFeed);
+        BlogRoot blog = sut.createRecentBlogRoot(syndFeed);
         //then
         List<Post> posts = blog.getPosts();
         assertThat(posts)
                 .hasSize(3)
                 .extracting(e -> e.getPostUrl(), e -> e.getPostTitle(), e -> e.getPublishedDateTime())
                 .containsExactly(
-                        tuple(URI.create(ANY_LINK + "/1").toURL(), ANY_TITLE+"1", ANY_PUBLISHED_DATE_TIME.plusMinutes(1)), //1분씩 증가
-                        tuple(URI.create(ANY_LINK + "/2").toURL(), ANY_TITLE+"2", ANY_PUBLISHED_DATE_TIME.plusMinutes(2)),
-                        tuple(URI.create(ANY_LINK + "/3").toURL(), ANY_TITLE+"3", ANY_PUBLISHED_DATE_TIME.plusMinutes(3))
+                        tuple(URI.create(ANY_LINK + "/1").toURL(), ANY_TITLE + "1", ANY_PUBLISHED_DATE_TIME.plusMinutes(1)), //1분씩 증가
+                        tuple(URI.create(ANY_LINK + "/2").toURL(), ANY_TITLE + "2", ANY_PUBLISHED_DATE_TIME.plusMinutes(2)),
+                        tuple(URI.create(ANY_LINK + "/3").toURL(), ANY_TITLE + "3", ANY_PUBLISHED_DATE_TIME.plusMinutes(3))
                 );
     }
 }
