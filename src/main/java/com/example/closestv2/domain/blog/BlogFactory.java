@@ -7,5 +7,5 @@ import java.net.URISyntaxException;
 import java.net.URL;
 
 public interface BlogFactory {
-    BlogRoot createRecentBlogRoot(SyndFeed syndFeed) throws URISyntaxException, MalformedURLException;
+    BlogRoot createRecentBlogRoot(URL rssUrl, SyndFeed syndFeed) throws URISyntaxException, MalformedURLException;
 }

@@ -13,10 +13,12 @@ import org.mockserver.client.MockServerClient;
 import org.mockserver.integration.ClientAndServer;
 import org.mockserver.model.Header;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URI;
+import java.net.URL;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -26,6 +28,7 @@ import static org.mockserver.model.HttpRequest.request;
 import static org.mockserver.model.HttpResponse.response;
 
 class BlogSchedulerServiceTest extends IntegrationTestSupport {
+    private final URL ANY_RSS_URL = URI.create("http://localhost:8888").toURL();
     private final String RSS_FEED_RESPONSE = FileUtil.readFileAsString("rssResponse.xml");
     private final String ANY_LINK = "http://localhost:8888/";
     private final String ANY_AUTHOR = "블로그 작가";
@@ -71,9 +74,10 @@ class BlogSchedulerServiceTest extends IntegrationTestSupport {
 
     @Test
     @DisplayName("업데이트 된 블로그를 확인 후 블로그 정보를 업데이트한다.")
+    @Transactional
     void pollingUpdatedBlogs() throws MalformedURLException {
         //given
-        BlogRoot blogRoot = BlogRoot.create(URI.create(ANY_LINK).toURL(), ANY_BLOG_TITLE, ANY_AUTHOR, ANY_PUBLISHED_DATE_TIME);
+        BlogRoot blogRoot = BlogRoot.create(ANY_RSS_URL, URI.create(ANY_LINK).toURL(), ANY_BLOG_TITLE, ANY_AUTHOR);
         blogRepository.save(blogRoot);
         //when
         blogSchedulerService.pollingUpdatedBlogs();

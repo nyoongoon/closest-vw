@@ -24,11 +24,15 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.tuple;
 
 class RssBlogFactoryTest {
-    private final String ANY_LINK = "https://example.com/blog123";
+    private final URL ANY_RSS_URL = URI.create("https://example.com/rss").toURL();
+    private final String ANY_LINK = "https://example.com";
     private final LocalDateTime ANY_PUBLISHED_DATE_TIME = LocalDateTime.of(2022, 1, 1, 12, 3, 31);
     private final String ANY_TITLE = "제목";
     private final String ANY_AUTHOR = "작가";
     private RssBlogFactory sut;
+
+    RssBlogFactoryTest() throws MalformedURLException {
+    }
 
     private Date toDate(LocalDateTime localDateTime) {
         // 서울 시간대 (UTC+9) 기준으로 Instant로 변환
@@ -74,13 +78,25 @@ class RssBlogFactoryTest {
         SyndFeed syndFeed = getSyndFeed(ANY_LINK, ANY_TITLE, ANY_AUTHOR, ANY_PUBLISHED_DATE_TIME);
         sut = new RssBlogFactory();
         //when
-        BlogRoot blog = sut.createRecentBlogRoot(syndFeed);
+        BlogRoot blog = sut.createRecentBlogRoot(ANY_RSS_URL, syndFeed);
         BlogInfo blogInfo = blog.getBlogInfo();
         //then
         assertThat(blogInfo.getBlogUrl()).isEqualTo(new URL(ANY_LINK));
         assertThat(blogInfo.getBlogTitle()).isEqualTo(ANY_TITLE);
         assertThat(blogInfo.getAuthor()).isEqualTo(ANY_AUTHOR);
-        assertThat(blogInfo.getPublishedDateTime()).isEqualTo(LocalDateTime.of(2022, 1, 1, 12, 3, 31));
+    }
+
+    @Test
+    @DisplayName("URL로 RssClient를 통해서 Blog 객체를 얻을 때 Post로 변환되는 SyndEntry가 없다면 BlogRoot의 publishedDateTime은 LocalDateTime.MIN의 값이다.")
+    void createBlogByLocalDateTimeMIN() throws MalformedURLException {
+        //given
+        SyndFeed syndFeed = getSyndFeed(ANY_LINK, ANY_TITLE, ANY_AUTHOR, ANY_PUBLISHED_DATE_TIME);
+        sut = new RssBlogFactory();
+        //when
+        BlogRoot blog = sut.createRecentBlogRoot(ANY_RSS_URL, syndFeed);
+        BlogInfo blogInfo = blog.getBlogInfo();
+        //then
+        assertThat(blogInfo.getPublishedDateTime()).isEqualTo(LocalDateTime.MIN);
     }
 
     @Test
@@ -91,7 +107,7 @@ class RssBlogFactoryTest {
         setEntries(syndFeed, ANY_LINK, ANY_TITLE, ANY_PUBLISHED_DATE_TIME);
         sut = new RssBlogFactory();
         //when
-        BlogRoot blog = sut.createRecentBlogRoot(syndFeed);
+        BlogRoot blog = sut.createRecentBlogRoot(ANY_RSS_URL, syndFeed);
         //then
         List<Post> posts = blog.getPosts();
         assertThat(posts)

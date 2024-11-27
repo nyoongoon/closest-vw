@@ -25,10 +25,10 @@ class RssFeedClientTest  {
     private ClientAndServer mockServer;
 
     private final String RSS_FEED_RESPONSE = FileUtil.readFileAsString("rssResponse.xml");
-    private static final String POST_ONE_TITLE = "Post One";
-    private static final String POST_ONE_LINK = "http://localhost:8888/post-one";
-    private static final String POST_TWO_TITLE = "Post Two";
-    private static final String POST_TWO_LINK = "http://localhost:8888/post-two";
+    private static final String POST_ONE_TITLE = "포스트 제목 1";
+    private static final String POST_ONE_LINK = "http://localhost:8888/1";
+    private static final String POST_TWO_TITLE = "포스트 제목 2";
+    private static final String POST_TWO_LINK = "http://localhost:8888/2";
 
     RssFeedClientTest() throws IOException {
     }
@@ -65,7 +65,7 @@ class RssFeedClientTest  {
         List<SyndEntry> entries = syndFeed.getEntries();
 
         assertAll(
-                () -> assertThat(syndFeed.getLink()).isEqualTo("http://localhost:8888"),
+                () -> assertThat(syndFeed.getLink()).isEqualTo("http://localhost:8888/"),
 
                 () -> assertThat(entries.get(0).getTitle()).isEqualTo(POST_ONE_TITLE),
                 () -> assertThat(entries.get(0).getLink()).isEqualTo(POST_ONE_LINK),

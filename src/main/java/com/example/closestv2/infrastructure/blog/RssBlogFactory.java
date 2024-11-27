@@ -17,19 +17,21 @@ import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.Date;
 import java.util.List;
+import java.util.Objects;
 
 @Service
 @RequiredArgsConstructor
 public class RssBlogFactory implements BlogFactory {
 
     @Override
-    public BlogRoot createRecentBlogRoot(SyndFeed syndFeed) throws MalformedURLException {
-        BlogRoot blogRoot = translate(syndFeed);
+    public BlogRoot createRecentBlogRoot(URL rssUrl, SyndFeed syndFeed) throws MalformedURLException {
+        BlogRoot blogRoot = translate(rssUrl, syndFeed);
 
         if (CollectionUtils.isEmpty(syndFeed.getEntries())) {
             return blogRoot;
         }
 
+        LocalDateTime recentPublishedDateTime = blogRoot.getBlogInfo().getPublishedDateTime();
         List<Post> posts = blogRoot.getPosts();
         for (SyndEntry entry : syndFeed.getEntries()) {
             URL postUrl = URI.create(entry.getLink()).toURL();
@@ -40,22 +42,30 @@ public class RssBlogFactory implements BlogFactory {
                     postTitle,
                     publishedDate
             );
-            posts.add(post);
+
+            LocalDateTime updatePostPublishedDateTime = post.getPublishedDateTime();
+
+            if (Objects.isNull(recentPublishedDateTime) || recentPublishedDateTime.isBefore(updatePostPublishedDateTime)) {
+                recentPublishedDateTime = updatePostPublishedDateTime;
+            }
+            if (!posts.contains(post)) {
+                posts.add(post);
+            }
         }
+        blogRoot.updatePublishedDateTime(recentPublishedDateTime);
 
         return blogRoot;
     }
 
-    private BlogRoot translate(SyndFeed syndFeed) throws MalformedURLException {
+    private BlogRoot translate(URL rssUrl, SyndFeed syndFeed) throws MalformedURLException {
         URL blogUrl = URI.create(syndFeed.getLink()).toURL();
         String blogTitle = syndFeed.getTitle();
         String author = syndFeed.getAuthor();
-        LocalDateTime blogPublishedDateTime = toLocalDateTime(syndFeed.getPublishedDate());
         return BlogRoot.create(
+                rssUrl,
                 blogUrl,
                 blogTitle,
-                author,
-                blogPublishedDateTime
+                author
         );
     }
 

@@ -13,7 +13,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 class BlogInfoTest {
-    private final URL ANY_BLOG_URL = URI.create("https://example.com/blog123").toURL();
+    private final URL ANY_RSS_URL = URI.create("https://example.com/rss").toURL();
+    private final URL ANY_BLOG_URL = URI.create("https://example.com/").toURL();
     private final String ANY_BLOG_TITLE = "제목";
     private final String ANY_AUTHOR = "작가";
     private final LocalDateTime ANY_PUBLISHED_DATE_TIME = LocalDateTime.of(2022, 1, 1, 12, 3, 31);
@@ -29,6 +30,7 @@ class BlogInfoTest {
     @BeforeEach
     void setUp() {
         builder = BlogInfo.builder()
+                .rssUrl(ANY_RSS_URL)
                 .blogUrl(ANY_BLOG_URL)
                 .author(ANY_AUTHOR)
                 .blogTitle(ANY_BLOG_TITLE)
@@ -40,6 +42,7 @@ class BlogInfoTest {
     @Test
     @DisplayName("BlogInfo 생성 예외 케이스 - 필수값 검증")
     void createBlogInfoFailTest() {
+        assertThatThrownBy(() -> sut = builder.rssUrl(null).build()).isInstanceOf(IllegalArgumentException.class);
         assertThatThrownBy(() -> sut = builder.blogUrl(null).build()).isInstanceOf(IllegalArgumentException.class);
         assertThatThrownBy(() -> sut = builder.blogTitle(null).build()).isInstanceOf(IllegalArgumentException.class);
         assertThatThrownBy(() -> sut = builder.author(null).build()).isInstanceOf(IllegalArgumentException.class);
@@ -50,6 +53,7 @@ class BlogInfoTest {
     @DisplayName("BlogInfo 생성 성공 케이스")
     void createBlogInfoSuccessTest() {
         sut = builder.build();
+        assertThat(sut.getRssUrl()).isEqualTo(ANY_RSS_URL);
         assertThat(sut.getBlogUrl()).isEqualTo(ANY_BLOG_URL);
         assertThat(sut.getAuthor()).isEqualTo(ANY_AUTHOR);
         assertThat(sut.getBlogTitle()).isEqualTo(ANY_BLOG_TITLE);

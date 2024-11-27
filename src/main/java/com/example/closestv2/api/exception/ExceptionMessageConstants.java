@@ -20,8 +20,6 @@ public final class ExceptionMessageConstants {
     public static final String NOT_VALID_CONFIRM_PASSWORD_SIZE = "확인 비밀번호는 최소 8자 이상 최대 64자 이하입니다";
     public static final String NOT_EQUAL_PASSWORDS = "비밀번호와 확인 비밀번호가 다릅니다.";
     public static final String WRONG_PASSWORD = "비밀번호가 일치하지 않습니다.";
-    /* URL */
-    public static final String URL_IS_REQUIRED = "URL은 필수값입니다.";
     /* 아이디 */
     public static final String DUPLICATED_ID = "이미 사용 중인 아이디입니다.";
     /* 회원 */
@@ -32,16 +30,19 @@ public final class ExceptionMessageConstants {
     public static final String EXPIRED_TOKEN = "토큰이 만료되었습니다.";
     /* 나의 블로그 */
     public static final String NOT_EXISTS_MY_BLOG = "나의 블로그가 존재하지 않습니다.";
+    public static final String MY_BLOG_URL_IS_REQUIRED = "RSS URL은 필수값입니다.";
     public static final String ALREADY_EXISTS_MY_BLOG = "나의 블로그가 이미 존재합니다.";
     public static final String MY_BLOG_VISIT_COUNT_IS_REQUIRED = "나의 블로그 방문 횟수가 존재하지 않습니다.";
     /* 블로그 */
     public static final String BLOG_TITLE_IS_REQUIRED = "블로그명은 필수값입니다.";
-    public static final String BLOG_URL_IS_REQUIRED = "블로그명은 필수값입니다.";
+    public static final String RSS_URL_IS_REQUIRED = "RSS URL은 필수값입니다.";
+    public static final String BLOG_URL_IS_REQUIRED = "블로그 URL은 필수값입니다.";
     public static final String BLOG_AUTHOR_IS_REQUIRED = "블로그 저자명은 필수값입니다.";
     public static final String BLOG_PUBLISHED_DATETIME_IS_REQUIRED = "블로그 발행 시간은 필수값입니다.";
     public static final String BLOG_VISIT_COUNT_IS_REQUIRED = "블로그 방문 횟수가 존재하지 않습니다.";
     public static final String BLOG_URL_IS_NOT_CHANGEABLE = "블로그 URL은 변경될 수 없습니다.";
-    public static final String BLOG_UPDATABLE_BY_SAME_URL = "블로그는 같은 URL 정보로 업데이트가 가능합니다";
+    public static final String BLOG_UPDATABLE_BY_SAME_RSS_URL = "블로그는 같은 RSS URL 정보로 업데이트가 가능합니다";
+    public static final String BLOG_UPDATABLE_BY_SAME_BLOG_URL = "블로그는 같은 BLOG URL 정보로 업데이트가 가능합니다";
     public static final String BLOG_NON_UPDATABLE_BY_PAST_PUBLISHED_DATETIME = "블로그는 이전 발행시간 정보로 업데이트할 수 없습니다.";
 
     /* 포스트 */

@@ -54,9 +54,9 @@ public class BlogSchedulerService { // 이런 서비스 레이어의 테스트 -
     @Transactional
     public void pollingIfUpdated(BlogRoot blogRoot) {
         try {
-            URL blogUrl = blogRoot.getBlogInfo().getBlogUrl();
-            SyndFeed syndFeed = rssFeedClient.getSyndFeed(blogUrl);
-            BlogRoot recentBlogRoot = blogFactory.createRecentBlogRoot(syndFeed);
+            URL rssUrl = blogRoot.getBlogInfo().getRssUrl();
+            SyndFeed syndFeed = rssFeedClient.getSyndFeed(rssUrl);
+            BlogRoot recentBlogRoot = blogFactory.createRecentBlogRoot(rssUrl, syndFeed);
             boolean isBlogUpdated = blogRoot.isBlogUpdated(recentBlogRoot);
 
             if (isBlogUpdated) {

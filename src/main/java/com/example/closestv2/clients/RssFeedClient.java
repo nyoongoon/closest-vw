@@ -11,9 +11,9 @@ import java.net.URL;
 
 @Component
 public class RssFeedClient {
-    public SyndFeed getSyndFeed(URL url) {
+    public SyndFeed getSyndFeed(URL rssUrl) {
         try {
-            XmlReader reader = new XmlReader(url);
+            XmlReader reader = new XmlReader(rssUrl);
             return new SyndFeedInput().build(reader);
         } catch (FeedException | IOException e) {
             throw new IllegalStateException(e);
