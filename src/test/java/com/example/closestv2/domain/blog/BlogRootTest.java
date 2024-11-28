@@ -154,7 +154,7 @@ class BlogRootTest {
     }
 
     @Test
-    @DisplayName("포스트 업데이트 시 전달된 BlogRoot의 post를 기존 posts에 추가한다.")
+    @DisplayName("포스트 업데이트 시 postUrl이 기존에 존재하지 않았으면 BlogRoot의 posts에 전달된 Post를 추가한다.")
     void updatePosts() throws MalformedURLException {
         //given
         BlogRoot sut = BlogRoot.create(ANY_RSS_URL, ANY_BLOG_URL, ANY_BLOG_TITLE, ANY_AUTHOR);
@@ -184,7 +184,7 @@ class BlogRootTest {
 
 
     @Test
-    @DisplayName("Post 생성 시 Blog의 posts 리스트에 추가되어 생성된다.")
+    @DisplayName("Post 생성 시 BlogRoot의 posts에 추가되어 생성된다.")
     void createPost() {
         //given
         BlogRoot blogRoot = BlogRoot.create(ANY_RSS_URL, ANY_BLOG_URL, ANY_BLOG_TITLE, ANY_AUTHOR);
@@ -200,7 +200,7 @@ class BlogRootTest {
     }
 
     @Test
-    @DisplayName("블로그 업데이트 시 post의 URL이 같다면 equals 비교 후 다르면 업데이트한다.")
+    @DisplayName("블로그 업데이트 시 post의 URL이 같다면 포스트 제목과 포스트 발행시간 비교 후 다르면 업데이트한다.")
     void updatePostsWithSameUrl() {
         //given
         BlogRoot sut = BlogRoot.create(ANY_RSS_URL, ANY_BLOG_URL, ANY_BLOG_TITLE, ANY_AUTHOR);
@@ -211,16 +211,13 @@ class BlogRootTest {
         Map<URL, Post> comparedPosts = compared.getPosts();
         Post updatedPost = compared.createPost(ANY_POST_URL, "포스트 제목1 변경", ANY_PUBLISHED_DATE_TIME.plusSeconds(2));
         comparedPosts.put(ANY_POST_URL, updatedPost);
-        for (int i = 0; i < 2; i++) {
-            compared.visitPost(ANY_POST_URL); //방문 2회
-        }
         compared.updatePublishedDateTime(updatedPost.getPublishedDateTime()); //발생시간 업데이트
         //when
         sut.updateBlogRoot(compared);
         //then
         Post post = sut.getPosts().get(ANY_POST_URL);
         assertThat(post.getPostTitle()).isEqualTo("포스트 제목1 변경");
-        assertThat(post.getPostVisitCount()).isEqualTo(2);
+        assertThat(post.getPublishedDateTime()).isEqualTo(ANY_PUBLISHED_DATE_TIME.plusSeconds(2));
     }
 
     @Test

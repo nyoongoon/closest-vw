@@ -56,11 +56,10 @@ class PostTest {
     }
 
     @Test
-    @DisplayName("Post 동등성 비교 - 밸류 타입이므로 필드 값으로 동등성 비교")
-    void postEqualityTest(){
-        Post sut1 = builder.build();
-        Post sut2 = builder.build();
-        assertThat(sut1.equals(sut2)).isTrue();
-        assertThat(sut1).isEqualTo(sut2);
+    @DisplayName("Post isUpdated 비교 - 포스트 제목과 포스트 발행시간이 달라졌으면 true를 반환한다.")
+    void isUpdatedTest(){
+        Post sut = builder.build();
+        assertThat(sut.isUpdated(builder.postTitle("변경제목").build())).isTrue();
+        assertThat(sut.isUpdated(builder.publishedDateTime(ANY_PUBLISHED_DATE_TIME.plusSeconds(1)).build())).isTrue();
     }
 }

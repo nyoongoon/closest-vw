@@ -20,25 +20,22 @@ import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.List;
 
-import static org.springframework.transaction.TransactionDefinition.PROPAGATION_REQUIRES_NEW;
-
 @Slf4j
 @Service
 @RequiredArgsConstructor
-public class BlogSchedulerService { // 이런 서비스 레이어의 테스트 -> 통합테스트 -> mock을 잘 안쓰나..?
+public class BlogSchedulerService {
+    private static final int PAGE_SIZE = 100;
     private final BlogFactory blogFactory;
     private final BlogRepository blogRepository;
     private final RssFeedClient rssFeedClient;
 
-    private static final int PAGE_SIZE = 100;
-
     @Transactional
-    @Scheduled(fixedDelay = 5000)
+    @Scheduled(fixedDelay = 5000) // todo 이거 이렇게 해놓으면 비동시 작업 끝나기 전에 재시작 될듯?
     public void pollingUpdatedBlogs() {
         int page = 0;
         boolean hasMore = true;
 
-        while(hasMore){
+        while (hasMore) {
             Page<BlogRoot> blogPage = blogRepository.findAll(PageRequest.of(page, PAGE_SIZE));
             List<BlogRoot> blogRoots = blogPage.getContent();
             hasMore = blogPage.hasNext();
@@ -52,7 +49,6 @@ public class BlogSchedulerService { // 이런 서비스 레이어의 테스트 -
 
     /**
      * @Async 하면 테스트 코드도 비동기로 처리?
-     *
      */
     @Async
     @Transactional(propagation = Propagation.REQUIRES_NEW)
@@ -61,14 +57,14 @@ public class BlogSchedulerService { // 이런 서비스 레이어의 테스트 -
             URL rssUrl = blogRoot.getBlogInfo().getRssUrl();
             SyndFeed syndFeed = rssFeedClient.getSyndFeed(rssUrl);
             BlogRoot recentBlogRoot = blogFactory.createRecentBlogRoot(rssUrl, syndFeed);
-            boolean isBlogUpdated = blogRoot.isBlogUpdated(recentBlogRoot);
+//            boolean isBlogUpdated = blogRoot.isBlogUpdated(recentBlogRoot);
 
-            if (isBlogUpdated) {
-                blogRoot.updateBlogRoot(recentBlogRoot);
-                blogRepository.save(blogRoot);
-            }
+//            if (isBlogUpdated) {
+            blogRoot.updateBlogRoot(recentBlogRoot);
+            blogRepository.save(blogRoot);
+//            }
         } catch (MalformedURLException | URISyntaxException e) {
-            // 에러 로그 처리, 로깅 사용 권장
+
             log.error("블로그 업데이트 중 에러 발생 - url :{}", blogRoot.getBlogInfo().getBlogUrl().toString());
             log.error("에러 메시지 : {}", e.getMessage());
         }

@@ -88,8 +88,8 @@ public class BlogRoot {
                 .build();
     }
 
-    public boolean isBlogUpdated(
-            BlogRoot comparedBlogRoot
+    public boolean isBlogUpdated( //todo 업데이트 여부.. 일단 추가하지 않고 성능 이슈되면 추가하기??
+                                  BlogRoot comparedBlogRoot
     ) {
         BlogInfo comparedBlogInfo = comparedBlogRoot.blogInfo;
 
@@ -112,7 +112,7 @@ public class BlogRoot {
         BlogInfo comparedBlogInfo = comparedBlogRoot.blogInfo;
         checkValidUpdate(comparedBlogInfo);
 
-        boolean isPostUpdated = isPostsUpdated(comparedBlogRoot);
+//        boolean isPostUpdated = isPostsUpdated(comparedBlogRoot);
 
         blogInfo = BlogInfo.builder()
                 .rssUrl(blogInfo.getRssUrl())
@@ -125,12 +125,13 @@ public class BlogRoot {
                 .build();
 
         // 포스트 업데이트 여부는 블로그 발행시간을 비교하므로, 메서드 호출 시 미리 변경할 대상의 블로그 발행시간을 업데이트하면 안된다.
-        if (isPostUpdated) {
-            updatePosts(comparedBlogRoot);
-        }
+//        if (isPostUpdated) {
+        updatePosts(comparedBlogRoot);
+//        }
     }
 
     /**
+     * //todo 업데이트 여부.. 일단 추가하지 않고 성능 이슈되면 추가하기??
      * 블로그 발행시간을 비교하므로, 메서드 호출 시 미리 변경할 대상의 블로그 발행시간을 업데이트하면 안된다.
      * Post 중 가장 발생시간이 최신인 것
      */
@@ -153,22 +154,27 @@ public class BlogRoot {
         checkValidUpdate(comparedBlogRoot.blogInfo);
         LocalDateTime recentPublishedDateTime = blogInfo.getPublishedDateTime();
 
-        Map<URL, Post> updatedPosts = comparedBlogRoot.getPosts();
-        for (Map.Entry<URL, Post> urlPostEntry : updatedPosts.entrySet()) {
-            Post updatedPost = urlPostEntry.getValue();
-            LocalDateTime updatePostPublishedDateTime = updatedPost.getPublishedDateTime();
+        Map<URL, Post> comparedPosts = comparedBlogRoot.getPosts();
+        for (Map.Entry<URL, Post> urlPostEntry : comparedPosts.entrySet()) {
+            Post comparedPost = urlPostEntry.getValue();
+            LocalDateTime updatePostPublishedDateTime = comparedPost.getPublishedDateTime();
             if (recentPublishedDateTime.isBefore(updatePostPublishedDateTime)) {
                 recentPublishedDateTime = updatePostPublishedDateTime;
             }
-            if (!posts.containsKey(updatedPost.getPostUrl())) {
-                posts.put(updatedPost.getPostUrl(), updatedPost);
+            if (!posts.containsKey(comparedPost.getPostUrl())) {
+                posts.put(comparedPost.getPostUrl(), comparedPost);
                 continue;
             }
 
-            Post originPost = posts.get(updatedPost.getPostUrl());
-            if (!originPost.equals(updatedPost)) { // 있는 경우 다르면 업데이트
-                posts.replace(updatedPost.getPostUrl(), updatedPost);
+            Post originPost = posts.get(comparedPost.getPostUrl());
+            if (originPost.isUpdated(comparedPost)) { // posts에 postUrl 있는 경우 제목이나 발행시간이 다르면 업데이트
+                log.info("post replaced : {}", comparedPost.getPostUrl());
+                originPost.updateTitle(comparedPost.getPostTitle());
+                originPost.updatePublishedDateTime(comparedPost.getPublishedDateTime());
             }
+//            else {
+//                log.info("post not replaced : {}", comparedPost.getPostUrl());
+//            }
         }
         updatePublishedDateTime(recentPublishedDateTime);
     }
@@ -198,7 +204,7 @@ public class BlogRoot {
     }
 
     public void visitPost(URL postUrl) {
-        if(!posts.containsKey(postUrl)){
+        if (!posts.containsKey(postUrl)) {
             throw new IllegalStateException(NOT_EXISTS_POST_URL);
         }
 
