@@ -55,18 +55,18 @@ public class BlogSchedulerService {
     public void pollingIfUpdated(BlogRoot blogRoot) {
         try {
             URL rssUrl = blogRoot.getBlogInfo().getRssUrl();
-            SyndFeed syndFeed = rssFeedClient.getSyndFeed(rssUrl);
-            BlogRoot recentBlogRoot = blogFactory.createRecentBlogRoot(rssUrl, syndFeed);
-//            boolean isBlogUpdated = blogRoot.isBlogUpdated(recentBlogRoot);
+            SyndFeed syndFeed = rssFeedClient.getSyndFeed(rssUrl); // todo 분리 // 기다려보기.. //jmeter같은 부하테스트가 필요하다..
 
-//            if (isBlogUpdated) {
+            BlogRoot recentBlogRoot = blogFactory.createRecentBlogRoot(rssUrl, syndFeed);
             blogRoot.updateBlogRoot(recentBlogRoot);
             blogRepository.save(blogRoot);
-//            }
+
         } catch (MalformedURLException | URISyntaxException e) {
 
             log.error("블로그 업데이트 중 에러 발생 - url :{}", blogRoot.getBlogInfo().getBlogUrl().toString());
             log.error("에러 메시지 : {}", e.getMessage());
         }
     }
+
+
 }

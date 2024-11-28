@@ -112,8 +112,6 @@ public class BlogRoot {
         BlogInfo comparedBlogInfo = comparedBlogRoot.blogInfo;
         checkValidUpdate(comparedBlogInfo);
 
-//        boolean isPostUpdated = isPostsUpdated(comparedBlogRoot);
-
         blogInfo = BlogInfo.builder()
                 .rssUrl(blogInfo.getRssUrl())
                 .blogUrl(blogInfo.getBlogUrl())
@@ -124,10 +122,7 @@ public class BlogRoot {
                 .statusMessage(blogInfo.getStatusMessage())
                 .build();
 
-        // 포스트 업데이트 여부는 블로그 발행시간을 비교하므로, 메서드 호출 시 미리 변경할 대상의 블로그 발행시간을 업데이트하면 안된다.
-//        if (isPostUpdated) {
         updatePosts(comparedBlogRoot);
-//        }
     }
 
     /**
@@ -172,9 +167,6 @@ public class BlogRoot {
                 originPost.updateTitle(comparedPost.getPostTitle());
                 originPost.updatePublishedDateTime(comparedPost.getPublishedDateTime());
             }
-//            else {
-//                log.info("post not replaced : {}", comparedPost.getPostUrl());
-//            }
         }
         updatePublishedDateTime(recentPublishedDateTime);
     }
