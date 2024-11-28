@@ -32,7 +32,8 @@ public class BlogRoot {
     @Embedded
     private BlogInfo blogInfo;
 
-    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+//    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
     @MapKey(name = "postUrl") // 엔티티인 경우
     private Map<URL, Post> posts = new HashMap<>();
 
@@ -157,18 +158,19 @@ public class BlogRoot {
                 recentPublishedDateTime = updatePostPublishedDateTime;
             }
             if (!posts.containsKey(comparedPost.getPostUrl())) {
+                log.info("post inserted : {}", comparedPost.getPostUrl());
                 posts.put(comparedPost.getPostUrl(), comparedPost);
                 continue;
             }
 
             Post originPost = posts.get(comparedPost.getPostUrl());
             if (originPost.isUpdated(comparedPost)) { // posts에 postUrl 있는 경우 제목이나 발행시간이 다르면 업데이트
-                log.info("post replaced : {}", comparedPost.getPostUrl());
+                log.info("post updated : {}", comparedPost.getPostUrl());
                 originPost.updateTitle(comparedPost.getPostTitle());
                 originPost.updatePublishedDateTime(comparedPost.getPublishedDateTime());
             }
         }
-        updatePublishedDateTime(recentPublishedDateTime);
+        updatePublishedDateTime(recentPublishedDateTime); //blogInfo publishedDateTime 최신화
     }
 
     public void updatePublishedDateTime(LocalDateTime recentPublishedDateTime) {

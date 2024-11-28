@@ -30,6 +30,7 @@ public final class ExceptionMessageConstants {
     public static final String ALREADY_EXISTS_MY_BLOG = "나의 블로그가 이미 존재합니다.";
     public static final String MY_BLOG_VISIT_COUNT_IS_REQUIRED = "나의 블로그 방문 횟수가 존재하지 않습니다.";
     /* 블로그 */
+    public static final String NOT_EXISTS_BLOG = "존재하지 않는 블로그입니다.";
     public static final String BLOG_TITLE_IS_REQUIRED = "블로그명은 필수값입니다.";
     public static final String RSS_URL_IS_REQUIRED = "RSS URL은 필수값입니다.";
     public static final String BLOG_URL_IS_REQUIRED = "블로그 URL은 필수값입니다.";
