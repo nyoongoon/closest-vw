@@ -21,6 +21,7 @@ import java.net.URI;
 import java.net.URL;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.tuple;
@@ -85,10 +86,10 @@ class BlogSchedulerServiceTest extends IntegrationTestSupport {
         //발행시간 업데이트
         BlogRoot found = blogRepository.findById(blogRoot.getId()).orElseThrow();
         found.getBlogInfo().getPublishedDateTime().isEqual(ANY_PUBLISHED_DATE_TIME.plusMinutes(3));
-        List<Post> posts = found.getPosts();
-        assertThat(posts)
+        Map<URL, Post> posts = found.getPosts();
+        assertThat(posts.entrySet())
                 .hasSize(2)
-                .extracting(Post::getPostUrl, Post::getPostTitle, Post::getPublishedDateTime)
+                .extracting(e->e.getValue().getPostUrl(), e->e.getValue().getPostTitle(), e->e.getValue().getPublishedDateTime())
                 .containsExactly(
                         tuple(URI.create(POST_ONE_LINK).toURL(), POST_ONE_TITLE, ANY_PUBLISHED_DATE_TIME.plusMinutes(1)),
                         tuple(URI.create(POST_TWO_LINK).toURL(), POST_TWO_TITLE, ANY_PUBLISHED_DATE_TIME.plusMinutes(2))

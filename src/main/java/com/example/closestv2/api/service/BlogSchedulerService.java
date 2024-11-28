@@ -12,12 +12,15 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.net.MalformedURLException;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.List;
+
+import static org.springframework.transaction.TransactionDefinition.PROPAGATION_REQUIRES_NEW;
 
 @Slf4j
 @Service
@@ -29,6 +32,7 @@ public class BlogSchedulerService { // 이런 서비스 레이어의 테스트 -
 
     private static final int PAGE_SIZE = 100;
 
+    @Transactional
     @Scheduled(fixedDelay = 5000)
     public void pollingUpdatedBlogs() {
         int page = 0;
@@ -51,7 +55,7 @@ public class BlogSchedulerService { // 이런 서비스 레이어의 테스트 -
      *
      */
     @Async
-    @Transactional
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
     public void pollingIfUpdated(BlogRoot blogRoot) {
         try {
             URL rssUrl = blogRoot.getBlogInfo().getRssUrl();

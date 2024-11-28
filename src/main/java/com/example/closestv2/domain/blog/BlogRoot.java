@@ -11,8 +11,8 @@ import org.hibernate.proxy.HibernateProxy;
 
 import java.net.URL;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Objects;
 
 import static com.example.closestv2.api.exception.ExceptionMessageConstants.*;
@@ -32,10 +32,9 @@ public class BlogRoot {
     @Embedded
     private BlogInfo blogInfo;
 
-    @ElementCollection(fetch = FetchType.EAGER)
-    @CollectionTable(name = "post", joinColumns = @JoinColumn(name = "blog_id"))
-//    @OrderColumn(name="post_id") // 꼭 필요한지?
-    private List<Post> posts = new ArrayList<>();
+    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    @MapKey(name = "postUrl") // 엔티티인 경우
+    private Map<URL, Post> posts = new HashMap<>();
 
     @Builder(access = AccessLevel.PRIVATE)
     private BlogRoot(
@@ -154,18 +153,23 @@ public class BlogRoot {
         checkValidUpdate(comparedBlogRoot.blogInfo);
         LocalDateTime recentPublishedDateTime = blogInfo.getPublishedDateTime();
 
-        List<Post> updatPosts = comparedBlogRoot.getPosts();
-        for (Post updatePost : updatPosts) {
-            LocalDateTime updatePostPublishedDateTime = updatePost.getPublishedDateTime();
+        Map<URL, Post> updatedPosts = comparedBlogRoot.getPosts();
+        for (Map.Entry<URL, Post> urlPostEntry : updatedPosts.entrySet()) {
+            Post updatedPost = urlPostEntry.getValue();
+            LocalDateTime updatePostPublishedDateTime = updatedPost.getPublishedDateTime();
             if (recentPublishedDateTime.isBefore(updatePostPublishedDateTime)) {
                 recentPublishedDateTime = updatePostPublishedDateTime;
             }
-            // 기존 포스트와 URL 중복되면 안됨 //TODO post는 엔티티이므로 식별자로 동등성하는가?
-            if (!posts.contains(updatePost)) {
-                posts.add(updatePost);
+            if (!posts.containsKey(updatedPost.getPostUrl())) {
+                posts.put(updatedPost.getPostUrl(), updatedPost);
+                continue;
+            }
+
+            Post originPost = posts.get(updatedPost.getPostUrl());
+            if (!originPost.equals(updatedPost)) { // 있는 경우 다르면 업데이트
+                posts.replace(updatedPost.getPostUrl(), updatedPost);
             }
         }
-
         updatePublishedDateTime(recentPublishedDateTime);
     }
 
@@ -187,10 +191,27 @@ public class BlogRoot {
             throw new IllegalStateException(BLOG_UPDATABLE_BY_SAME_RSS_URL);
         }
         // blogInfo의 발행시간이 더 이후면 예외
-        if (blogInfo.getPublishedDateTime().isAfter(comparedBlogInfo.getPublishedDateTime())){
+        if (blogInfo.getPublishedDateTime().isAfter(comparedBlogInfo.getPublishedDateTime())) {
             log.error("블로그 업데이트는 발행시간이 더 과거인 블로그로 업데이트 할 수 없다. 기존:{}, 업데이트 시도:{} ", blogInfo.getPublishedDateTime(), comparedBlogInfo.getPublishedDateTime());
             throw new IllegalStateException(BLOG_NON_UPDATABLE_BY_PAST_PUBLISHED_DATETIME);
         }
+    }
+
+    public void visitPost(URL postUrl) {
+        if(!posts.containsKey(postUrl)){
+            throw new IllegalStateException(NOT_EXISTS_POST_URL);
+        }
+
+        Post post = posts.get(postUrl);
+        Long postVisitCount = post.getPostVisitCount();
+
+        Post updatedPost = Post.builder()
+                .postUrl(post.getPostUrl())
+                .postTitle(post.getPostTitle())
+                .publishedDateTime(post.getPublishedDateTime())
+                .postVisitCount(postVisitCount + 1)
+                .build();
+        posts.replace(post.getPostUrl(), updatedPost);
     }
 
     @Override

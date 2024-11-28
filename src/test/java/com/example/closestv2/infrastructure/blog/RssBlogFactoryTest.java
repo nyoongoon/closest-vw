@@ -19,6 +19,7 @@ import java.time.ZoneOffset;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.tuple;
@@ -109,11 +110,11 @@ class RssBlogFactoryTest {
         //when
         BlogRoot blog = sut.createRecentBlogRoot(ANY_RSS_URL, syndFeed);
         //then
-        List<Post> posts = blog.getPosts();
-        assertThat(posts)
+        Map<URL, Post> posts = blog.getPosts();
+        assertThat(posts.entrySet())
                 .hasSize(3)
-                .extracting(e -> e.getPostUrl(), e -> e.getPostTitle(), e -> e.getPublishedDateTime())
-                .containsExactly(
+                .extracting(e -> e.getValue().getPostUrl(), e -> e.getValue().getPostTitle(), e -> e.getValue().getPublishedDateTime())
+                .containsExactlyInAnyOrder(
                         tuple(URI.create(ANY_LINK + "/1").toURL(), ANY_TITLE + "1", ANY_PUBLISHED_DATE_TIME.plusMinutes(1)), //1분씩 증가
                         tuple(URI.create(ANY_LINK + "/2").toURL(), ANY_TITLE + "2", ANY_PUBLISHED_DATE_TIME.plusMinutes(2)),
                         tuple(URI.create(ANY_LINK + "/3").toURL(), ANY_TITLE + "3", ANY_PUBLISHED_DATE_TIME.plusMinutes(3))

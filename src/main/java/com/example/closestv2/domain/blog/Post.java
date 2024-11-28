@@ -1,7 +1,7 @@
 package com.example.closestv2.domain.blog;
 
 
-import jakarta.persistence.Embeddable;
+import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
@@ -13,11 +13,17 @@ import java.time.LocalDateTime;
 import static com.example.closestv2.api.exception.ExceptionMessageConstants.*;
 
 @Getter
-@Embeddable
+@Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @EqualsAndHashCode
 public class Post {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "post_id")
+    private Long id;
+
     @NotNull(message = POST_URL_IS_REQUIRED)
+    @Column(name = "post_url")
     private URL postUrl;
 
     @NotBlank(message = POST_TITLE_IS_REQUIRED)

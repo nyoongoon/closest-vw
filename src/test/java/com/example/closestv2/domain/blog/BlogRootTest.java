@@ -7,8 +7,7 @@ import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URL;
 import java.time.LocalDateTime;
-import java.util.List;
-import java.util.NoSuchElementException;
+import java.util.Map;
 
 import static org.assertj.core.api.Assertions.*;
 
@@ -45,24 +44,12 @@ class BlogRootTest {
         //given
         BlogRoot sut = BlogRoot.create(ANY_RSS_URL, ANY_BLOG_URL, ANY_BLOG_TITLE, ANY_AUTHOR);
         Post post = sut.createPost(ANY_POST_URL, ANY_POST_TITLE, ANY_PUBLISHED_DATE_TIME);
-        sut.getPosts().add(post);
-
-        URL findUrl = ANY_POST_URL;
-        Post foundPost = sut.getPosts().stream()
-                .filter(e -> e.getPostUrl().equals(findUrl))
-                .findFirst()
-                .orElseThrow();
-
+        sut.getPosts().put(post.getPostUrl(), post);
+        Post foundPost = sut.getPosts().get(ANY_POST_URL);
         //when
-        sut.getPosts().remove(foundPost);
-
+        sut.getPosts().remove(foundPost.getPostUrl());
         //then
-        assertThatThrownBy(() ->
-                sut.getPosts().stream()
-                        .filter(e -> e.getPostUrl().equals(findUrl))
-                        .findFirst()
-                        .orElseThrow()
-        ).isInstanceOf(NoSuchElementException.class);
+        assertThat(sut.getPosts()).hasSize(0);
     }
 
 
@@ -171,21 +158,23 @@ class BlogRootTest {
     void updatePosts() throws MalformedURLException {
         //given
         BlogRoot sut = BlogRoot.create(ANY_RSS_URL, ANY_BLOG_URL, ANY_BLOG_TITLE, ANY_AUTHOR);
-        List<Post> sutPosts = sut.getPosts();
-        sutPosts.add(sut.createPost(URI.create("https://example.com/blog123/1").toURL(), "포스트 제목1", ANY_PUBLISHED_DATE_TIME.plusSeconds(1)));
+        Map<URL, Post> sutPosts = sut.getPosts();
+        sutPosts.put(URI.create("https://example.com/blog123/1").toURL(), sut.createPost(URI.create("https://example.com/blog123/1").toURL(), "포스트 제목1", ANY_PUBLISHED_DATE_TIME.plusSeconds(1)));
         BlogRoot compared = BlogRoot.create(ANY_RSS_URL, ANY_BLOG_URL, ANY_BLOG_TITLE, ANY_AUTHOR);
-        List<Post> comparedPosts = compared.getPosts();
-        comparedPosts.add(compared.createPost(URI.create("https://example.com/blog123/2").toURL(), "포스트 제목2", ANY_PUBLISHED_DATE_TIME.plusSeconds(2)));
-        comparedPosts.add(compared.createPost(URI.create("https://example.com/blog123/3").toURL(), "포스트 제목3", ANY_PUBLISHED_DATE_TIME.plusSeconds(3)));
-        comparedPosts.add(compared.createPost(URI.create("https://example.com/blog123/4").toURL(), "포스트 제목4", ANY_PUBLISHED_DATE_TIME.plusSeconds(4)));
+        Map<URL, Post> comparedPosts = compared.getPosts();
+        comparedPosts.put(URI.create("https://example.com/blog123/2").toURL(), compared.createPost(URI.create("https://example.com/blog123/2").toURL(), "포스트 제목2", ANY_PUBLISHED_DATE_TIME.plusSeconds(2)));
+        comparedPosts.put(URI.create("https://example.com/blog123/3").toURL(), compared.createPost(URI.create("https://example.com/blog123/3").toURL(), "포스트 제목3", ANY_PUBLISHED_DATE_TIME.plusSeconds(3)));
+        comparedPosts.put(URI.create("https://example.com/blog123/4").toURL(), compared.createPost(URI.create("https://example.com/blog123/4").toURL(), "포스트 제목4", ANY_PUBLISHED_DATE_TIME.plusSeconds(4)));
         compared.updatePublishedDateTime(LocalDateTime.of(2022, 1, 1, 12, 3, 31));
         //when
         sut.updateBlogRoot(compared);
         //then
-        assertThat(sut.getPosts())
+        assertThat(sut.getPosts().entrySet())
                 .hasSize(4)
-                .extracting(Post::getPostUrl, Post::getPostTitle, Post::getPublishedDateTime)
-                .containsExactly(
+                .extracting(
+                        e -> e.getValue().getPostUrl(), e -> e.getValue().getPostTitle(), e -> e.getValue().getPublishedDateTime()
+                )
+                .containsExactlyInAnyOrder(
                         tuple(URI.create("https://example.com/blog123/1").toURL(), "포스트 제목1", ANY_PUBLISHED_DATE_TIME.plusSeconds(1)),
                         tuple(URI.create("https://example.com/blog123/2").toURL(), "포스트 제목2", ANY_PUBLISHED_DATE_TIME.plusSeconds(2)),
                         tuple(URI.create("https://example.com/blog123/3").toURL(), "포스트 제목3", ANY_PUBLISHED_DATE_TIME.plusSeconds(3)),
@@ -201,12 +190,88 @@ class BlogRootTest {
         BlogRoot blogRoot = BlogRoot.create(ANY_RSS_URL, ANY_BLOG_URL, ANY_BLOG_TITLE, ANY_AUTHOR);
         //when
         Post post = blogRoot.createPost(ANY_POST_URL, ANY_POST_TITLE, ANY_PUBLISHED_DATE_TIME);
-        blogRoot.getPosts().add(post);
+        blogRoot.getPosts().put(post.getPostUrl(), post);
         //then
-        Post savedPost = blogRoot.getPosts().getFirst();
+        Post savedPost = blogRoot.getPosts().get(ANY_POST_URL);
 
         assertThat(savedPost)
                 .extracting(Post::getPostUrl, Post::getPostTitle, Post::getPublishedDateTime)
                 .containsExactly(ANY_POST_URL, ANY_POST_TITLE, ANY_PUBLISHED_DATE_TIME);
+    }
+
+    @Test
+    @DisplayName("블로그 업데이트 시 post의 URL이 같다면 equals 비교 후 다르면 업데이트한다.")
+    void updatePostsWithSameUrl() {
+        //given
+        BlogRoot sut = BlogRoot.create(ANY_RSS_URL, ANY_BLOG_URL, ANY_BLOG_TITLE, ANY_AUTHOR);
+        Map<URL, Post> sutPosts = sut.getPosts();
+        sutPosts.put(ANY_POST_URL, sut.createPost(ANY_POST_URL, ANY_POST_TITLE, ANY_PUBLISHED_DATE_TIME.plusSeconds(1)));
+
+        BlogRoot compared = BlogRoot.create(ANY_RSS_URL, ANY_BLOG_URL, ANY_BLOG_TITLE, ANY_AUTHOR);
+        Map<URL, Post> comparedPosts = compared.getPosts();
+        Post updatedPost = compared.createPost(ANY_POST_URL, "포스트 제목1 변경", ANY_PUBLISHED_DATE_TIME.plusSeconds(2));
+        comparedPosts.put(ANY_POST_URL, updatedPost);
+        for (int i = 0; i < 2; i++) {
+            compared.visitPost(ANY_POST_URL); //방문 2회
+        }
+        compared.updatePublishedDateTime(updatedPost.getPublishedDateTime()); //발생시간 업데이트
+        //when
+        sut.updateBlogRoot(compared);
+        //then
+        Post post = sut.getPosts().get(ANY_POST_URL);
+        assertThat(post.getPostTitle()).isEqualTo("포스트 제목1 변경");
+        assertThat(post.getPostVisitCount()).isEqualTo(2);
+    }
+
+    @Test
+    @DisplayName("블로그 업데이트 시 post의 URL이 다르면 posts에 추가한다.")
+    void updatePostsWithNotSameUrl() throws MalformedURLException {
+        //given
+        BlogRoot sut = BlogRoot.create(ANY_RSS_URL, ANY_BLOG_URL, ANY_BLOG_TITLE, ANY_AUTHOR);
+        Map<URL, Post> sutPosts = sut.getPosts();
+        sutPosts.put(ANY_POST_URL, sut.createPost(ANY_POST_URL, ANY_POST_TITLE, ANY_PUBLISHED_DATE_TIME.plusSeconds(1)));
+
+        BlogRoot compared = BlogRoot.create(ANY_RSS_URL, ANY_BLOG_URL, ANY_BLOG_TITLE, ANY_AUTHOR);
+        Map<URL, Post> comparedPosts = compared.getPosts();
+        Post updatedPost = compared.createPost(URI.create("https://example.com/blog123/124").toURL(), ANY_POST_TITLE, ANY_PUBLISHED_DATE_TIME.plusSeconds(2));
+        comparedPosts.put(URI.create("https://example.com/blog123/124").toURL(), updatedPost);
+        compared.updatePublishedDateTime(updatedPost.getPublishedDateTime()); //발생시간 업데이트
+        //when
+        sut.updateBlogRoot(compared);
+        //then
+        Map<URL, Post> posts = sut.getPosts();
+        assertThat(posts.entrySet()).hasSize(2)
+                .extracting(e->e.getValue().getPostUrl())
+                .containsExactlyInAnyOrder(
+                        ANY_POST_URL,
+                        URI.create("https://example.com/blog123/124").toURL()
+                );
+    }
+
+    @Test
+    @DisplayName("visitPost을 호출할 때 존재하지 않은 postUrl로 호출하면 에러가 발생한다.")
+    void visitPostByNotExistsPostUrl() throws MalformedURLException {
+        //given
+        BlogRoot sut = BlogRoot.create(ANY_RSS_URL, ANY_BLOG_URL, ANY_BLOG_TITLE, ANY_AUTHOR);
+        Map<URL, Post> posts = sut.getPosts();
+        Post post = sut.createPost(ANY_POST_URL, "포스트 제목1 변경", ANY_PUBLISHED_DATE_TIME.plusSeconds(2));
+        posts.put(URI.create("https://example.com/blog123/XXX").toURL(), post);
+        //expected
+        assertThatThrownBy(() -> sut.visitPost(ANY_POST_URL)).isInstanceOf(IllegalStateException.class);
+    }
+
+    @Test
+    @DisplayName("postUrl로 visitPost을 호출하면 해당 postUrl에 해당하는 Post의 postVisitCount가 증가한다.")
+    void visitPostByPostUrl() {
+        //given
+        BlogRoot sut = BlogRoot.create(ANY_RSS_URL, ANY_BLOG_URL, ANY_BLOG_TITLE, ANY_AUTHOR);
+        Map<URL, Post> posts = sut.getPosts();
+        Post post = sut.createPost(ANY_POST_URL, "포스트 제목1 변경", ANY_PUBLISHED_DATE_TIME.plusSeconds(2));
+        posts.put(ANY_POST_URL, post);
+        //then
+        for (int i = 0; i <13 ; i++) {
+            sut.visitPost(ANY_POST_URL);
+        }
+        assertThat(sut.getPosts().get(ANY_POST_URL).getPostVisitCount()).isEqualTo(13);
     }
 }

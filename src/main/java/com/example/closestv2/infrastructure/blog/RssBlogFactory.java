@@ -1,6 +1,5 @@
 package com.example.closestv2.infrastructure.blog;
 
-import com.example.closestv2.clients.RssFeedClient;
 import com.example.closestv2.domain.blog.BlogFactory;
 import com.example.closestv2.domain.blog.BlogRoot;
 import com.example.closestv2.domain.blog.Post;
@@ -16,7 +15,7 @@ import java.net.URL;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.Date;
-import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 
 @Service
@@ -32,7 +31,7 @@ public class RssBlogFactory implements BlogFactory {
         }
 
         LocalDateTime recentPublishedDateTime = blogRoot.getBlogInfo().getPublishedDateTime();
-        List<Post> posts = blogRoot.getPosts();
+        Map<URL, Post> posts = blogRoot.getPosts();
         for (SyndEntry entry : syndFeed.getEntries()) {
             URL postUrl = URI.create(entry.getLink()).toURL();
             String postTitle = entry.getTitle();
@@ -48,9 +47,7 @@ public class RssBlogFactory implements BlogFactory {
             if (Objects.isNull(recentPublishedDateTime) || recentPublishedDateTime.isBefore(updatePostPublishedDateTime)) {
                 recentPublishedDateTime = updatePostPublishedDateTime;
             }
-            if (!posts.contains(post)) {
-                posts.add(post);
-            }
+            posts.put(post.getPostUrl(), post);
         }
         blogRoot.updatePublishedDateTime(recentPublishedDateTime);
 
