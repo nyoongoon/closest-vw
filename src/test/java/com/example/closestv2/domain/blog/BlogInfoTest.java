@@ -1,112 +1,64 @@
 package com.example.closestv2.domain.blog;
 
-import com.example.closestv2.support.RepositoryTestSupport;
-import jakarta.validation.ConstraintViolationException;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.net.MalformedURLException;
+import java.net.URI;
 import java.net.URL;
 import java.time.LocalDateTime;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
-@Transactional
-class BlogInfoTest extends RepositoryTestSupport {
-    @Autowired
-    private BlogRepository blogRepository;
+class BlogInfoTest {
+    private final URL ANY_RSS_URL = URI.create("https://example.com/rss").toURL();
+    private final URL ANY_BLOG_URL = URI.create("https://example.com/").toURL();
+    private final String ANY_BLOG_TITLE = "제목";
+    private final String ANY_AUTHOR = "작가";
+    private final LocalDateTime ANY_PUBLISHED_DATE_TIME = LocalDateTime.of(2022, 1, 1, 12, 3, 31);
+    private final String ANY_STATUS_MESSAGE = "ANY_STATUS_MESSAGE";
 
-    @Test
-    @DisplayName("Blog 생성 시 postUrl, blogTitle, author, publishedDateTime으로 BlogInfo을 생성한다.")
-    void createBlogByBlogInfo() throws MalformedURLException {
-        //given
-        URL blogUrl = new URL("https://example.com/blog123");
-        String blogTitle = "제목";
-        String author = "작가";
-        LocalDateTime publishedDateTime = LocalDateTime.of(2022, 1, 1, 12, 3, 31);
-        BlogRoot blogRoot = BlogRoot.create(
-                blogUrl,
-                blogTitle,
-                author,
-                publishedDateTime
-        );
-        // when
-        blogRepository.save(blogRoot);
-        // then
-        BlogInfo blogInfo = blogRoot.getBlogInfo();
-        assertThat(blogInfo)
-                .extracting(BlogInfo::blogUrl, BlogInfo::blogTitle, BlogInfo::author, BlogInfo::publishedDateTime)
-                .containsExactly(new URL("https://example.com/blog123"), "제목", "작가", LocalDateTime.of(2022, 1, 1, 12, 3, 31));
+    private BlogInfo sut;
+    private BlogInfo.BlogInfoBuilder builder;
+
+    BlogInfoTest() throws MalformedURLException {
+    }
+
+
+    @BeforeEach
+    void setUp() {
+        builder = BlogInfo.builder()
+                .rssUrl(ANY_RSS_URL)
+                .blogUrl(ANY_BLOG_URL)
+                .author(ANY_AUTHOR)
+                .blogTitle(ANY_BLOG_TITLE)
+                .blogVisitCount(0L)
+                .publishedDateTime(ANY_PUBLISHED_DATE_TIME)
+                .statusMessage(ANY_STATUS_MESSAGE);
     }
 
     @Test
-    @DisplayName("Blog 생성 시 BlogInfo의 url이 null이면 에러가 발생한다.")
-    void createBlogInfoWithNullUrl() {
-        //given
-        URL blogUrl = null;
-        //when
-        BlogRoot blogRoot = BlogRoot.create(
-                blogUrl,
-                "제목",
-                "작가",
-                LocalDateTime.of(2022, 1, 1, 12, 3, 31)
-        );
-        //expected
-        assertThatThrownBy(() -> blogRepository.save(blogRoot))
-                .isInstanceOf(ConstraintViolationException.class);
+    @DisplayName("BlogInfo 생성 예외 케이스 - 필수값 검증")
+    void createBlogInfoFailTest() {
+        assertThatThrownBy(() -> sut = builder.rssUrl(null).build()).isInstanceOf(IllegalArgumentException.class);
+        assertThatThrownBy(() -> sut = builder.blogUrl(null).build()).isInstanceOf(IllegalArgumentException.class);
+        assertThatThrownBy(() -> sut = builder.blogTitle(null).build()).isInstanceOf(IllegalArgumentException.class);
+        assertThatThrownBy(() -> sut = builder.author(null).build()).isInstanceOf(IllegalArgumentException.class);
+        assertThatThrownBy(() -> sut = builder.publishedDateTime(null).build()).isInstanceOf(IllegalArgumentException.class);
     }
 
     @Test
-    @DisplayName("Blog 생성 시 BlogInfo의 title이 null이면 에러가 발생한다.")
-    void createBlogInfoWithNullTitle() throws MalformedURLException {
-        //given
-        String blogTitle = null;
-        //when
-        BlogRoot blogRoot = BlogRoot.create(
-                new URL("https://example.com/blog123"),
-                blogTitle,
-                "작가",
-                LocalDateTime.of(2022, 1, 1, 12, 3, 31)
-        );
-        //expected
-        assertThatThrownBy(() -> blogRepository.save(blogRoot))
-                .isInstanceOf(ConstraintViolationException.class);
-    }
-
-    @Test
-    @DisplayName("Blog 생성 시 BlogInfo의 author이 null이면 에러가 발생한다.")
-    void createBlogInfoWithNullAuthor() throws MalformedURLException {
-        //given
-        String author = null;
-        //when
-        BlogRoot blogRoot = BlogRoot.create(
-                new URL("https://example.com/blog123"),
-                "제목",
-                author,
-                LocalDateTime.of(2022, 1, 1, 12, 3, 31)
-        );
-        //expected
-        assertThatThrownBy(() -> blogRepository.save(blogRoot))
-                .isInstanceOf(ConstraintViolationException.class);
-    }
-
-    @Test
-    @DisplayName("Blog 생성 시 BlogInfo의 url이 null이면 에러가 발생한다.")
-    void createBlogInfoWithNullPublishedDateTime() throws MalformedURLException {
-        //given
-        LocalDateTime publishedDateTime = null;
-        //when
-        BlogRoot blogRoot = BlogRoot.create(
-                new URL("https://example.com/blog123"),
-                "제목",
-                "작가",
-                publishedDateTime
-        );
-        //expected
-        assertThatThrownBy(() -> blogRepository.save(blogRoot))
-                .isInstanceOf(ConstraintViolationException.class);
+    @DisplayName("BlogInfo 생성 성공 케이스")
+    void createBlogInfoSuccessTest() {
+        sut = builder.build();
+        assertThat(sut.getRssUrl()).isEqualTo(ANY_RSS_URL);
+        assertThat(sut.getBlogUrl()).isEqualTo(ANY_BLOG_URL);
+        assertThat(sut.getAuthor()).isEqualTo(ANY_AUTHOR);
+        assertThat(sut.getBlogTitle()).isEqualTo(ANY_BLOG_TITLE);
+        assertThat(sut.getBlogVisitCount()).isEqualTo(0L);
+        assertThat(sut.getPublishedDateTime()).isEqualTo(ANY_PUBLISHED_DATE_TIME);
+        assertThat(sut.getStatusMessage()).isEqualTo(ANY_STATUS_MESSAGE);
     }
 }

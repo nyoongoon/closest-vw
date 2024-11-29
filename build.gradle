@@ -42,6 +42,9 @@ dependencies {
     /* test */
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     testImplementation 'org.springframework.security:spring-security-test'
+    /* mock server */
+    testImplementation("org.mock-server:mockserver-client-java:5.15.0")
+    testImplementation("org.mock-server:mockserver-netty:5.15.0")
 
     compileOnly 'org.projectlombok:lombok'
     annotationProcessor 'org.projectlombok:lombok'
