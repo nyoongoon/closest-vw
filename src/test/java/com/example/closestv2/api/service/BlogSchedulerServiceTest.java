@@ -13,16 +13,14 @@ import org.mockserver.client.MockServerClient;
 import org.mockserver.integration.ClientAndServer;
 import org.mockserver.model.Header;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URI;
-import java.net.URISyntaxException;
 import java.net.URL;
 import java.time.LocalDateTime;
-import java.util.List;
 import java.util.Map;
+import java.util.concurrent.CompletableFuture;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.tuple;
@@ -76,15 +74,19 @@ class BlogSchedulerServiceTest extends IntegrationTestSupport {
 
     @Test
     @DisplayName("업데이트 된 블로그를 확인 후 블로그 정보를 업데이트한다.")
-    @Transactional
     void pollingUpdatedBlogs() throws MalformedURLException {
         //given
         BlogRoot blogRoot = BlogRoot.create(ANY_RSS_URL, URI.create(ANY_LINK).toURL(), ANY_BLOG_TITLE, ANY_AUTHOR);
         blogRepository.save(blogRoot);
+
         //when
-        blogSchedulerService.pollingUpdatedBlogs();
+        // 비동기 작업
+        CompletableFuture<Void> future = blogSchedulerService.pollingUpdatedBlogs();
+        // CompletableFuture 완료 대기
+        future.join();
+
         //then
-        //발행시간 업데이트
+        // 비동기 작업이 완전히 끝나고 나서 then을 실행
         BlogRoot found = blogRepository.findById(blogRoot.getId()).orElseThrow();
         found.getBlogInfo().getPublishedDateTime().isEqual(ANY_PUBLISHED_DATE_TIME.plusMinutes(3));
         Map<URL, Post> posts = found.getPosts();
