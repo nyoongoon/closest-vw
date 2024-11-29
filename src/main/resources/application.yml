@@ -16,4 +16,10 @@ spring:
     hibernate:
       ddl-auto: create
       default_batch_fetch_size: 100
-    show-sql: true
+#    show-sql: true
+    show-sql: false
+
+logging:
+  level:
+    org:
+      springframework: warn
