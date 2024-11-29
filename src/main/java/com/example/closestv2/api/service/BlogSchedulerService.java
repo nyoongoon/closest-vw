@@ -31,40 +31,33 @@ public class BlogSchedulerService {
     private final RssFeedClient rssFeedClient;
 
     @Transactional(readOnly = true)
-    @Scheduled(fixedDelay = 10000) // todo 이거 이렇게 해놓으면 비동시 작업 끝나기 전에 재시작 될듯?
+    @Scheduled(fixedDelay = 10000)
     public void pollingUpdatedBlogs() {
         int page = 0;
         boolean hasMore = true;
 
-        while (hasMore) { // FIXME 무한 루프 돌고 있음... .. post 중복으로 계속 들어감....
+        while (hasMore) {
             Page<BlogRoot> blogPage = blogRepository.findAll(PageRequest.of(page, PAGE_SIZE));
             List<BlogRoot> blogRoots = blogPage.getContent();
             hasMore = blogPage.hasNext();
 
-            // 비동기 작업 수집 // todo 분리 // 스레드 기다려보면서 부하 검증..? //jmeter같은 부하테스트가 필요하다..
-            List<CompletableFuture<Void>> futures = blogRoots.stream()
-                    .map(blogRoot -> rssFeedClient.polling(blogRoot.getBlogInfo().getRssUrl())
-                            .thenAccept(syndFeed -> {
-                                try {
-                                    updateBlogBySyndFeed(blogRoot.getId(), syndFeed);
-                                } catch (MalformedURLException e) {
-                                    //로그만 남겨도 됨?
-                                } catch (URISyntaxException e) {
-                                    //로그만 남겨도 됨?
-                                }
-                            })
-                            .exceptionally(ex -> {
-                                log.error("Error processing blogRoot: {}", blogRoot.getId(), ex);
-                                return null;
-                            }))
-                    .toList();
+            // 비동기 처리
+            for (BlogRoot blogRoot : blogRoots) {
 
-            // 모든 작업 완료 대기
-//            CompletableFuture.allOf(futures.toArray(new CompletableFuture[0])).join();
+                CompletableFuture.supplyAsync(
+                        () -> rssFeedClient.getSyndFeed(blogRoot.getBlogInfo().getRssUrl())
+                ).thenAccept((syndFeed) -> {
+                    try {
+                        updateBlogBySyndFeed(blogRoot.getId(), syndFeed);
+                    } catch (MalformedURLException | URISyntaxException e) {
+                        log.error("BlogSchedulerService#pollingUpdatedBlogs : {} - {}", e.getClass(), e.getMessage());
+                    }
+                });
+
+            }
             page++;
         }
     }
-
 
     @Transactional(propagation = Propagation.REQUIRES_NEW)
     public void updateBlogBySyndFeed(Long blogId, SyndFeed syndFeed) throws MalformedURLException, URISyntaxException {
@@ -74,5 +67,4 @@ public class BlogSchedulerService {
         blogRoot.updateBlogRoot(recentBlogRoot);
         blogRepository.save(blogRoot);
     }
-
 }
