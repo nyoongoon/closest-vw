@@ -10,8 +10,10 @@ spring:
     username: sa
     password:
     driver-class-name: org.h2.Driver
+  sql:
+    init:
+      mode: never # 디폴트 설정은 embedded
   jpa:
-    defer-datasource-initialization: false # 실행시 data.sql 적용
     hibernate:
       ddl-auto: create
       default_batch_fetch_size: 100

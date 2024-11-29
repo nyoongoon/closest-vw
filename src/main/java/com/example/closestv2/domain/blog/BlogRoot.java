@@ -10,7 +10,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.hibernate.proxy.HibernateProxy;
 
 import java.net.URL;
+import java.time.Instant;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
@@ -50,12 +52,13 @@ public class BlogRoot {
             String blogTitle,
             String author
     ) {
+        LocalDateTime epochTime = LocalDateTime.ofInstant(Instant.EPOCH, ZoneId.of("Asia/Seoul"));
         BlogInfo blogInfo = BlogInfo.builder()
                 .rssUrl(rssUrl)
                 .blogUrl(blogUrl)
                 .blogTitle(blogTitle)
                 .author(author)
-                .publishedDateTime(LocalDateTime.MIN)
+                .publishedDateTime(epochTime)
                 .blogVisitCount(0L)
                 .build();
         return BlogRoot.builder()

@@ -15,6 +15,7 @@ import java.net.URI;
 import java.net.URL;
 import java.time.Instant;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.time.ZoneOffset;
 import java.util.ArrayList;
 import java.util.Date;
@@ -97,7 +98,7 @@ class RssBlogFactoryTest {
         BlogRoot blog = sut.createRecentBlogRoot(ANY_RSS_URL, syndFeed);
         BlogInfo blogInfo = blog.getBlogInfo();
         //then
-        assertThat(blogInfo.getPublishedDateTime()).isEqualTo(LocalDateTime.MIN);
+        assertThat(blogInfo.getPublishedDateTime()).isEqualTo(LocalDateTime.ofInstant(Instant.EPOCH, ZoneId.of("Asia/Seoul")));
     }
 
     @Test
