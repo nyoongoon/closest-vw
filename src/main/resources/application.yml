@@ -11,8 +11,15 @@ spring:
     password:
     driver-class-name: org.h2.Driver
   jpa:
-    defer-datasource-initialization: true # 실행시 data.sql 적용
+    # Whether to defer DataSource initialization until after any EntityManagerFactory beans have been created and initialized."
+    defer-datasource-initialization: true # true로 설정해서 EntityManagerFactory(Hibernate) 초기화 이후 data.sql가 실행되도록 변경한다. 디폴트는 false
     hibernate:
       ddl-auto: create
       default_batch_fetch_size: 100
-    show-sql: true
+#    show-sql: true
+    show-sql: false
+
+logging:
+  level:
+    org:
+      springframework: warn

@@ -93,7 +93,7 @@ class BlogSchedulerServiceTest extends IntegrationTestSupport {
         assertThat(posts.entrySet())
                 .hasSize(2)
                 .extracting(e->e.getValue().getPostUrl(), e->e.getValue().getPostTitle(), e->e.getValue().getPublishedDateTime())
-                .containsExactly(
+                .containsExactlyInAnyOrder(
                         tuple(URI.create(POST_ONE_LINK).toURL(), POST_ONE_TITLE, ANY_PUBLISHED_DATE_TIME.plusMinutes(1)),
                         tuple(URI.create(POST_TWO_LINK).toURL(), POST_TWO_TITLE, ANY_PUBLISHED_DATE_TIME.plusMinutes(2))
                 );

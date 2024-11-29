@@ -24,16 +24,4 @@ public class RssFeedClient {
             log.info("getSyndFeed() - rssUrl : {}", rssUrl);
         }
     }
-
-
-//    @Async //동일 클래스 내에서 메서드 호출은 프록시를 거치지 않고 직접 호출되므로 @Async가 무시됨
-//    public SyndFeed polling(URL rssUrl) {
-//        log.info("polling() - RssUrl : {}", rssUrl);
-//        try {
-//            return CompletableFuture.completedFuture(getSyndFeed(rssUrl));
-//        } catch (Exception ex) {
-//            log.error("Error fetching RSS feed for blogRoot: {}", rssUrl, ex);
-//            return CompletableFuture.failedFuture(ex);
-//        }
-//    }
 }
