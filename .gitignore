@@ -35,3 +35,6 @@ out/
 
 ### VS Code ###
 .vscode/
+
+### Open Api Code Gen ##
+/src/main/openapi-generated/

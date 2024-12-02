@@ -2,6 +2,7 @@ plugins {
     id 'java'
     id 'org.springframework.boot' version '3.3.4'
     id 'io.spring.dependency-management' version '1.1.6'
+    id "org.openapi.generator" version "7.7.0"
 }
 
 group = 'com.example'
@@ -42,6 +43,7 @@ dependencies {
     /* test */
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     testImplementation 'org.springframework.security:spring-security-test'
+
     /* mock server */
     testImplementation("org.mock-server:mockserver-client-java:5.15.0")
     testImplementation("org.mock-server:mockserver-netty:5.15.0")
@@ -50,6 +52,58 @@ dependencies {
     annotationProcessor 'org.projectlombok:lombok'
     developmentOnly 'org.springframework.boot:spring-boot-devtools'
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+
+    /* open api*/
+    implementation('org.openapitools:openapi-generator:7.7.0') {
+        exclude group: 'org.slf4j', module: 'slf4j-simple'
+    }
+    implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.6.0'
+}
+openApiGenerate {
+    generatorName = "spring"
+    inputSpec = "${projectDir}/src/main/api-spec/closest-api.yml"
+    outputDir = "${projectDir}/src/main"
+    configFile = "${projectDir}/src/main/api-spec/config.json"
+    configOptions = [
+            "dateLibrary"          : "spring",
+            "useSpringBoot3"       : "true",
+            "openApiNullable"      : "false",
+            "sourceFolder"         : "openapi-generated",
+            "interfaceOnly"        : "true",
+            "useBeanValidation"    : "true",
+            "performBeanValidation": "true",
+    ]
+}
+
+tasks.named("openApiGenerate") {
+
+    it ->
+        it.doFirst {
+            delete("${projectDir}/src/main/openapi-generated")
+        }
+
+        it.doLast {
+            delete("${projectDir}/src/main/pom.xml")
+            delete("${projectDir}/src/main/README.md")
+            delete("${projectDir}/src/main/.openapi-generator-ignore")
+            delete("${projectDir}/src/main/.openapi-generator")
+        }
+}
+
+tasks.named('compileJava') {
+    it -> it.dependsOn(tasks.named('openApiGenerate'))
+}
+
+tasks.named('processResources') {
+    it -> it.dependsOn(tasks.named('openApiGenerate'))
+}
+
+sourceSets {
+    main {
+        java {
+            srcDirs = ['src/main/java', 'src/main/openapi-generated']
+        }
+    }
 }
 
 tasks.named('test') {

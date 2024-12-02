@@ -1,4 +1,4 @@
-package com.example.closestv2.clients;
+package com.example.closestv2.util.clients;
 
 import com.rometools.rome.feed.synd.SyndFeed;
 import com.rometools.rome.io.FeedException;

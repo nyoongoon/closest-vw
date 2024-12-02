@@ -1,6 +1,6 @@
 package com.example.closestv2.api.service;
 
-import com.example.closestv2.clients.RssFeedClient;
+import com.example.closestv2.util.clients.RssFeedClient;
 import com.example.closestv2.domain.blog.BlogFactory;
 import com.example.closestv2.domain.blog.BlogRepository;
 import com.example.closestv2.domain.blog.BlogRoot;
@@ -46,9 +46,11 @@ public class BlogSchedulerService {
                 // 비동기 처리
                 List<CompletableFuture<Void>> futures = blogRoots.stream()
                         .map(blogRoot -> CompletableFuture.supplyAsync(
+                                // 비동기 호출
                                 () -> rssFeedClient.getSyndFeed(blogRoot.getBlogInfo().getRssUrl())
                         ).thenAccept(syndFeed -> {
                             try {
+                                // 콜백
                                 updateBlogBySyndFeed(blogRoot.getId(), syndFeed);
                             } catch (MalformedURLException | URISyntaxException e) {
                                 log.error("BlogSchedulerService#pollingUpdatedBlogs : {} - {}", e.getClass(), e.getMessage());

@@ -1,5 +1,6 @@
 package com.example.closestv2.clients;
 
+import com.example.closestv2.util.clients.RssFeedClient;
 import com.example.closestv2.util.file.FileUtil;
 import com.rometools.rome.feed.synd.SyndEntry;
 import com.rometools.rome.feed.synd.SyndFeed;
