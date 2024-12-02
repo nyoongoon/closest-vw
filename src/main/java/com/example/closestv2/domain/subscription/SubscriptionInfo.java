@@ -14,22 +14,19 @@ import static com.example.closestv2.api.exception.ExceptionMessageConstants.SUBS
 @EqualsAndHashCode
 public class SubscriptionInfo {
     @NotNull(message = MEMBER_ID_IS_REQUIRED)
-    Long memberId;
+    long memberId;
 
     @NotNull(message = SUBSCRIPTION_VISIT_COUNT_IS_REQUIRED)
-    Long subscriptionVisitCount;
+    long subscriptionVisitCount;
 
     String subscriptionNickName;
 
     @Builder(access = AccessLevel.PROTECTED)
     private SubscriptionInfo(
-            Long memberId,
-            Long subscriptionVisitCount,
+            long memberId,
+            long subscriptionVisitCount,
             String subscriptionNickName
     ) {
-        Assert.notNull(memberId, MEMBER_ID_IS_REQUIRED);
-        Assert.notNull(subscriptionVisitCount, SUBSCRIPTION_VISIT_COUNT_IS_REQUIRED);
-
         this.memberId = memberId;
         this.subscriptionVisitCount = subscriptionVisitCount;
         this.subscriptionNickName = subscriptionNickName;

@@ -26,19 +26,18 @@ public class SubscriptionBlog {
     LocalDateTime publishedDateTime;
 
     @NotNull(message = NEW_POST_COUNT_IS_REQUIRED)
-    Long newPostCount;
+    long newPostCount;
 
     @Builder(access = AccessLevel.PROTECTED)
     private SubscriptionBlog(
             URL blogUrl,
             String blogTitle,
             LocalDateTime publishedDateTime,
-            Long newPostCount
+            long newPostCount
     ) {
         Assert.notNull(blogUrl, BLOG_URL_IS_REQUIRED);
         Assert.hasText(blogTitle, BLOG_TITLE_IS_REQUIRED);
         Assert.notNull(publishedDateTime, SUBSCRIPTION_PUBLISHED_DATETIME_IS_REQUIRED);
-        Assert.notNull(newPostCount, NEW_POST_COUNT_IS_REQUIRED);
 
         this.blogUrl = blogUrl;
         this.blogTitle = blogTitle;

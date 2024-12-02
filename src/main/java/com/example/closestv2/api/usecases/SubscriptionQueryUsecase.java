@@ -5,6 +5,6 @@ import com.example.closestv2.models.SubscriptionResponse;
 import java.util.List;
 
 public interface SubscriptionQueryUsecase {
-    List<SubscriptionResponse> getCloseSubscriptionList(Long memberId);
-    List<SubscriptionResponse> getCloseSubscriptionList(Long memberId, Integer page, Integer size);
+    List<SubscriptionResponse> getCloseSubscriptionList(long memberId);
+    List<SubscriptionResponse> getCloseSubscriptionList(long memberId, int page, int size);
 }

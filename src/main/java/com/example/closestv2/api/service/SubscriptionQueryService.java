@@ -7,12 +7,12 @@ import java.util.List;
 
 public class SubscriptionQueryService implements SubscriptionQueryUsecase {
     @Override
-    public List<SubscriptionResponse> getCloseSubscriptionList(Long memberId) {
+    public List<SubscriptionResponse> getCloseSubscriptionList(long memberId) {
         return List.of();
     }
 
     @Override
-    public List<SubscriptionResponse> getCloseSubscriptionList(Long memberId, Integer page, Integer size) {
+    public List<SubscriptionResponse> getCloseSubscriptionList(long memberId, int page, int size) {
         return List.of();
     }
 }

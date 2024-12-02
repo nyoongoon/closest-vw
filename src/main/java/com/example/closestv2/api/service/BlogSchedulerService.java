@@ -68,7 +68,7 @@ public class BlogSchedulerService {
 
 
     @Transactional(propagation = Propagation.REQUIRES_NEW)
-    public void updateBlogBySyndFeed(Long blogId, SyndFeed syndFeed) throws MalformedURLException, URISyntaxException {
+    public void updateBlogBySyndFeed(long blogId, SyndFeed syndFeed) throws MalformedURLException, URISyntaxException {
         BlogRoot blogRoot = blogRepository.findById(blogId).orElseThrow(() -> new IllegalStateException(NOT_EXISTS_BLOG));
         log.info("updateBlogBySyndFeed() - RssUrl : {}", blogRoot.getBlogInfo().getRssUrl());
         BlogRoot recentBlogRoot = blogFactory.createRecentBlogRoot(blogRoot.getBlogInfo().getRssUrl(), syndFeed);

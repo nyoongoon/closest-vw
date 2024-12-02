@@ -56,7 +56,7 @@ class MemberRootTest {
     @DisplayName("MyBlog 생성 시 myBlogVisitCount는 외부에서 전달받아 생성된다.")
     void createMyBlogWithMyBlogVisitCount() {
         //given
-        Long blogVisitCount = 11L; //TODO 해당 테스트 따로 만들기 - 기존에 url에 해당하는 BlogRoot가 존재하면 해당 블로그의 visitCount를 가져오고 존재하지 않으면 0L으로 생성
+        long blogVisitCount = 11L; //TODO 해당 테스트 따로 만들기 - 기존에 url에 해당하는 BlogRoot가 존재하면 해당 블로그의 visitCount를 가져오고 존재하지 않으면 0L으로 생성
         MemberRoot memberRoot = MemberRoot.create(ANY_USER_EMAIL, ANY_PASSWORD, ANY_NICK_NAME);
         memberRoot.saveMyBlog(ANY_URL, blogVisitCount);
         //then
@@ -67,7 +67,7 @@ class MemberRootTest {
     @DisplayName("MyBlog 가 방문될 경우 visitMyBlog()로 방문횟수를 1 증가시킨다.")
     void visitMyBlog() {
         //given
-        Long blogVisitCount = 11L; //TODO 해당 테스트 따로 만들기 - 기존에 url에 해당하는 BlogRoot가 존재하면 해당 블로그의 visitCount를 가져오고 존재하지 않으면 0L으로 생성
+        long blogVisitCount = 11L; //TODO 해당 테스트 따로 만들기 - 기존에 url에 해당하는 BlogRoot가 존재하면 해당 블로그의 visitCount를 가져오고 존재하지 않으면 0L으로 생성
         MemberRoot memberRoot = MemberRoot.create(ANY_USER_EMAIL, ANY_PASSWORD, ANY_NICK_NAME);
         memberRoot.saveMyBlog(ANY_URL, blogVisitCount);
         //when

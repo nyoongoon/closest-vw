@@ -13,8 +13,8 @@ tags:
     description: 구독 블로그 방문
   - name: subscriptionRegister
     description: 구독 블로그 추가 및 삭제
-  - name: myBlog
-    description: 나의 블로그 관리
+  - name: myBlogStatus
+    description: 나의 블로그 상태 관리
   - name: post
     description: 포스트 관리
   - name: blogAuth
@@ -153,7 +153,7 @@ paths:
   /my-blog/status:
     patch:
       tags:
-        - myBlog
+        - myBlogStatus
       summary: 자신의 블로그에 다른 유저들이 볼 수 있는 상태 메시지 설정
       requestBody:
         required: true

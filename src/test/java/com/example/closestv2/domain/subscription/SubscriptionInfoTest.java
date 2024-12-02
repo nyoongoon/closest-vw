@@ -8,8 +8,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 class SubscriptionInfoTest {
-    private final Long ANY_MEMBER_ID = 1L;
-    private final Long ANY_SUBSCRIPTION_VISIT_COUNT = 0L;
+    private final long ANY_MEMBER_ID = 1L;
+    private final long ANY_SUBSCRIPTION_VISIT_COUNT = 0L;
 
     private SubscriptionInfo sut;
     private SubscriptionInfo.SubscriptionInfoBuilder builder;
@@ -19,13 +19,6 @@ class SubscriptionInfoTest {
         builder = SubscriptionInfo.builder()
                 .memberId(ANY_MEMBER_ID)
                 .subscriptionVisitCount(ANY_SUBSCRIPTION_VISIT_COUNT);
-    }
-
-    @Test
-    @DisplayName("SubscriptionInfo 생성 예외 케이스 - 필수값 검증")
-    void createSubscriptionInfoFailTest() {
-        assertThatThrownBy(() -> sut = builder.memberId(null).build()).isInstanceOf(IllegalArgumentException.class);
-        assertThatThrownBy(() -> sut = builder.subscriptionVisitCount(null).build()).isInstanceOf(IllegalArgumentException.class);
     }
 
     @Test

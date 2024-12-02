@@ -8,6 +8,6 @@ import java.net.URL;
 @Service
 public class PostLikeService implements PostLikeUsecase {
     @Override
-    public void likePost(Long memberId, URL url) {
+    public void likePost(long memberId, URL url) {
     }
 }

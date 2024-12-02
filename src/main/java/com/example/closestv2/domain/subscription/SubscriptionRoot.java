@@ -43,7 +43,7 @@ public class SubscriptionRoot {
     }
 
     public static SubscriptionRoot create(
-            Long memberId,
+            long memberId,
             URL blogUrl,
             String blogTitle,
             LocalDateTime publishedDateTime
@@ -66,7 +66,7 @@ public class SubscriptionRoot {
 
     // TODO 구독 방문 이벤트 발생 !
     public void increaseVisitCount() {
-        Long plusedVisitCount = subscriptionInfo.getSubscriptionVisitCount() + 1;
+        long plusedVisitCount = subscriptionInfo.getSubscriptionVisitCount() + 1;
 
         subscriptionInfo = SubscriptionInfo.builder()
                 .memberId(subscriptionInfo.getMemberId())
@@ -75,7 +75,7 @@ public class SubscriptionRoot {
         Events.raise(new SubscriptionVisitEvent(subscriptionBlog.getBlogUrl()));
     }
 
-    public void putRecentBlogInfo(LocalDateTime publishedDateTime, Long newPostCount) {
+    public void putRecentBlogInfo(LocalDateTime publishedDateTime, long newPostCount) {
         if (subscriptionBlog.getPublishedDateTime().isAfter(publishedDateTime)) {
             throw new IllegalArgumentException(RECENT_PUBLISHED_DATETIME_IS_PAST);
         }

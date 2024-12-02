@@ -35,19 +35,18 @@ public class Post {
     private LocalDateTime publishedDateTime;
 
     @NotNull(message = POST_VISIT_COUNT_IS_REQUIRED)
-    private Long postVisitCount;
+    private long postVisitCount;
 
     @Builder(access = AccessLevel.PROTECTED)
     private Post(
             URL postUrl,
             String postTitle,
             LocalDateTime publishedDateTime,
-            Long postVisitCount
+            long postVisitCount
     ) {
         Assert.notNull(postUrl, POST_URL_IS_REQUIRED);
         Assert.hasText(postTitle, POST_TITLE_IS_REQUIRED);
         Assert.notNull(publishedDateTime, POST_PUBLISHED_DATETIME_IS_REQUIRED);
-        Assert.notNull(postVisitCount, POST_VISIT_COUNT_IS_REQUIRED);
 
         this.postUrl = postUrl;
         this.postTitle = postTitle;

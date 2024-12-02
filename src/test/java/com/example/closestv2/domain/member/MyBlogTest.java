@@ -30,7 +30,6 @@ class MyBlogTest {
     @DisplayName("MyBlog 생성 예외 케이스 - 필수값 검증")
     void createMyBlogFailTest() {
         assertThatThrownBy(() -> builder.blogUrl(null).build()).isInstanceOf(IllegalArgumentException.class);
-        assertThatThrownBy(() -> builder.myBlogVisitCount(null).build()).isInstanceOf(IllegalArgumentException.class);
     }
 
     @Test

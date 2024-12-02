@@ -20,19 +20,17 @@ class MyBlog {
     @Column(unique = true)
     URL blogUrl;
 
-    @NotNull(message = MY_BLOG_VISIT_COUNT_IS_REQUIRED)
-    Long myBlogVisitCount;
+    long myBlogVisitCount;
 
     String statusMessage;
 
     @Builder(access = AccessLevel.PROTECTED)
     public MyBlog(
             URL blogUrl,
-            Long myBlogVisitCount,
+            long myBlogVisitCount,
             String statusMessage
     ) {
         Assert.notNull(blogUrl, MY_BLOG_URL_IS_REQUIRED);
-        Assert.notNull(myBlogVisitCount, MY_BLOG_VISIT_COUNT_IS_REQUIRED);
 
         this.blogUrl = blogUrl;
         this.myBlogVisitCount = myBlogVisitCount;

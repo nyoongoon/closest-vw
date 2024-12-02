@@ -206,7 +206,7 @@ public class BlogRoot {
         }
 
         Post post = posts.get(postUrl);
-        Long postVisitCount = post.getPostVisitCount();
+        long postVisitCount = post.getPostVisitCount();
 
         Post updatedPost = Post.builder()
                 .postUrl(post.getPostUrl())
