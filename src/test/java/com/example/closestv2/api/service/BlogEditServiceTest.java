@@ -1,8 +1,7 @@
 package com.example.closestv2.api.service;
 
 import com.example.closestv2.domain.blog.BlogRepository;
-import com.example.closestv2.domain.member.event.StatusMessageEditEvent;
-import com.example.closestv2.infrastructure.event.Events;
+import com.example.closestv2.domain.blog.BlogRoot;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -12,9 +11,17 @@ import org.mockito.MockitoAnnotations;
 import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URL;
+import java.util.Optional;
+
+import static org.assertj.core.api.Assertions.*;
+import static org.mockito.Mockito.when;
 
 class BlogEditServiceTest {
-    private final URL ANY_BLOG_URL = URI.create("http://example.com").toURL();
+    private final URL ANY_RSS_URL = URI.create("http://example.com/rss").toURL();
+    private final URL ANY_BLOG_URL1 = URI.create("http://example1.com").toURL();
+    private final URL ANY_BLOG_URL2 = URI.create("http://example2.com").toURL();
+    private final String ANY_TITLE = "제목";
+    private final String ANY_AUTHOR = "작가";
     private final String ANY_STATUS_MESSAGE = "변경된 상태 메시지";
 
     private BlogEditService blogEditService;
@@ -32,40 +39,41 @@ class BlogEditServiceTest {
 
     }
 
-
-
     @Test
-    @DisplayName("")
-    void editStatueMessage(){
+    @DisplayName("블로그의 상태메시지를 수정할 수 있다.")
+    void editStatueMessage() {
         //given
-        long memberId = 1L;
-
-
-        Events.raise(new StatusMessageEditEvent(ANY_BLOG_URL, ANY_STATUS_MESSAGE));
+        saveBlogRoot(ANY_BLOG_URL1);
         //when
+        blogEditService.editStatueMessage(ANY_BLOG_URL1, ANY_STATUS_MESSAGE);
         //then
-        throw new IllegalStateException();
+        BlogRoot blogRoot = blogRepository.findByBlogInfoBlogUrl(ANY_BLOG_URL1).orElseThrow();
+        assertThat(blogRoot.getBlogInfo().getStatusMessage()).isEqualTo(ANY_STATUS_MESSAGE);
     }
 
     @Test
-    @DisplayName("")
-    void editStatueMessageWithNotExistsBlogUrl(){
+    @DisplayName("존재하지 않는 BlogUrl로 상태메시지 수정 요청 시 에러가 발생한다.")
+    void editStatueMessageWithNotExistsBlogUrl()  {
         //given
-
-        Events.raise(new StatusMessageEditEvent(ANY_BLOG_URL, ANY_STATUS_MESSAGE));
-        //when
-        //then
-        throw new IllegalStateException();
+        saveBlogRoot(ANY_BLOG_URL1);
+        //expected
+        assertThatThrownBy(() -> blogEditService.editStatueMessage(ANY_BLOG_URL2, ANY_STATUS_MESSAGE))
+                .isInstanceOf(IllegalArgumentException.class);
     }
 
     @Test
-    @DisplayName("")
-    void editStatueMessageWithEmptyStatusMessage(){
+    @DisplayName("상태메지시가 empty여도 예외가 발생하지 않는다.")
+    void editStatueMessageWithEmptyStatusMessage()  {
         //given
+        saveBlogRoot(ANY_BLOG_URL1);
+        //expected
+        assertThatCode(()-> blogEditService.editStatueMessage(ANY_BLOG_URL1, null));
+        assertThatCode(()-> blogEditService.editStatueMessage(ANY_BLOG_URL1, ""));
+        assertThatCode(()-> blogEditService.editStatueMessage(ANY_BLOG_URL1, " "));
+    }
 
-        Events.raise(new StatusMessageEditEvent(ANY_BLOG_URL, ANY_STATUS_MESSAGE));
-        //when
-        //then
-        throw new IllegalStateException();
+    private void saveBlogRoot(URL url){
+        BlogRoot blogRoot = BlogRoot.create(ANY_RSS_URL, url, ANY_TITLE, ANY_AUTHOR);
+        when(blogRepository.findByBlogInfoBlogUrl(ANY_BLOG_URL1)).thenReturn(Optional.of(blogRoot));
     }
 }
