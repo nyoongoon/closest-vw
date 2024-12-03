@@ -1,7 +1,7 @@
 package com.example.closestv2.api.controller;
 
 import com.example.closestv2.api.service.model.request.MyBlogStatusPatchServiceRequest;
-import com.example.closestv2.api.usecases.MyBlogStatusUsecase;
+import com.example.closestv2.api.usecases.MyBlogEditUsecase;
 import com.example.closestv2.models.MyBlogStatusPatchRequest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -18,10 +18,10 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.*;
 
-class MyBlogStatusControllerTest {
+class MyBlogEditControllerTest {
 
     @Mock
-    private MyBlogStatusUsecase myBlogStatusUsecase;
+    private MyBlogEditUsecase myBlogEditUsecase;
 
     @Mock
     private SecurityContext securityContext;
@@ -30,7 +30,7 @@ class MyBlogStatusControllerTest {
     private Authentication authentication;
 
     @InjectMocks
-    private MyBlogStatusController myBlogStatusController;
+    private MyBlogEditController myBlogEditController;
 
     @BeforeEach
     void setUp() {
@@ -50,7 +50,7 @@ class MyBlogStatusControllerTest {
         when(authentication.getPrincipal()).thenReturn(expectedPrincipal);
 
         // when
-        ResponseEntity<Void> response = myBlogStatusController.myBlogStatusPatch(request);
+        ResponseEntity<Void> response = myBlogEditController.myBlogStatusPatch(request);
 
         // then
         assertEquals(ResponseEntity.ok().build(), response);
@@ -58,7 +58,7 @@ class MyBlogStatusControllerTest {
         ArgumentCaptor<Long> principalCaptor = ArgumentCaptor.forClass(Long.class);
         ArgumentCaptor<MyBlogStatusPatchServiceRequest> serviceRequestCaptor = ArgumentCaptor.forClass(MyBlogStatusPatchServiceRequest.class);
 
-        verify(myBlogStatusUsecase, times(1)).resetMyBlogStatusMessage(principalCaptor.capture(), serviceRequestCaptor.capture());
+        verify(myBlogEditUsecase, times(1)).editMyBlogStatusMessage(principalCaptor.capture(), serviceRequestCaptor.capture());
 
         assertEquals(123L, principalCaptor.getValue());
         assertEquals("New status message", serviceRequestCaptor.getValue().getMessage());

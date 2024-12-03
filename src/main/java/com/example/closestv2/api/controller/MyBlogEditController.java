@@ -1,8 +1,8 @@
 package com.example.closestv2.api.controller;
 
-import com.example.closestv2.api.MyBlogStatusApi;
+import com.example.closestv2.api.MyBlogEditApi;
 import com.example.closestv2.api.service.model.request.MyBlogStatusPatchServiceRequest;
-import com.example.closestv2.api.usecases.MyBlogStatusUsecase;
+import com.example.closestv2.api.usecases.MyBlogEditUsecase;
 import com.example.closestv2.models.MyBlogStatusPatchRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -12,14 +12,14 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequiredArgsConstructor
-public class MyBlogStatusController implements MyBlogStatusApi {
-    private final MyBlogStatusUsecase myBlogStatusUsecase;
+public class MyBlogEditController implements MyBlogEditApi {
+    private final MyBlogEditUsecase myBlogEditUsecase;
 
     @Override
     public ResponseEntity<Void> myBlogStatusPatch(MyBlogStatusPatchRequest request) {
         Authentication authentication = SecurityContextHolder.getContextHolderStrategy().getContext().getAuthentication();
         Object principal = authentication.getPrincipal();
-        myBlogStatusUsecase.resetMyBlogStatusMessage((long) principal, toServiceRequest(request));
+        myBlogEditUsecase.editMyBlogStatusMessage((long) principal, toServiceRequest(request));
 
         return ResponseEntity.ok().build();
     }

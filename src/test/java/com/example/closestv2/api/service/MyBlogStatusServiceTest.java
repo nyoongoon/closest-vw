@@ -4,7 +4,7 @@ import com.example.closestv2.api.service.model.request.MyBlogStatusPatchServiceR
 import com.example.closestv2.domain.member.MemberRepository;
 import com.example.closestv2.domain.member.MemberRoot;
 import com.example.closestv2.domain.member.MyBlog;
-import com.example.closestv2.domain.member.event.StatusMessageChangeEvent;
+import com.example.closestv2.domain.member.event.StatusMessageEditEvent;
 import com.example.closestv2.infrastructure.event.Events;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -22,7 +22,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.*;
 
 class MyBlogStatusServiceTest {
-    private MyBlogStatusService myBlogStatusService;
+    private MyBlogEditService myBlogStatusService;
 
     @Mock
     private MemberRepository memberRepository;
@@ -32,9 +32,7 @@ class MyBlogStatusServiceTest {
     @BeforeEach
     void setUp() {
         MockitoAnnotations.openMocks(this);
-        myBlogStatusService = new MyBlogStatusService(memberRepository);
-//        mockPublisher = mock(ApplicationEventPublisher.class);
-        // Initializing Events with mock
+        myBlogStatusService = new MyBlogEditService(memberRepository);
         Events.setPublisher(mockPublisher);
     }
 
@@ -49,7 +47,7 @@ class MyBlogStatusServiceTest {
         when(memberRepository.findById(1L)).thenReturn(Optional.of(memberRoot));
 
         //when
-        myBlogStatusService.resetMyBlogStatusMessage(memberId, serviceRequest);
+        myBlogStatusService.editMyBlogStatusMessage(memberId, serviceRequest);
 
         //then
         MemberRoot found = memberRepository.findById(1L).orElseThrow();
@@ -66,12 +64,12 @@ class MyBlogStatusServiceTest {
         MemberRoot memberRoot = MemberRoot.create("test@domain.com", "Password123!", "닉네임");
         memberRoot.saveMyBlog(URI.create("https://example.com/rss").toURL(), 0L);
         when(memberRepository.findById(memberId)).thenReturn(Optional.of(memberRoot));
-        ArgumentCaptor<StatusMessageChangeEvent> captor = ArgumentCaptor.forClass(StatusMessageChangeEvent.class);
+        ArgumentCaptor<StatusMessageEditEvent> captor = ArgumentCaptor.forClass(StatusMessageEditEvent.class);
         // when
-        myBlogStatusService.resetMyBlogStatusMessage(memberId, serviceRequest);
+        myBlogStatusService.editMyBlogStatusMessage(memberId, serviceRequest);
         // then
         verify(mockPublisher, times(1)).publishEvent(captor.capture());
-        StatusMessageChangeEvent event = captor.getValue();
+        StatusMessageEditEvent event = captor.getValue();
         assertThat(event.blogUrl().toString()).isEqualTo("https://example.com/rss");
         assertThat(event.statusMessage()).isEqualTo("새로운 상태 메시지"); //검증하기..
     }

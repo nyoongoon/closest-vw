@@ -1,19 +1,38 @@
 package com.example.closestv2.domain.member;
 
+import com.example.closestv2.api.service.MyBlogEditService;
+import com.example.closestv2.domain.member.event.StatusMessageEditEvent;
+import com.example.closestv2.infrastructure.event.Events;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.mockito.ArgumentCaptor;
+import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
+import org.springframework.context.ApplicationEventPublisher;
 
 import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URL;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 
 class MemberRootTest {
     private final String ANY_USER_EMAIL = "abc@naver.com";
     private final String ANY_PASSWORD = "Abc1234!!";
     private final String ANY_NICK_NAME = "닉네임";
     private final URL ANY_URL = URI.create("https://goalinnext.tistory.com/rss").toURL();
+
+    @Mock
+    private ApplicationEventPublisher mockPublisher;
+
+    @BeforeEach
+    void setUp() {
+        MockitoAnnotations.openMocks(this);
+        Events.setPublisher(mockPublisher);
+    }
 
     MemberRootTest() throws MalformedURLException {
     }
@@ -50,6 +69,23 @@ class MemberRootTest {
         memberRoot.withStatusMessage(statusMessage);
         //then
         assertThat(memberRoot.getMyBlog().getStatusMessage()).isEqualTo("상태 메시지입니다.");
+    }
+
+    @DisplayName("상태메시지 변경 시 상태메시지 변경 이벤트가 발행된다.")
+    @Test
+    void memberRootWithStatusMessagePublishEvent() {
+        //given
+        MemberRoot memberRoot = MemberRoot.create(ANY_USER_EMAIL, ANY_PASSWORD, ANY_NICK_NAME);
+        memberRoot.saveMyBlog(ANY_URL, 0L);
+        String statusMessage = "상태 메시지입니다."; //상태 메시지
+        ArgumentCaptor<StatusMessageEditEvent> captor = ArgumentCaptor.forClass(StatusMessageEditEvent.class);
+        //when
+        memberRoot.withStatusMessage(statusMessage);
+        //then
+        verify(mockPublisher, times(1)).publishEvent(captor.capture());
+        StatusMessageEditEvent event = captor.getValue();
+        assertThat(event.blogUrl()).isEqualTo(ANY_URL);
+        assertThat(event.statusMessage()).isEqualTo("상태 메시지입니다."); //검증하기..
     }
 
     @Test
