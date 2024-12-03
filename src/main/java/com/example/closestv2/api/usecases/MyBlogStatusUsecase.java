@@ -5,5 +5,5 @@ import com.example.closestv2.models.MyBlogStatusPatchRequest;
 import org.springframework.http.ResponseEntity;
 
 public interface MyBlogStatusUsecase {
-    ResponseEntity<Void> resetMyBlogStatusMessage(long memberId, MyBlogStatusPatchServiceRequest serviceRequest);
+    void resetMyBlogStatusMessage(long memberId, MyBlogStatusPatchServiceRequest serviceRequest);
 }

@@ -4,6 +4,7 @@ import com.example.closestv2.api.service.model.request.MyBlogStatusPatchServiceR
 import com.example.closestv2.api.usecases.MyBlogStatusUsecase;
 import com.example.closestv2.models.MyBlogStatusPatchRequest;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
@@ -38,29 +39,28 @@ class MyBlogStatusControllerTest {
         when(securityContext.getAuthentication()).thenReturn(authentication);
     }
 
+    @DisplayName("myBlogStatusPatch가 호출 될 때 세션에서 유저 정보를 조회하여 전달한다.")
     @Test
-    void testMyBlogStatusPatch() {
-        // Given
+    void myBlogStatusPatch() {
+        // given
         Long expectedPrincipal = 123L;
         MyBlogStatusPatchRequest request = new MyBlogStatusPatchRequest();
         request.setMessage("New status message");
 
         when(authentication.getPrincipal()).thenReturn(expectedPrincipal);
 
-        // When
+        // when
         ResponseEntity<Void> response = myBlogStatusController.myBlogStatusPatch(request);
 
-        // Then
+        // then
         assertEquals(ResponseEntity.ok().build(), response);
 
-        // Capture the argument passed to the usecase
         ArgumentCaptor<Long> principalCaptor = ArgumentCaptor.forClass(Long.class);
         ArgumentCaptor<MyBlogStatusPatchServiceRequest> serviceRequestCaptor = ArgumentCaptor.forClass(MyBlogStatusPatchServiceRequest.class);
 
         verify(myBlogStatusUsecase, times(1)).resetMyBlogStatusMessage(principalCaptor.capture(), serviceRequestCaptor.capture());
 
-        // Verify the captured arguments
-        assertEquals(expectedPrincipal, principalCaptor.getValue());
+        assertEquals(123L, principalCaptor.getValue());
         assertEquals("New status message", serviceRequestCaptor.getValue().getMessage());
     }
 }

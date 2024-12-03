@@ -1,4 +1,4 @@
-package com.example.closestv2.infrastructure.blog;
+package com.example.closestv2.infrastructure.domain.blog;
 
 import com.example.closestv2.domain.blog.BlogFactory;
 import com.example.closestv2.domain.blog.BlogRoot;

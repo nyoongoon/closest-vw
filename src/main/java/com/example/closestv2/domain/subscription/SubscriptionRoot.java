@@ -1,7 +1,7 @@
 package com.example.closestv2.domain.subscription;
 
-import com.example.closestv2.domain.Events;
 import com.example.closestv2.domain.subscription.event.SubscriptionVisitEvent;
+import com.example.closestv2.infrastructure.event.Events;
 import jakarta.persistence.*;
 import jakarta.validation.Valid;
 import lombok.AccessLevel;

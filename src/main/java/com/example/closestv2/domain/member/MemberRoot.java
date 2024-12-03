@@ -1,7 +1,7 @@
 package com.example.closestv2.domain.member;
 
-import com.example.closestv2.domain.Events;
 import com.example.closestv2.domain.member.event.StatusMessageChangeEvent;
+import com.example.closestv2.infrastructure.event.Events;
 import jakarta.persistence.*;
 import jakarta.validation.Valid;
 import lombok.AccessLevel;
@@ -105,7 +105,7 @@ public class MemberRoot {
                 .myBlogVisitCount(myBlogVisitCount)
                 .build();
 
-        //todo 블로그 도메인에서 이벤트 받아 처리..
+//        //todo 블로그 도메인에서 이벤트 받아 처리..
         Events.raise(new StatusMessageChangeEvent(blogUrl, statusMessage));
     }
 }
