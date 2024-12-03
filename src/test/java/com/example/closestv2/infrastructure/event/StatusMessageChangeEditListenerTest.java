@@ -1,7 +1,6 @@
 package com.example.closestv2.infrastructure.event;
 
 import com.example.closestv2.api.service.BlogEditService;
-import com.example.closestv2.api.service.MyBlogEditService;
 import com.example.closestv2.domain.member.event.StatusMessageEditEvent;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -9,9 +8,6 @@ import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 
 import java.net.MalformedURLException;
@@ -29,10 +25,6 @@ class StatusMessageChangeEditListenerTest {
 
     @Mock
     private BlogEditService blogEditService;
-    @Mock
-    private ApplicationEventPublisher mockPublisher;
-    @Mock
-    private StatusMessageChangeEditListener listener;
 
     private AnnotationConfigApplicationContext context;
 
@@ -43,7 +35,6 @@ class StatusMessageChangeEditListenerTest {
     void setUp() {
         MockitoAnnotations.openMocks(this);
 
-//        listener = new StatusMessageChangeEditListener(blogEditService);
         // Spring 컨텍스트 설정
         context = new AnnotationConfigApplicationContext();
         context.registerBean(BlogEditService.class, () -> blogEditService); // Mock 주입

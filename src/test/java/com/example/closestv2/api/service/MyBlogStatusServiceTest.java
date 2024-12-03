@@ -40,12 +40,9 @@ class MyBlogStatusServiceTest {
     @DisplayName("MyBlog의 상태메시지를 변경 요청 시 새로운 상태메시지로 업데이트한다.")
     void resetMyBlogStatusMessage() throws MalformedURLException {
         //given
+        saveBlogRoot();
         long memberId = 1L;
         MyBlogStatusPatchServiceRequest serviceRequest = new MyBlogStatusPatchServiceRequest("상태 메시지입니다.");
-        MemberRoot memberRoot = MemberRoot.create("abc@naver.com", "Ab1234!!", "별명123");
-        memberRoot.saveMyBlog(URI.create("https://example.com/rss").toURL(), 0L);
-        when(memberRepository.findById(1L)).thenReturn(Optional.of(memberRoot));
-
         //when
         myBlogStatusService.editMyBlogStatusMessage(memberId, serviceRequest);
 
@@ -59,11 +56,9 @@ class MyBlogStatusServiceTest {
     @DisplayName("MyBlog의 상태메시지를 변경 요청 시 상태메시지 변경 이벤트를 발행한다.")
     void resetMyBlogStatusMessageWithPublishingEvent() throws MalformedURLException {
         // given
+        saveBlogRoot();
         long memberId = 1L;
         MyBlogStatusPatchServiceRequest serviceRequest = new MyBlogStatusPatchServiceRequest("새로운 상태 메시지");
-        MemberRoot memberRoot = MemberRoot.create("test@domain.com", "Password123!", "닉네임");
-        memberRoot.saveMyBlog(URI.create("https://example.com/rss").toURL(), 0L);
-        when(memberRepository.findById(memberId)).thenReturn(Optional.of(memberRoot));
         ArgumentCaptor<StatusMessageEditEvent> captor = ArgumentCaptor.forClass(StatusMessageEditEvent.class);
         // when
         myBlogStatusService.editMyBlogStatusMessage(memberId, serviceRequest);
@@ -72,5 +67,11 @@ class MyBlogStatusServiceTest {
         StatusMessageEditEvent event = captor.getValue();
         assertThat(event.blogUrl().toString()).isEqualTo("https://example.com/rss");
         assertThat(event.statusMessage()).isEqualTo("새로운 상태 메시지"); //검증하기..
+    }
+
+    private void saveBlogRoot() throws MalformedURLException {
+        MemberRoot memberRoot = MemberRoot.create("abc@naver.com", "Ab1234!!", "별명123");
+        memberRoot.saveMyBlog(URI.create("https://example.com/rss").toURL(), 0L);
+        when(memberRepository.findById(1L)).thenReturn(Optional.of(memberRoot));
     }
 }
