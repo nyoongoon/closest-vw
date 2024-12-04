@@ -105,7 +105,6 @@ public class MemberRoot {
                 .myBlogVisitCount(myBlogVisitCount)
                 .build();
 
-//        //todo 블로그 도메인에서 이벤트 받아 처리..
         Events.raise(new StatusMessageEditEvent(blogUrl, statusMessage));
     }
 }

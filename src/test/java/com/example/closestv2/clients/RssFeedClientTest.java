@@ -1,6 +1,9 @@
 package com.example.closestv2.clients;
 
-import com.example.closestv2.util.clients.RssFeedClient;
+import com.example.closestv2.domain.blog.BlogInfo;
+import com.example.closestv2.domain.blog.BlogRoot;
+import com.example.closestv2.infrastructure.domain.feed.RssFeedClient;
+import com.example.closestv2.infrastructure.rss.RssBlogFactory;
 import com.example.closestv2.util.file.FileUtil;
 import com.rometools.rome.feed.synd.SyndEntry;
 import com.rometools.rome.feed.synd.SyndFeed;
@@ -15,6 +18,9 @@ import org.mockserver.model.Header;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URI;
+import java.time.Instant;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -56,6 +62,30 @@ class RssFeedClientTest  {
     @AfterEach
     void shutDown() {
         mockServer.stop();
+    }
+
+
+    @Test
+    @DisplayName("SyndFeed를 읽어와서 Feed 객체로 변환한다.")
+    void getFeed(){
+        //given
+        //when
+        //then
+        throw new IllegalStateException();
+    }
+
+
+    @Test
+    @DisplayName("URL로 RssClient를 통해서 Blog 객체를 얻을 때 Post로 변환되는 SyndEntry가 없다면 BlogRoot의 publishedDateTime은 LocalDateTime.MIN의 값이다.")
+    void createBlogByLocalDateTimeMIN() throws MalformedURLException {
+        //given
+        SyndFeed syndFeed = getSyndFeed(ANY_LINK, ANY_TITLE, ANY_AUTHOR, ANY_PUBLISHED_DATE_TIME);
+        sut = new RssBlogFactory();
+        //when
+        BlogRoot blog = sut.createRecentBlogRoot(ANY_RSS_URL, syndFeed);
+        BlogInfo blogInfo = blog.getBlogInfo();
+        //then
+        assertThat(blogInfo.getPublishedDateTime()).isEqualTo(LocalDateTime.ofInstant(Instant.EPOCH, ZoneId.of("Asia/Seoul")));
     }
 
     @DisplayName("피드 읽어오기 테스트")

@@ -36,6 +36,4 @@ class BlogRepositoryTest extends RepositoryTestSupport {
                 .extracting(BlogInfo::getRssUrl, BlogInfo::getBlogUrl, BlogInfo::getBlogTitle, BlogInfo::getAuthor)
                 .containsExactly(ANY_RSS_URL, ANY_BLOG_URL, ANY_TITLE, ANY_AUTHOR);
     }
-
-
 }

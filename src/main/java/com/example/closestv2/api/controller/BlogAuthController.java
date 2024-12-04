@@ -3,7 +3,7 @@ package com.example.closestv2.api.controller;
 import com.example.closestv2.api.BlogAuthApi;
 import com.example.closestv2.api.service.model.request.BlogAuthVerificationPostServiceRequest;
 import com.example.closestv2.api.usecases.BlogAuthUsecase;
-import com.example.closestv2.models.AuthMessage;
+import com.example.closestv2.models.AuthMessageResponse;
 import com.example.closestv2.models.BlogAuthVerificationPostRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -17,9 +17,9 @@ public class BlogAuthController implements BlogAuthApi {
     private final BlogAuthUsecase blogAuthUsecase;
 
     @Override
-    public ResponseEntity<AuthMessage> blogAuthMessageGet(URI url) {
-        blogAuthUsecase.getBlogAuthMessage(url);
-        return null;
+    public ResponseEntity<AuthMessageResponse> blogAuthMessageGet(URI url) {
+        AuthMessageResponse blogAuthMessage = blogAuthUsecase.getBlogAuthMessage(url);
+        return ResponseEntity.ok(blogAuthMessage);
     }
 
     @Override

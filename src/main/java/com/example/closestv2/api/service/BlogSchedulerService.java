@@ -1,6 +1,6 @@
 package com.example.closestv2.api.service;
 
-import com.example.closestv2.util.clients.RssFeedClient;
+import com.example.closestv2.infrastructure.domain.feed.RssFeedClient;
 import com.example.closestv2.domain.blog.BlogFactory;
 import com.example.closestv2.domain.blog.BlogRepository;
 import com.example.closestv2.domain.blog.BlogRoot;
@@ -26,7 +26,7 @@ import static com.example.closestv2.api.exception.ExceptionMessageConstants.NOT_
 @RequiredArgsConstructor
 public class BlogSchedulerService {
     private static final int PAGE_SIZE = 100;
-    private final BlogFactory blogFactory;
+//    private final BlogFactory blogFactory;
     private final BlogRepository blogRepository;
     private final RssFeedClient rssFeedClient;
 
@@ -47,11 +47,18 @@ public class BlogSchedulerService {
                 List<CompletableFuture<Void>> futures = blogRoots.stream()
                         .map(blogRoot -> CompletableFuture.supplyAsync(
                                 // 비동기 호출
-                                () -> rssFeedClient.getSyndFeed(blogRoot.getBlogInfo().getRssUrl())
-                        ).thenAccept(syndFeed -> {
+//                                () -> rssFeedClient.getSyndFeed(blogRoot.getBlogInfo().getRssUrl())
+                                ()-> {
+                                    try {
+                                        return rssFeedClient.getFeed(blogRoot.getBlogInfo().getRssUrl());
+                                    } catch (MalformedURLException e) { //TODO
+                                        throw new RuntimeException(e);
+                                    }
+                                }
+                        ).thenAccept(feed -> {
                             try {
                                 // 콜백
-                                updateBlogBySyndFeed(blogRoot.getId(), syndFeed);
+                                updateBlogBySyndFeed(blogRoot.getId(), feed);
                             } catch (MalformedURLException | URISyntaxException e) {
                                 log.error("BlogSchedulerService#pollingUpdatedBlogs : {} - {}", e.getClass(), e.getMessage());
                             }
