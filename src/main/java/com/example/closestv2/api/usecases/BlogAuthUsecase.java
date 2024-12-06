@@ -1,12 +1,11 @@
 package com.example.closestv2.api.usecases;
 
-import com.example.closestv2.api.service.model.request.BlogAuthVerificationPostServiceRequest;
 import com.example.closestv2.models.AuthMessageResponse;
 
 import java.net.URI;
 
 public interface BlogAuthUsecase {
-    AuthMessageResponse getBlogAuthMessage(URI url);
+    AuthMessageResponse getBlogAuthMessage(URI rssUri);
 
-    void verifyBlogAuthMessage(BlogAuthVerificationPostServiceRequest blogAuthVerificationPostServiceRequest);
+    void verifyBlogAuthMessage(long memberId);
 }
