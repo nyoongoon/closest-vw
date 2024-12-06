@@ -1,5 +1,7 @@
 package com.example.closestv2.api.service;
 
+import com.example.closestv2.domain.feed.Feed;
+import com.example.closestv2.domain.feed.FeedClient;
 import com.example.closestv2.infrastructure.domain.feed.RssFeedClient;
 import com.example.closestv2.domain.blog.BlogFactory;
 import com.example.closestv2.domain.blog.BlogRepository;
@@ -28,7 +30,7 @@ public class BlogSchedulerService {
     private static final int PAGE_SIZE = 100;
 //    private final BlogFactory blogFactory;
     private final BlogRepository blogRepository;
-    private final RssFeedClient rssFeedClient;
+    private final FeedClient rssFeedClient;
 
     // CompletableFuture<Void>를 반환하게 하여 테스트 시 완료 시점을 체크할 수 있도록 한다.
     @Transactional(readOnly = true)
@@ -75,10 +77,10 @@ public class BlogSchedulerService {
 
 
     @Transactional(propagation = Propagation.REQUIRES_NEW)
-    public void updateBlogBySyndFeed(long blogId, SyndFeed syndFeed) throws MalformedURLException, URISyntaxException {
+    public void updateBlogBySyndFeed(long blogId, Feed feed) throws MalformedURLException, URISyntaxException {
         BlogRoot blogRoot = blogRepository.findById(blogId).orElseThrow(() -> new IllegalStateException(NOT_EXISTS_BLOG));
         log.info("updateBlogBySyndFeed() - RssUrl : {}", blogRoot.getBlogInfo().getRssUrl());
-        BlogRoot recentBlogRoot = blogFactory.createRecentBlogRoot(blogRoot.getBlogInfo().getRssUrl(), syndFeed);
+        BlogRoot recentBlogRoot = feed.toBlogRoot();
         blogRoot.updateBlogRoot(recentBlogRoot);
         blogRepository.save(blogRoot);
     }

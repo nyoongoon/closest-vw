@@ -1,14 +1,18 @@
 package com.example.closestv2.domain.feed;
 
 import com.example.closestv2.domain.blog.BlogRoot;
+import com.example.closestv2.domain.blog.Post;
 import lombok.AccessLevel;
 import lombok.Builder;
+import lombok.Getter;
 import org.springframework.util.CollectionUtils;
 
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
+@Getter
 @Builder(access = AccessLevel.PRIVATE)
 public class Feed {
     private URL rssUrl;
@@ -37,11 +41,21 @@ public class Feed {
     }
 
     public BlogRoot toBlogRoot(){
-        return BlogRoot.create(
+        BlogRoot blogRoot = BlogRoot.create(
                 rssUrl,
                 blogUrl,
                 blogTitle,
                 author
         );
+        Map<URL, Post> posts = blogRoot.getPosts();
+        for (FeedItem feedItem : feedItems){
+            Post post = blogRoot.createPost(
+                    feedItem.getPostUrl(),
+                    feedItem.getPostTitle(),
+                    feedItem.getPublishedDateTime()
+            );
+            posts.put(post.getPostUrl(), post);
+        }
+        return blogRoot;
     }
 }
