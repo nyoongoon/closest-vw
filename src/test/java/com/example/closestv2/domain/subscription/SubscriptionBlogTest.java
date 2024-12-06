@@ -40,7 +40,6 @@ class SubscriptionBlogTest {
         assertThatThrownBy(() -> sut = builder.blogTitle("").build()).isInstanceOf(IllegalArgumentException.class);
         assertThatThrownBy(() -> sut = builder.blogTitle(" ").build()).isInstanceOf(IllegalArgumentException.class);
         assertThatThrownBy(() -> sut = builder.publishedDateTime(null).build()).isInstanceOf(IllegalArgumentException.class);
-        assertThatThrownBy(() -> sut = builder.newPostCount(null).build()).isInstanceOf(IllegalArgumentException.class);
     }
 
     @Test

@@ -1,0 +1,10 @@
+{
+  "basePackage": "com.example.closestv2",
+  "modelPackage": "com.example.closestv2.models",
+  "apiPackage": "com.example.closestv2.api",
+  "interfaceOnly": true,
+  "useTags": true,
+  "useSpringfox": false,
+  "skipDefaultInterface": true,
+  "dateLibrary": "java8"
+}

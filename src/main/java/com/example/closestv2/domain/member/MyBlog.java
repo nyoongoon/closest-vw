@@ -9,30 +9,27 @@ import org.springframework.util.Assert;
 import java.net.URL;
 
 import static com.example.closestv2.api.exception.ExceptionMessageConstants.MY_BLOG_URL_IS_REQUIRED;
-import static com.example.closestv2.api.exception.ExceptionMessageConstants.MY_BLOG_VISIT_COUNT_IS_REQUIRED;
 
 @Getter
 @Embeddable
 @EqualsAndHashCode
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-class MyBlog {
+public class MyBlog {
     @NotNull(message = MY_BLOG_URL_IS_REQUIRED)
     @Column(unique = true)
     URL blogUrl;
 
-    @NotNull(message = MY_BLOG_VISIT_COUNT_IS_REQUIRED)
-    Long myBlogVisitCount;
+    long myBlogVisitCount;
 
     String statusMessage;
 
     @Builder(access = AccessLevel.PROTECTED)
     public MyBlog(
             URL blogUrl,
-            Long myBlogVisitCount,
+            long myBlogVisitCount,
             String statusMessage
     ) {
         Assert.notNull(blogUrl, MY_BLOG_URL_IS_REQUIRED);
-        Assert.notNull(myBlogVisitCount, MY_BLOG_VISIT_COUNT_IS_REQUIRED);
 
         this.blogUrl = blogUrl;
         this.myBlogVisitCount = myBlogVisitCount;

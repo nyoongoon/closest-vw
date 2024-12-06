@@ -3,6 +3,7 @@ package com.example.closestv2.infrastructure.blog;
 import com.example.closestv2.domain.blog.BlogInfo;
 import com.example.closestv2.domain.blog.BlogRoot;
 import com.example.closestv2.domain.blog.Post;
+import com.example.closestv2.infrastructure.rss.RssBlogFactory;
 import com.rometools.rome.feed.synd.SyndEntry;
 import com.rometools.rome.feed.synd.SyndEntryImpl;
 import com.rometools.rome.feed.synd.SyndFeed;

@@ -1,7 +1,7 @@
 package com.example.closestv2.domain.member;
 
-import com.example.closestv2.domain.Events;
-import com.example.closestv2.domain.member.event.StatusMessageChangeEvent;
+import com.example.closestv2.domain.member.event.StatusMessageEditEvent;
+import com.example.closestv2.infrastructure.event.Events;
 import jakarta.persistence.*;
 import jakarta.validation.Valid;
 import lombok.AccessLevel;
@@ -68,7 +68,7 @@ public class MemberRoot {
 
     public void saveMyBlog(
             URL blogUrl,
-            Long myBlogVisitCount
+            long myBlogVisitCount
     ) {
         if (hasMyBlog()) {
             throw new IllegalStateException(ALREADY_EXISTS_MY_BLOG); //블로그 변경 시 변경 메서드 사용
@@ -84,7 +84,7 @@ public class MemberRoot {
         if (!hasMyBlog()) {
             throw new IllegalStateException(ALREADY_EXISTS_MY_BLOG); //블로그 변경 시 변경 메서드 사용
         }
-        Long plusedMyBlogVisitCount = myBlog.getMyBlogVisitCount() + 1;
+        long plusedMyBlogVisitCount = myBlog.getMyBlogVisitCount() + 1;
         myBlog = MyBlog.builder()
                 .blogUrl(myBlog.getBlogUrl())
                 .myBlogVisitCount(plusedMyBlogVisitCount)
@@ -98,14 +98,13 @@ public class MemberRoot {
             throw new IllegalStateException(NOT_EXISTS_MY_BLOG);
         }
         URL blogUrl = myBlog.getBlogUrl();
-        Long myBlogVisitCount = myBlog.getMyBlogVisitCount();
+        long myBlogVisitCount = myBlog.getMyBlogVisitCount();
         myBlog = MyBlog.builder()
                 .blogUrl(blogUrl)
                 .statusMessage(statusMessage)
                 .myBlogVisitCount(myBlogVisitCount)
                 .build();
 
-        //todo 블로그 도메인에서 이벤트 받아 처리..
-        Events.raise(new StatusMessageChangeEvent(blogUrl, statusMessage));
+        Events.raise(new StatusMessageEditEvent(blogUrl, statusMessage));
     }
 }

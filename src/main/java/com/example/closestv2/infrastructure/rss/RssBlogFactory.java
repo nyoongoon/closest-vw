@@ -1,4 +1,4 @@
-package com.example.closestv2.infrastructure.blog;
+package com.example.closestv2.infrastructure.rss;
 
 import com.example.closestv2.domain.blog.BlogFactory;
 import com.example.closestv2.domain.blog.BlogRoot;
@@ -18,6 +18,9 @@ import java.util.Date;
 import java.util.Map;
 import java.util.Objects;
 
+/**
+ * Blog 도메인 서비스 구현체
+ */
 @Service
 @RequiredArgsConstructor
 public class RssBlogFactory implements BlogFactory {

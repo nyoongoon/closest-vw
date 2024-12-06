@@ -7,7 +7,9 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.hibernate.proxy.HibernateProxy;
+import org.springframework.util.Assert;
 
 import java.net.URL;
 import java.time.Instant;
@@ -34,7 +36,6 @@ public class BlogRoot {
     @Embedded
     private BlogInfo blogInfo;
 
-//    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
     @MapKey(name = "postUrl") // 엔티티인 경우
     private Map<URL, Post> posts = new HashMap<>();
@@ -206,7 +207,7 @@ public class BlogRoot {
         }
 
         Post post = posts.get(postUrl);
-        Long postVisitCount = post.getPostVisitCount();
+        long postVisitCount = post.getPostVisitCount();
 
         Post updatedPost = Post.builder()
                 .postUrl(post.getPostUrl())

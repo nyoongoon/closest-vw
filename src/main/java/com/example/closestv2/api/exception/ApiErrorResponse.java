@@ -1,4 +1,4 @@
-package com.example.closestv2.api;
+package com.example.closestv2.api.exception;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import org.springframework.http.HttpStatus;
@@ -7,14 +7,14 @@ import java.util.HashMap;
 import java.util.Map;
 
 @JsonInclude(value = JsonInclude.Include.NON_EMPTY) //응답 내려줄 떄 비어있는 필드는 없애고 json 변환
-public class ApiResponse<T> {
+public class ApiErrorResponse<T> { //todo error 공통
     private int code;
     private String status;
     private String message;
     private T data;
     private Map<String, String> validation;
 
-    private ApiResponse(HttpStatus status, String message, T data, Map<String, String> validation) {
+    private ApiErrorResponse(HttpStatus status, String message, T data, Map<String, String> validation) {
         this.code = status.value();
         this.status = status.name();
         this.message = message;
@@ -22,20 +22,20 @@ public class ApiResponse<T> {
         this.validation = validation;
     }
 
-    public static <T> ApiResponse<T> ok() {
-        return ApiResponse.ok(null);
+    public static <T> ApiErrorResponse<T> ok() {
+        return ApiErrorResponse.ok(null);
     }
 
-    public static <T> ApiResponse<T> ok(T data) {
-        return new ApiResponse<T>(HttpStatus.OK, HttpStatus.OK.name(), data, null);
+    public static <T> ApiErrorResponse<T> ok(T data) {
+        return new ApiErrorResponse<T>(HttpStatus.OK, HttpStatus.OK.name(), data, null);
     }
 
-    public static ApiResponse error(HttpStatus status, String message, Map<String, String> validation) {
-        return new ApiResponse<>(status, message, null, validation);
+    public static ApiErrorResponse error(HttpStatus status, String message, Map<String, String> validation) {
+        return new ApiErrorResponse<>(status, message, null, validation);
     }
 
-    public static ApiResponse error(HttpStatus status, String message) {
-        return ApiResponse.error(status, message, new HashMap<>());
+    public static ApiErrorResponse error(HttpStatus status, String message) {
+        return ApiErrorResponse.error(status, message, new HashMap<>());
     }
 
     public void addValidation(String fieldName, String errorMessage) {

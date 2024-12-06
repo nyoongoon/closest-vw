@@ -25,7 +25,6 @@ public class BlogInfo {
     @NotBlank(message = BLOG_TITLE_IS_REQUIRED)
     private String blogTitle;
 
-    //    @NotBlank(message = BLOG_AUTHOR_IS_REQUIRED)
     private String author;
 
     @NotNull(message = BLOG_PUBLISHED_DATETIME_IS_REQUIRED)

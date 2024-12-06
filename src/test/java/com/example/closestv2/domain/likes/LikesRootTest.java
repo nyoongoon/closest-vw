@@ -20,7 +20,6 @@ class LikesRootTest {
     @DisplayName("LikesRoot 생성 예외 케이스 - 필수값 검증")
     @Test
     void createLikesFailTest() {
-        assertThatThrownBy(() -> LikesRoot.create(null, ANY_URL));
         assertThatThrownBy(() -> LikesRoot.create(1L, null));
     }
 

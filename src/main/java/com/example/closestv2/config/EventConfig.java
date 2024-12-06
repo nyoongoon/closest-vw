@@ -1,6 +1,6 @@
 package com.example.closestv2.config;
 
-import com.example.closestv2.domain.Events;
+import com.example.closestv2.infrastructure.event.Events;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
@@ -8,7 +8,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 @Configuration
-public class EventConfiguration {
+public class EventConfig {
     @Autowired
     private ApplicationContext applicationContext;
 

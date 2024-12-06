@@ -30,15 +30,14 @@ public class LikesRoot {
     private URL postUrl;
 
     @Builder(access = AccessLevel.PRIVATE)
-    private LikesRoot(Long memberId, URL postUrl) {
-        Assert.notNull(memberId, MEMBER_ID_IS_REQUIRED);
+    private LikesRoot(long memberId, URL postUrl) {
         Assert.notNull(postUrl, POST_URL_IS_REQUIRED);
         this.memberId = memberId;
         this.postUrl = postUrl;
     }
 
     public static LikesRoot create(
-            Long memberId,
+            long memberId,
             URL postUrl
     ) {
         return LikesRoot.builder()

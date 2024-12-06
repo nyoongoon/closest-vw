@@ -42,7 +42,6 @@ class PostTest {
         assertThatThrownBy(() -> sut = builder.postTitle("").build()).isInstanceOf(IllegalArgumentException.class);
         assertThatThrownBy(() -> sut = builder.postTitle(" ").build()).isInstanceOf(IllegalArgumentException.class);
         assertThatThrownBy(() -> sut = builder.publishedDateTime(null).build()).isInstanceOf(IllegalArgumentException.class);
-        assertThatThrownBy(() -> sut = builder.postVisitCount(null).build()).isInstanceOf(IllegalArgumentException.class);
     }
 
     @Test

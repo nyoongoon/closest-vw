@@ -7,15 +7,23 @@ info:
   version: 0.0.1
   title: Closest API Specification
 tags:
-  - name: subscriptions
-    description: 구독 관리
-  - name: blogs
-    description: 블로그 관리
+  - name: subscriptionQuery
+    description: 구독 정보 조회
+  - name: subscriptionVisit
+    description: 구독 블로그 방문
+  - name: subscriptionRegister
+    description: 구독 블로그 추가 및 삭제
+  - name: myBlogEdit
+    description: 나의 블로그 상태 관리
+  - name: post
+    description: 포스트 관리
+  - name: blogAuth
+    description: 블로그 인증 관리
 paths:
-  /subscriptions/blogs/closest:
+  /subscriptions/blogs/close:
     get:
       tags:
-        - subscriptions
+        - subscriptionQuery
       summary: 사용자는 친밀도 순위가 높은 20개의 블로그 목록을 요청
       responses:
         "200":
@@ -25,17 +33,18 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/SubscribedBlog'
+                  $ref: '#/components/schemas/SubscriptionResponse'
         "400":
           $ref: '#/components/responses/BadRequest'
         "500":
           $ref: '#/components/responses/InternalServerError'
         "502":
           description: RSS 서버 에러
+
   /subscriptions/blogs:
     get:
       tags:
-        - subscriptions
+        - subscriptionQuery
       summary: 사용자는 구독한 블로그 목록을 요청
       parameters:
         - in: query
@@ -60,7 +69,7 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/SubscribedBlog'
+                  $ref: '#/components/schemas/SubscriptionResponse'
         "400":
           $ref: '#/components/responses/BadRequest'
         "500":
@@ -71,29 +80,25 @@ paths:
   /subscriptions:
     post:
       tags:
-        - subscriptions
+        - subscriptionRegister
       summary: 사용자가 특정 블로그를 구독 요청
-      description: 블로그 URL을 통해 사용자가 구독을 생성한다.
+      description: 블로그 URI을 통해 사용자가 구독을 생성한다.
       requestBody:
-        description: 구독할 블로그의 URL 정보
+        description: 구독할 블로그의 URI 정보
         required: true
         content:
           application/json:
             schema:
               type: object
               properties:
-                url:
+                rssUri:
                   type: string
                   format: uri
                   example: "https://example.com/blog123"
-                  description: 구독할 블로그의 URL
+                  description: 구독할 블로그의 URI
       responses:
         "201":
           description: 구독 생성 성공
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/SubscribedBlog'
         "400":
           $ref: '#/components/responses/BadRequest'
         "500":
@@ -104,7 +109,7 @@ paths:
   /subscriptions/{subscriptionsId}:
     delete:
       tags:
-        - subscriptions
+        - subscriptionRegister
       summary: 사용자가 특정 블로그 구독 해지 요청
       description: 구독 정보 키로 사용자와 블로그 연관관계 삭제
       parameters:
@@ -126,7 +131,7 @@ paths:
   /subscriptions/{subscriptionsId}/visit:
     patch:
       tags:
-        - subscriptions
+        - subscriptionVisit
       summary: 구독한 블로그 방문 및 조회수 증가
       description: 구독한 블로그는 새창으로 띄우고 해당 구독 정보에 조회수를 1 증가시킨다
       parameters:
@@ -145,11 +150,11 @@ paths:
         "500":
           $ref: '#/components/responses/InternalServerError'
 
-  /blogs/status/my:
+  /my-blog/status:
     patch:
       tags:
-        - blogs
-      summary: 자신의 블로그에 다른 유저들이 볼 수 있는 상태 메시지 설정. (변경의 여지가 있다)
+        - myBlogEdit
+      summary: 자신의 블로그에 다른 유저들이 볼 수 있는 상태 메시지 설정
       requestBody:
         required: true
         content:
@@ -169,10 +174,10 @@ paths:
         "500":
           $ref: '#/components/responses/InternalServerError'
 
-  /blogs/posts/like:
+  /posts/like:
     post:
       tags:
-        - blogs
+        - postLike
       summary: 사용자는 블로그 포스트에 좋아요 생성
       requestBody:
         required: true
@@ -181,8 +186,9 @@ paths:
             schema:
               type: object
               properties:
-                postUrl:
+                postUri:
                   type: string
+                  format: uri
       responses:
         "200":
           description: 좋아요 생성 성공
@@ -191,16 +197,15 @@ paths:
         "500":
           $ref: '#/components/responses/InternalServerError'
 
-
   /blog/auth/message:
     get:
       tags:
-        - blogs
+        - blogAuth
       summary: 블로그 인증 메시지 생성
       description: 블로그 인증을 위해 랜덤 메시지 생성 요청
       parameters:
         - in: query
-          name: url
+          name: rssUri
           required: true
           schema:
             type: string
@@ -211,28 +216,16 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/AuthMessage'
+                $ref: '#/components/schemas/AuthMessageResponse'
         "500":
           $ref: '#/components/responses/InternalServerError'
 
   /blog/auth/verification:
     post:
       tags:
-        - blogs
+        - blogAuth
       summary: 블로그 인증 요청
       description: 본인 블로그 구독한 사람을 추적하거나 본인의 블로그에 해당하는 좋아하는 것 추적하기 위해. 나의 블로그를 구독한 사람들에 대한 기능을 만들기 어렵다. 나의 블로그임을 입증한다. 상태메세지나 나를 구독한 사람을 알기 위해서 필요.
-      requestBody:
-        description: 인증을 위한 URL 정보
-        required: true
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                url:
-                  type: string
-                  format: uri
-                  example: "https://example.com/myblog"
       responses:
         "200":
           description: 인증 요청 성공
@@ -243,7 +236,7 @@ paths:
 
 components:
   schemas:
-    SubscribedBlog:
+    SubscriptionResponse:
       type: object
       properties:
         subscriptionId:
@@ -255,14 +248,14 @@ components:
         nickName:
           type: string
           example: 개발자123
-        url:
+        uri:
           type: string
           example: https://example.com/blog1
         newPostsCnt:
           type: integer
           example: 5
 
-    AuthMessage:
+    AuthMessageResponse:
       type: object
       properties:
         authMessage:

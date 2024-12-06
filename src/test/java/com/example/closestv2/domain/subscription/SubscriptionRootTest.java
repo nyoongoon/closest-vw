@@ -12,7 +12,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 class SubscriptionRootTest {
-    private final Long ANY_MEMBER_ID = 1L;
+    private final long ANY_MEMBER_ID = 1L;
     private final URL ANY_BLOG_URL = URI.create("https://example.com/blog123").toURL();
     private final String ANY_BLOG_TITLE = "블로그 제목";
     private final LocalDateTime ANY_PUBLISHED_DATE_TIME = LocalDateTime.of(2022, 1, 1, 12, 3, 31);
@@ -38,7 +38,7 @@ class SubscriptionRootTest {
         //given
         SubscriptionRoot sut = SubscriptionRoot.create(ANY_MEMBER_ID, ANY_BLOG_URL, ANY_BLOG_TITLE, ANY_PUBLISHED_DATE_TIME);
         LocalDateTime recent = ANY_PUBLISHED_DATE_TIME.plusSeconds(1);
-        Long newPostCount = 12L;
+        long newPostCount = 12L;
         //when
         sut.putRecentBlogInfo(recent, newPostCount); //발행 일자와 새로 받은 개수를 그대로 put
         //then
