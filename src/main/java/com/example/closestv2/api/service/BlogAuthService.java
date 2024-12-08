@@ -1,6 +1,5 @@
 package com.example.closestv2.api.service;
 
-import com.example.closestv2.api.service.model.request.BlogAuthVerificationPostServiceRequest;
 import com.example.closestv2.api.usecases.BlogAuthUsecase;
 import com.example.closestv2.domain.blog.BlogAuthenticator;
 import com.example.closestv2.domain.feed.FeedClient;

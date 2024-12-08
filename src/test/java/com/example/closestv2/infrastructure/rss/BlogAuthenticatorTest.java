@@ -1,78 +1,67 @@
 package com.example.closestv2.infrastructure.rss;
 
+import com.example.closestv2.domain.blog.BlogAuthCode;
+import com.example.closestv2.domain.blog.BlogAuthenticator;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
+import java.net.MalformedURLException;
+import java.net.URI;
+import java.net.URL;
+
+import static org.assertj.core.api.Assertions.assertThat;
+
 class BlogAuthenticatorTest {
+    private final long ANY_MEMBER_ID = 1L;
+    private final URL ANY_RSS_URL = URI.create("https://example.com/rss").toURL();
 
-    @Test
-    @DisplayName("memberId와 rssUrl로 캐시된 인증 코드를 생성한다.")
-    void createAuthCode(){
-        //given
-        //when
-        //then
-        throw new IllegalStateException();
+    private BlogAuthenticator blogAuthenticator;
+
+    BlogAuthenticatorTest() throws MalformedURLException {
     }
-    @Test
-    @DisplayName("캐시된 인증 코드의 제한시간은 10분이다.")
-    void createAuthCodeLimit10Minute(){
-        //given
-        //when
-        //then
-        throw new IllegalStateException();
+
+    @BeforeEach
+    void setUp() {
+        blogAuthenticator = new BlogAuthenticator();
     }
 
     @Test
-    @DisplayName("동일한 memberId로 캐시가 요청되면 기존 코드를 엎어쓰고 새로 생성한다.")
-    void recreateAuthCodeWithSameMemberId(){
+    @DisplayName("memberId와 rssUrl, authMessage를 포함한 인증 코드 객체 BlogAuthCode를 생성한다.")
+    void createAuthCode() {
         //given
         //when
+        BlogAuthCode authCode = blogAuthenticator.createAuthCode(ANY_MEMBER_ID, ANY_RSS_URL);
         //then
-        throw new IllegalStateException();
+        assertThat(authCode.memberId()).isEqualTo(ANY_MEMBER_ID);
+        assertThat(authCode.rssUrl()).isEqualTo(ANY_RSS_URL);
+        assertThat(authCode.authMessage()).isNotNull();
+    }
+
+
+    @Test
+    @DisplayName("전달받은 BlogAuthCode의 authMessage와 blogTitle이 동일하면 인증에 성공한다.")
+    void authenticate() {
+        //given
+        String authMessage = "ABC123";
+        BlogAuthCode blogAuthCode = new BlogAuthCode(ANY_MEMBER_ID, ANY_RSS_URL, authMessage);
+        String blogTitle = "ABC123";
+        //when
+        boolean isAuthenticated = blogAuthenticator.authenticate(blogAuthCode, blogTitle);
+        //then
+        assertThat(isAuthenticated).isTrue();
     }
 
     @Test
-    @DisplayName("rss가 조회되지 않은 rssUrl을 요청 시 예외가 발생한다.")
-    void createAuthCodeWithNotRssUrl(){
+    @DisplayName("전달받은 BlogAuthCode의 authMessage와 blogTitle이 동일하지 않으면 인증에 실패한다.")
+    void authenticateFail() {
         //given
+        String authMessage = "ABC123";
+        BlogAuthCode blogAuthCode = new BlogAuthCode(ANY_MEMBER_ID, ANY_RSS_URL, authMessage);
+        String blogTitle = "ABC456";
         //when
+        boolean isAuthenticated = blogAuthenticator.authenticate(blogAuthCode, blogTitle);
         //then
-        throw new IllegalStateException();
-    }
-
-    @Test
-    @DisplayName("")
-    void authenticate(){
-        //given
-        //when
-        //then
-        throw new IllegalStateException();
-    }
-
-    @Test
-    @DisplayName("인증 코드 인증 요청 시 캐시에 존재하지 않는 memberId인 경우 예외가 발생한다.")
-    void authenticateWithNotExistsdMemberIdInCache(){
-        //given
-        //when
-        //then
-        throw new IllegalStateException();
-    }
-
-    @Test
-    @DisplayName("인증 코드 인증 요청 시 Rss 결과가 올바르지 못하면 예외가 발생한다.")
-    void authenticateWithNotValidRssResponse(){
-        //given
-        //when
-        //then
-        throw new IllegalStateException();
-    }
-
-    @Test
-    @DisplayName("인증 코드 인증 요청 시 Rss 결과로 제목과 캐시의 인증코드가 일치하지 않으면 예외가 발생한다.")
-    void authenticateWithNotValidRssTitle(){
-        //given
-        //when
-        //then
-        throw new IllegalStateException();
+        assertThat(isAuthenticated).isFalse();
     }
 }
