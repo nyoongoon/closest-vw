@@ -32,6 +32,7 @@ public final class ExceptionMessageConstants {
     /* 블로그 */
     public static final String NOT_EXISTS_BLOG = "존재하지 않는 블로그입니다.";
     public static final String BLOG_TITLE_IS_REQUIRED = "블로그명은 필수값입니다.";
+    public static final String WRONG_RSS_URL_FORMAT = "RSS URL의 형식이 올바르지 않습니다.";
     public static final String RSS_URL_IS_REQUIRED = "RSS URL은 필수값입니다.";
     public static final String BLOG_URL_IS_REQUIRED = "블로그 URL은 필수값입니다.";
     public static final String BLOG_AUTHOR_IS_REQUIRED = "블로그 저자명은 필수값입니다.";
@@ -52,6 +53,11 @@ public final class ExceptionMessageConstants {
     public static final String NEW_POST_COUNT_IS_REQUIRED = "구독의 새 포스트 개수는 필수값입니다.";
     public static final String SUBSCRIPTION_PUBLISHED_DATETIME_IS_REQUIRED = "구독 발생 시간은 필수값입니다.";
     public static final String RECENT_PUBLISHED_DATETIME_IS_PAST = "구독의 최근 발행 시각은 현재 값보다 과거일 수 없습니다.";
+    /* 블로그 인증 */
+    public static final String FAIL_BLOG_AUTHENTICATE = "블로그 인증에 실패하였습니다.";
+
+    /* 미식별 에러 */
+    public static final String SERVER_ERROR = "서버 에러가 발생했습니다.";
     private ExceptionMessageConstants() {
         throw new IllegalStateException();
     }

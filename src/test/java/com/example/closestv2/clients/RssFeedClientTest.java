@@ -37,7 +37,6 @@ class RssFeedClientTest  {
     private ClientAndServer mockServer;
     private RssFeedClient rssFeedClient;
     private final URL ANY_RSS_URL = URI.create("http://localhost:8888/rss").toURL();
-    private final LocalDateTime ANY_PUBLISHED_DATE_TIME = LocalDateTime.of(2022, 1, 1, 12, 3, 31);
     private final String RSS_FEED_RESPONSE = FileUtil.readFileAsString("rssResponse.xml");
     private  final String POST_ONE_TITLE = "포스트 제목 1";
     private  final String POST_ONE_LINK = "http://localhost:8888/1";

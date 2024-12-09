@@ -10,6 +10,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.net.MalformedURLException;
 import java.net.URI;
 
 @RestController
@@ -19,7 +20,9 @@ public class BlogAuthController implements BlogAuthApi {
 
     @Override
     public ResponseEntity<AuthMessageResponse> blogAuthMessageGet(URI rssUri) {
-        AuthMessageResponse blogAuthMessage = blogAuthUsecase.getBlogAuthMessage(rssUri);
+        Authentication authentication = SecurityContextHolder.getContextHolderStrategy().getContext().getAuthentication();
+        Object principal = authentication.getPrincipal();
+        AuthMessageResponse blogAuthMessage = blogAuthUsecase.getBlogAuthMessage((long) principal, rssUri);
         return ResponseEntity.ok(blogAuthMessage);
     }
 
