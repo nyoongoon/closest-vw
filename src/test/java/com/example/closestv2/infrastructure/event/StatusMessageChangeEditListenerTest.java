@@ -51,10 +51,8 @@ class StatusMessageChangeEditListenerTest {
         StatusMessageEditEvent event = new StatusMessageEditEvent(ANY_BLOG_URL, ANY_STATUS_MESSAGE);
         ArgumentCaptor<URL> urlCaptor = ArgumentCaptor.forClass(URL.class);
         ArgumentCaptor<String> messageCaptor = ArgumentCaptor.forClass(String.class);
-
         //when
         Events.raise(event);
-
         // then
         verify(blogEditService, times(1)).editStatueMessage(urlCaptor.capture(), messageCaptor.capture());
         assertThat(urlCaptor.getValue()).isEqualTo(ANY_BLOG_URL);

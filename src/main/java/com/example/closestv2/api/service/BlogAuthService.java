@@ -3,10 +3,12 @@ package com.example.closestv2.api.service;
 import com.example.closestv2.api.usecases.BlogAuthUsecase;
 import com.example.closestv2.domain.blog.BlogAuthCode;
 import com.example.closestv2.domain.blog.BlogAuthenticator;
+import com.example.closestv2.domain.blog.event.MyBlogSaveEvent;
 import com.example.closestv2.domain.feed.Feed;
 import com.example.closestv2.domain.feed.FeedClient;
 import com.example.closestv2.domain.feed.FeedItem;
 import com.example.closestv2.infrastructure.domain.blog.BlogAuthCodeRepository;
+import com.example.closestv2.infrastructure.event.Events;
 import com.example.closestv2.models.AuthMessageResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -41,6 +43,9 @@ public class BlogAuthService implements BlogAuthUsecase {
         }
     }
 
+    /**
+     * MyBlogSave 이벤트 발생
+     */
     @Override
     public void verifyBlogAuthMessage(long memberId) {
         BlogAuthCode blogAuthCode = blogAuthCodeRepository.findByMemberId(memberId);
@@ -61,7 +66,10 @@ public class BlogAuthService implements BlogAuthUsecase {
         FeedItem recentFeedItem = getRecentFeedItem(feedItems);
         boolean isAuthenticated = blogAuthenticator.authenticate(blogAuthCode, recentFeedItem.getPostTitle());
 
-        if(!isAuthenticated){
+        if (isAuthenticated) {
+            // MyBlog 생성 이벤트 발행
+            Events.raise(new MyBlogSaveEvent(memberId, feed.getBlogUrl()));
+        } else {
             throw new IllegalArgumentException(FAIL_BLOG_AUTHENTICATE);
         }
     }

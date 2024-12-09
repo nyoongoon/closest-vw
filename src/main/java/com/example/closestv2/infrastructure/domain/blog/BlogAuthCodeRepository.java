@@ -12,8 +12,7 @@ public class BlogAuthCodeRepository {
 
     @Cacheable(value = "blogAuthCode", key = "#memberId")
     public BlogAuthCode findByMemberId(long memberId){
-        // 없는 경우 InvalidDataAccessApiUsageException 발생
-        return null;
+        throw new IllegalArgumentException(FAIL_BLOG_AUTHENTICATE);
     }
 
     @CachePut(value = "blogAuthCode", key = "#blogAuthCode.memberId()")

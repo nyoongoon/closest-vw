@@ -45,16 +45,20 @@ class BlogAuthCodeRepositoryTest {
         BlogAuthCode blogAuthCode = new BlogAuthCode(1L, ANY_RSS_URL, ANY_AUTH_MESSAGE);
         blogAuthCodeRepository.save(blogAuthCode);
         //expected
-        assertThatThrownBy(() -> blogAuthCodeRepository.findByMemberId(2L))
-                .isInstanceOf(InvalidDataAccessApiUsageException.class);
+        assertThatThrownBy(() -> blogAuthCodeRepository.findByMemberId(2L)).isInstanceOf(InvalidDataAccessApiUsageException.class);
     }
 
     @Test
-    @DisplayName("동일한 memberId로 캐시가 요청되면 기존 코드를 엎어쓰고 새로 생성한다.")
+    @DisplayName("동일한 memberId로 캐시가 저장되면 기존 코드를 엎어쓰고 새로 생성한다.")
     void renewalBlogAuthCodeWithSameMemberId() {
         //given
+        BlogAuthCode blogAuthCode1 = new BlogAuthCode(1L, ANY_RSS_URL, ANY_AUTH_MESSAGE);
+        blogAuthCodeRepository.save(blogAuthCode1);
+        BlogAuthCode blogAuthCode2 = new BlogAuthCode(1L, ANY_RSS_URL, "다른메시지");
+        blogAuthCodeRepository.save(blogAuthCode2);
         //when
+        BlogAuthCode blogAuthCode = blogAuthCodeRepository.findByMemberId(1L);
         //then
-        throw new IllegalStateException();
+        assertThat(blogAuthCode.authMessage()).isEqualTo("다른메시지");
     }
 }

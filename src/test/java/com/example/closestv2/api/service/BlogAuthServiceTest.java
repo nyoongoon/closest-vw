@@ -2,16 +2,20 @@ package com.example.closestv2.api.service;
 
 import com.example.closestv2.domain.blog.BlogAuthCode;
 import com.example.closestv2.domain.blog.BlogAuthenticator;
+import com.example.closestv2.domain.blog.event.MyBlogSaveEvent;
 import com.example.closestv2.domain.feed.Feed;
 import com.example.closestv2.domain.feed.FeedClient;
 import com.example.closestv2.domain.feed.FeedItem;
 import com.example.closestv2.infrastructure.domain.blog.BlogAuthCodeRepository;
+import com.example.closestv2.infrastructure.event.Events;
 import com.example.closestv2.models.AuthMessageResponse;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.springframework.context.ApplicationEventPublisher;
 
 import java.io.IOException;
 import java.net.MalformedURLException;
@@ -22,7 +26,7 @@ import java.util.List;
 
 import static com.example.closestv2.api.exception.ExceptionMessageConstants.FAIL_BLOG_AUTHENTICATE;
 import static org.assertj.core.api.Assertions.*;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 class BlogAuthServiceTest {
     private final Long ANY_MEMBER_ID = 1L;
@@ -37,12 +41,14 @@ class BlogAuthServiceTest {
     private final String ANY_POST_TITLE = "포스트 제목";
     private final String WRONG_POST_TITLE = "123ABC";
     private final String ANY_AUTHOR = "블로그 작가";
+
     private BlogAuthService sut;
+    private BlogAuthenticator blogAuthenticator; // 의존성 없으므로 mock 안함
+
     @Mock
     private FeedClient feedClient;
-
-//    @Mock
-    private BlogAuthenticator blogAuthenticator;
+    @Mock
+    private ApplicationEventPublisher mockPublisher;
     @Mock
     private BlogAuthCodeRepository blogAuthCodeRepository;
 
@@ -68,9 +74,11 @@ class BlogAuthServiceTest {
         BlogAuthCode blogAuthCode = new BlogAuthCode(ANY_MEMBER_ID, ANY_RSS_URI.toURL(), ANY_AUTH_CODE);
         when(blogAuthCodeRepository.save(blogAuthCode)).thenReturn(blogAuthCode);
         when(blogAuthCodeRepository.findByMemberId(ANY_MEMBER_ID)).thenReturn(blogAuthCode);
-        when(blogAuthCodeRepository.findByMemberId(2L)).thenThrow( new  IllegalArgumentException(FAIL_BLOG_AUTHENTICATE));
+        when(blogAuthCodeRepository.findByMemberId(2L)).thenThrow(new IllegalArgumentException(FAIL_BLOG_AUTHENTICATE));
 
         sut = new BlogAuthService(feedClient, blogAuthenticator, blogAuthCodeRepository);
+
+        Events.setPublisher(mockPublisher);
     }
 
     @Test
@@ -132,7 +140,32 @@ class BlogAuthServiceTest {
         sut.createBlogAuthMessage(ANY_MEMBER_ID, ANY_RSS_URI);
         mockingFeedByFeedClient(WRONG_POST_TITLE);
         //expected
-        assertThatThrownBy(()->sut.verifyBlogAuthMessage(ANY_MEMBER_ID)).isInstanceOf(IllegalArgumentException.class);
+        assertThatThrownBy(() -> sut.verifyBlogAuthMessage(ANY_MEMBER_ID)).isInstanceOf(IllegalArgumentException.class);
+    }
+
+    @Test
+    @DisplayName("인증 성공시 MyBlogCreateionEvent가 발생한다.")
+    void myBlogCreationEventByAuthenticated() throws MalformedURLException {
+        //given
+        sut.createBlogAuthMessage(ANY_MEMBER_ID, ANY_RSS_URI);
+        ArgumentCaptor<MyBlogSaveEvent> captor = ArgumentCaptor.forClass(MyBlogSaveEvent.class);
+        //when
+        sut.verifyBlogAuthMessage(ANY_MEMBER_ID);
+        //then
+        verify(mockPublisher, times(1)).publishEvent(captor.capture());
+        MyBlogSaveEvent value = captor.getValue();
+        assertThat(value.memberId()).isEqualTo(ANY_MEMBER_ID);
+        assertThat(value.blogUrl()).isEqualTo(ANY_BLOG_URI.toURL());
+    }
+
+    @Test
+    @DisplayName("인증 실패시 MyBlogCreateionEvent가 발생하지 않는다.")
+    void myBlogCreationEventFailed() {
+        //given
+        sut.createBlogAuthMessage(ANY_MEMBER_ID, ANY_RSS_URI);
+        //expected
+        assertThatThrownBy(() -> sut.verifyBlogAuthMessage(2L)).isInstanceOf(IllegalArgumentException.class);
+        verify(mockPublisher, never()).publishEvent(any(MyBlogSaveEvent.class));
     }
 
     private void mockingFeedByFeedClient(String postTitle) throws MalformedURLException {
