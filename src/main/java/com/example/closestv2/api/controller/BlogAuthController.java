@@ -1,7 +1,6 @@
 package com.example.closestv2.api.controller;
 
 import com.example.closestv2.api.BlogAuthApi;
-import com.example.closestv2.api.service.model.request.BlogAuthVerificationPostServiceRequest;
 import com.example.closestv2.api.usecases.BlogAuthUsecase;
 import com.example.closestv2.models.AuthMessageResponse;
 import lombok.RequiredArgsConstructor;
@@ -10,7 +9,6 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.net.MalformedURLException;
 import java.net.URI;
 
 @RestController
@@ -22,7 +20,7 @@ public class BlogAuthController implements BlogAuthApi {
     public ResponseEntity<AuthMessageResponse> blogAuthMessageGet(URI rssUri) {
         Authentication authentication = SecurityContextHolder.getContextHolderStrategy().getContext().getAuthentication();
         Object principal = authentication.getPrincipal();
-        AuthMessageResponse blogAuthMessage = blogAuthUsecase.getBlogAuthMessage((long) principal, rssUri);
+        AuthMessageResponse blogAuthMessage = blogAuthUsecase.createBlogAuthMessage((long) principal, rssUri);
         return ResponseEntity.ok(blogAuthMessage);
     }
 

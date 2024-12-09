@@ -56,6 +56,8 @@ public final class ExceptionMessageConstants {
     /* 블로그 인증 */
     public static final String FAIL_BLOG_AUTHENTICATE = "블로그 인증에 실패하였습니다.";
 
+    /* RSS 클라이언트 에러 */
+    public static final String RSS_CLIENT_ERROR = "RSS 조회 중 에러가 발생하였습니다.";
     /* 미식별 에러 */
     public static final String SERVER_ERROR = "서버 에러가 발생했습니다.";
     private ExceptionMessageConstants() {

@@ -67,9 +67,9 @@ class BlogEditServiceTest {
         //given
         saveBlogRoot(ANY_BLOG_URL1);
         //expected
-        assertThatCode(()-> blogEditService.editStatueMessage(ANY_BLOG_URL1, null));
-        assertThatCode(()-> blogEditService.editStatueMessage(ANY_BLOG_URL1, ""));
-        assertThatCode(()-> blogEditService.editStatueMessage(ANY_BLOG_URL1, " "));
+        assertThatCode(()-> blogEditService.editStatueMessage(ANY_BLOG_URL1, null)).doesNotThrowAnyException();
+        assertThatCode(()-> blogEditService.editStatueMessage(ANY_BLOG_URL1, "")).doesNotThrowAnyException();
+        assertThatCode(()-> blogEditService.editStatueMessage(ANY_BLOG_URL1, " ")).doesNotThrowAnyException();
     }
 
     private void saveBlogRoot(URL url){
