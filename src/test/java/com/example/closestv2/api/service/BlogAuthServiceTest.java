@@ -7,7 +7,6 @@ import com.example.closestv2.domain.feed.Feed;
 import com.example.closestv2.domain.feed.FeedClient;
 import com.example.closestv2.domain.feed.FeedItem;
 import com.example.closestv2.infrastructure.domain.blog.BlogAuthCodeRepository;
-import com.example.closestv2.infrastructure.event.Events;
 import com.example.closestv2.models.AuthMessageResponse;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -76,9 +75,7 @@ class BlogAuthServiceTest {
         when(blogAuthCodeRepository.findByMemberId(ANY_MEMBER_ID)).thenReturn(blogAuthCode);
         when(blogAuthCodeRepository.findByMemberId(2L)).thenThrow(new IllegalArgumentException(FAIL_BLOG_AUTHENTICATE));
 
-        sut = new BlogAuthService(feedClient, blogAuthenticator, blogAuthCodeRepository);
-
-        Events.setPublisher(mockPublisher);
+        sut = new BlogAuthService(feedClient, mockPublisher, blogAuthenticator, blogAuthCodeRepository);
     }
 
     @Test

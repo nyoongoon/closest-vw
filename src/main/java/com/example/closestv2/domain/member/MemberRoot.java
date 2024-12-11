@@ -1,7 +1,6 @@
 package com.example.closestv2.domain.member;
 
 import com.example.closestv2.domain.member.event.StatusMessageEditEvent;
-import com.example.closestv2.infrastructure.event.Events;
 import jakarta.persistence.*;
 import jakarta.validation.Valid;
 import lombok.AccessLevel;
@@ -93,7 +92,7 @@ public class MemberRoot {
     }
 
     // 이벤트 발생
-    public void withStatusMessage(String statusMessage) {
+    public StatusMessageEditEvent withStatusMessage(String statusMessage) {
         if (!hasMyBlog()) {
             throw new IllegalStateException(NOT_EXISTS_MY_BLOG);
         }
@@ -105,6 +104,6 @@ public class MemberRoot {
                 .myBlogVisitCount(myBlogVisitCount)
                 .build();
 
-        Events.raise(new StatusMessageEditEvent(blogUrl, statusMessage));
+        return new StatusMessageEditEvent(blogUrl, statusMessage);
     }
 }

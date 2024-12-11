@@ -1,7 +1,7 @@
 package com.example.closestv2.api.usecases;
 
-import java.net.URL;
+import com.example.closestv2.api.service.model.request.PostsLikePostServiceRequest;
 
 public interface PostLikeUsecase {
-    void likePost(long memberId, URL url);
+    void likePost(PostsLikePostServiceRequest serviceRequest);
 }

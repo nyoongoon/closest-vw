@@ -5,7 +5,6 @@ import com.example.closestv2.domain.member.MemberRepository;
 import com.example.closestv2.domain.member.MemberRoot;
 import com.example.closestv2.domain.member.MyBlog;
 import com.example.closestv2.domain.member.event.StatusMessageEditEvent;
-import com.example.closestv2.infrastructure.event.Events;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -38,8 +37,7 @@ class MyBlogStatusServiceTest {
     @BeforeEach
     void setUp() {
         MockitoAnnotations.openMocks(this);
-        myBlogStatusService = new MyBlogEditService(memberRepository);
-        Events.setPublisher(mockPublisher);
+        myBlogStatusService = new MyBlogEditService(memberRepository, mockPublisher);
     }
 
     @Test

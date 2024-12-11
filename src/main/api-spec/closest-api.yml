@@ -241,15 +241,14 @@ components:
       properties:
         subscriptionId:
           type: integer
+          format: int64
           example: 1
-        intimacyRank:
-          type: integer
-          example: 2
         nickName:
           type: string
           example: 개발자123
         uri:
           type: string
+          format: uri
           example: https://example.com/blog1
         newPostsCnt:
           type: integer

@@ -44,6 +44,7 @@ public final class ExceptionMessageConstants {
     public static final String BLOG_NON_UPDATABLE_BY_PAST_PUBLISHED_DATETIME = "블로그는 이전 발행시간 정보로 업데이트할 수 없습니다.";
     /* 포스트 */
     public static final String POST_TITLE_IS_REQUIRED = "포스트명은 필수값입니다.";
+    public static final String WRONG_POST_URL_FORMAT = "RSS URL의 형식이 올바르지 않습니다.";
     public static final String POST_URL_IS_REQUIRED = "포스트 URL은 필수값입니다.";
     public static final String NOT_EXISTS_POST_URL = "존재하지 않는 포스트 URL입니다.";
     public static final String POST_PUBLISHED_DATETIME_IS_REQUIRED = "포스트 발행 시간은 필수값입니다.";

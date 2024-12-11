@@ -8,10 +8,10 @@ import com.example.closestv2.domain.feed.Feed;
 import com.example.closestv2.domain.feed.FeedClient;
 import com.example.closestv2.domain.feed.FeedItem;
 import com.example.closestv2.infrastructure.domain.blog.BlogAuthCodeRepository;
-import com.example.closestv2.infrastructure.event.Events;
 import com.example.closestv2.models.AuthMessageResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 
 import java.net.MalformedURLException;
@@ -26,6 +26,7 @@ import static com.example.closestv2.api.exception.ExceptionMessageConstants.*;
 @RequiredArgsConstructor
 public class BlogAuthService implements BlogAuthUsecase {
     private final FeedClient feedClient;
+    private final ApplicationEventPublisher eventPublisher;
     private final BlogAuthenticator blogAuthenticator;
     private final BlogAuthCodeRepository blogAuthCodeRepository;
 
@@ -68,7 +69,7 @@ public class BlogAuthService implements BlogAuthUsecase {
 
         if (isAuthenticated) {
             // MyBlog 생성 이벤트 발행
-            Events.raise(new MyBlogSaveEvent(memberId, feed.getBlogUrl()));
+            eventPublisher.publishEvent(new MyBlogSaveEvent(memberId, feed.getBlogUrl()));
         } else {
             throw new IllegalArgumentException(FAIL_BLOG_AUTHENTICATE);
         }

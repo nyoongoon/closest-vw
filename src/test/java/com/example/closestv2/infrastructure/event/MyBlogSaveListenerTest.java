@@ -9,6 +9,7 @@ import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 
 import java.net.MalformedURLException;
@@ -26,7 +27,7 @@ class MyBlogSaveListenerTest {
     @Mock
     private MyBlogSaveService myBlogSaveService;
 
-    private AnnotationConfigApplicationContext context;
+    private ApplicationEventPublisher eventPublisher;
 
     MyBlogSaveListenerTest() throws MalformedURLException {
     }
@@ -36,11 +37,11 @@ class MyBlogSaveListenerTest {
         MockitoAnnotations.openMocks(this);
 
         // Spring 컨텍스트 설정
-        context = new AnnotationConfigApplicationContext();
+        AnnotationConfigApplicationContext context = new AnnotationConfigApplicationContext();
         context.registerBean(MyBlogSaveService.class, () -> myBlogSaveService); // Mock 주입
         context.registerBean(MyBlogSaveListener.class, () -> new MyBlogSaveListener(myBlogSaveService));
         context.refresh();
-        Events.setPublisher(context);
+        eventPublisher = context;
     }
 
     @Test
@@ -51,7 +52,7 @@ class MyBlogSaveListenerTest {
         ArgumentCaptor<Long> idCaptor = ArgumentCaptor.forClass(Long.class);
         ArgumentCaptor<URL> urlCaptor = ArgumentCaptor.forClass(URL.class);
         //when
-        Events.raise(event);
+        eventPublisher.publishEvent(event);
         // then
         verify(myBlogSaveService, times(1)).saveMyBlog(idCaptor.capture(), urlCaptor.capture());
         assertThat(idCaptor.getValue()).isEqualTo(ANY_MEMBER_ID);

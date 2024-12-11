@@ -8,6 +8,7 @@ import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 
 import java.net.MalformedURLException;
@@ -26,7 +27,7 @@ class StatusMessageChangeEditListenerTest {
     @Mock
     private BlogEditService blogEditService;
 
-    private AnnotationConfigApplicationContext context;
+    private ApplicationEventPublisher eventPublisher;
 
     StatusMessageChangeEditListenerTest() throws MalformedURLException {
     }
@@ -36,13 +37,12 @@ class StatusMessageChangeEditListenerTest {
         MockitoAnnotations.openMocks(this);
 
         // Spring 컨텍스트 설정
-        context = new AnnotationConfigApplicationContext();
+        AnnotationConfigApplicationContext context = new AnnotationConfigApplicationContext();
         context.registerBean(BlogEditService.class, () -> blogEditService); // Mock 주입
         context.registerBean(StatusMessageChangeEditListener.class, () -> new StatusMessageChangeEditListener(blogEditService));
         context.refresh();
-        Events.setPublisher(context);
+        eventPublisher = context;
     }
-
 
     @Test
     @DisplayName("블로그 상태메시지 수정 이벤트가 발행되면 해당 이벤트를 수신하고 관련 응용서비스를 호출한다.")
@@ -52,7 +52,7 @@ class StatusMessageChangeEditListenerTest {
         ArgumentCaptor<URL> urlCaptor = ArgumentCaptor.forClass(URL.class);
         ArgumentCaptor<String> messageCaptor = ArgumentCaptor.forClass(String.class);
         //when
-        Events.raise(event);
+        eventPublisher.publishEvent(event);
         // then
         verify(blogEditService, times(1)).editStatueMessage(urlCaptor.capture(), messageCaptor.capture());
         assertThat(urlCaptor.getValue()).isEqualTo(ANY_BLOG_URL);
