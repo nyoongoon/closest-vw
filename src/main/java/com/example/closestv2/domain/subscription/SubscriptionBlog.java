@@ -17,23 +17,23 @@ import static com.example.closestv2.api.exception.ExceptionMessageConstants.*;
 @EqualsAndHashCode
 public class SubscriptionBlog {
     @NotNull(message = BLOG_URL_IS_REQUIRED)
-    URL blogUrl;
+    private URL blogUrl;
 
     @NotBlank(message = BLOG_TITLE_IS_REQUIRED)
-    String blogTitle;
+    private String blogTitle;
 
     @NotNull(message = SUBSCRIPTION_PUBLISHED_DATETIME_IS_REQUIRED)
-    LocalDateTime publishedDateTime;
+    private LocalDateTime publishedDateTime;
 
     @NotNull(message = NEW_POST_COUNT_IS_REQUIRED)
-    long newPostCount;
+    private int newPostCount;
 
     @Builder(access = AccessLevel.PROTECTED)
     private SubscriptionBlog(
             URL blogUrl,
             String blogTitle,
             LocalDateTime publishedDateTime,
-            long newPostCount
+            int newPostCount
     ) {
         Assert.notNull(blogUrl, BLOG_URL_IS_REQUIRED);
         Assert.hasText(blogTitle, BLOG_TITLE_IS_REQUIRED);

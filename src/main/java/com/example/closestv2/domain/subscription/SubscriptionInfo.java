@@ -14,12 +14,12 @@ import static com.example.closestv2.api.exception.ExceptionMessageConstants.SUBS
 @EqualsAndHashCode
 public class SubscriptionInfo {
     @NotNull(message = MEMBER_ID_IS_REQUIRED)
-    long memberId;
+    private long memberId;
 
     @NotNull(message = SUBSCRIPTION_VISIT_COUNT_IS_REQUIRED)
-    long subscriptionVisitCount;
+    private long subscriptionVisitCount;
 
-    String subscriptionNickName;
+    private String subscriptionNickName;
 
     @Builder(access = AccessLevel.PROTECTED)
     private SubscriptionInfo(

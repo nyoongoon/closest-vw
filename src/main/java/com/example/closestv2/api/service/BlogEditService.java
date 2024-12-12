@@ -14,7 +14,6 @@ import static com.example.closestv2.api.exception.ExceptionMessageConstants.NOT_
 @Service
 @RequiredArgsConstructor
 public class BlogEditService {
-
     private final BlogRepository blogRepository;
 
     /**

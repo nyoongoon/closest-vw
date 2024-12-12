@@ -29,7 +29,7 @@ class SubscriptionBlogTest {
                 .blogUrl(ANY_BLOG_URL)
                 .blogTitle(ANY_BLOG_TITLE)
                 .publishedDateTime(ANY_PUBLISHED_DATE_TIME)
-                .newPostCount(0L);
+                .newPostCount(0);
     }
 
     @Test

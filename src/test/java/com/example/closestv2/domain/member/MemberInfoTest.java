@@ -8,7 +8,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 class MemberInfoTest {
-
     private final String ANY_USER_EMAIL = "abc@naver.com";
     private final String ANY_PASSWORD = "Abc1234!!";
     private final String ANY_NICK_NAME = "닉네임";

@@ -1,7 +1,8 @@
 package com.example.closestv2.infrastructure.event;
 
 import com.example.closestv2.api.service.BlogEditService;
-import com.example.closestv2.domain.member.event.StatusMessageEditEvent;
+import com.example.closestv2.api.service.MyBlogSaveService;
+import com.example.closestv2.domain.blog.event.MyBlogSaveEvent;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -19,17 +20,16 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
-
-class StatusMessageChangeEditListenerTest {
-    private final URL ANY_BLOG_URL = URI.create("http://example.com").toURL();
-    private final String ANY_STATUS_MESSAGE = "변경된 상태 메시지";
+class MyBlogSaveListenerTest {
+    private final Long ANY_MEMBER_ID = 1L;
+    private final URL ANY_BLOG_URI = URI.create("http://www.example.com").toURL();
 
     @Mock
-    private BlogEditService blogEditService;
+    private MyBlogSaveService myBlogSaveService;
 
     private ApplicationEventPublisher eventPublisher;
 
-    StatusMessageChangeEditListenerTest() throws MalformedURLException {
+    MyBlogSaveListenerTest() throws MalformedURLException {
     }
 
     @BeforeEach
@@ -38,24 +38,24 @@ class StatusMessageChangeEditListenerTest {
 
         // Spring 컨텍스트 설정
         AnnotationConfigApplicationContext context = new AnnotationConfigApplicationContext();
-        context.registerBean(BlogEditService.class, () -> blogEditService); // Mock 주입
-        context.registerBean(StatusMessageChangeEditListener.class, () -> new StatusMessageChangeEditListener(blogEditService));
+        context.registerBean(MyBlogSaveService.class, () -> myBlogSaveService); // Mock 주입
+        context.registerBean(MyBlogSaveListener.class, () -> new MyBlogSaveListener(myBlogSaveService));
         context.refresh();
         eventPublisher = context;
     }
 
     @Test
-    @DisplayName("블로그 상태메시지 수정 이벤트가 발행되면 해당 이벤트를 수신하고 관련 응용서비스를 호출한다.")
-    void onStatusMessageEditEvent(){
+    @DisplayName("MyBlog 저장 이벤트가 발행되면 해당 이벤트를 수신하고 응용 서비스를 호출한다.")
+    void onMyBlogSaveEvent() {
         //given
-        StatusMessageEditEvent event = new StatusMessageEditEvent(ANY_BLOG_URL, ANY_STATUS_MESSAGE);
+        MyBlogSaveEvent event = new MyBlogSaveEvent(ANY_MEMBER_ID, ANY_BLOG_URI);
+        ArgumentCaptor<Long> idCaptor = ArgumentCaptor.forClass(Long.class);
         ArgumentCaptor<URL> urlCaptor = ArgumentCaptor.forClass(URL.class);
-        ArgumentCaptor<String> messageCaptor = ArgumentCaptor.forClass(String.class);
         //when
         eventPublisher.publishEvent(event);
         // then
-        verify(blogEditService, times(1)).editStatueMessage(urlCaptor.capture(), messageCaptor.capture());
-        assertThat(urlCaptor.getValue()).isEqualTo(ANY_BLOG_URL);
-        assertThat(messageCaptor.getValue()).isEqualTo(ANY_STATUS_MESSAGE);
+        verify(myBlogSaveService, times(1)).saveMyBlog(idCaptor.capture(), urlCaptor.capture());
+        assertThat(idCaptor.getValue()).isEqualTo(ANY_MEMBER_ID);
+        assertThat(urlCaptor.getValue()).isEqualTo(ANY_BLOG_URI);
     }
 }

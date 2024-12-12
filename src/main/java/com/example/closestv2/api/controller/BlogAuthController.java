@@ -1,7 +1,6 @@
 package com.example.closestv2.api.controller;
 
 import com.example.closestv2.api.BlogAuthApi;
-import com.example.closestv2.api.service.model.request.BlogAuthVerificationPostServiceRequest;
 import com.example.closestv2.api.usecases.BlogAuthUsecase;
 import com.example.closestv2.models.AuthMessageResponse;
 import lombok.RequiredArgsConstructor;
@@ -19,7 +18,9 @@ public class BlogAuthController implements BlogAuthApi {
 
     @Override
     public ResponseEntity<AuthMessageResponse> blogAuthMessageGet(URI rssUri) {
-        AuthMessageResponse blogAuthMessage = blogAuthUsecase.getBlogAuthMessage(rssUri);
+        Authentication authentication = SecurityContextHolder.getContextHolderStrategy().getContext().getAuthentication();
+        Object principal = authentication.getPrincipal();
+        AuthMessageResponse blogAuthMessage = blogAuthUsecase.createBlogAuthMessage((long) principal, rssUri);
         return ResponseEntity.ok(blogAuthMessage);
     }
 

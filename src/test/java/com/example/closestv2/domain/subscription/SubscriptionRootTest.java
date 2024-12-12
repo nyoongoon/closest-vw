@@ -38,13 +38,13 @@ class SubscriptionRootTest {
         //given
         SubscriptionRoot sut = SubscriptionRoot.create(ANY_MEMBER_ID, ANY_BLOG_URL, ANY_BLOG_TITLE, ANY_PUBLISHED_DATE_TIME);
         LocalDateTime recent = ANY_PUBLISHED_DATE_TIME.plusSeconds(1);
-        long newPostCount = 12L;
+        int newPostCount = 12;
         //when
         sut.putRecentBlogInfo(recent, newPostCount); //발행 일자와 새로 받은 개수를 그대로 put
         //then
         SubscriptionBlog recentInfo = sut.getSubscriptionBlog();
         assertThat(recentInfo.getPublishedDateTime()).isEqualTo(ANY_PUBLISHED_DATE_TIME.plusSeconds(1));
-        assertThat(recentInfo.getNewPostCount()).isEqualTo(12L);
+        assertThat(recentInfo.getNewPostCount()).isEqualTo(12);
     }
 
     @Test
@@ -54,7 +54,7 @@ class SubscriptionRootTest {
         SubscriptionRoot sut = SubscriptionRoot.create(ANY_MEMBER_ID, ANY_BLOG_URL, ANY_BLOG_TITLE, ANY_PUBLISHED_DATE_TIME);
         LocalDateTime past = ANY_PUBLISHED_DATE_TIME.minusSeconds(1);
         //expected
-        assertThatThrownBy(() -> sut.putRecentBlogInfo(past, 12L))  //새로 받은 개수를 그대로 pu
+        assertThatThrownBy(() -> sut.putRecentBlogInfo(past, 12))  //새로 받은 개수를 그대로 pu
                 .isInstanceOf(IllegalArgumentException.class);
     }
 

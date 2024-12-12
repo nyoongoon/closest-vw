@@ -241,19 +241,26 @@ components:
       properties:
         subscriptionId:
           type: integer
+          format: int64
           example: 1
-        intimacyRank:
-          type: integer
-          example: 2
         nickName:
           type: string
           example: 개발자123
         uri:
           type: string
+          format: uri
           example: https://example.com/blog1
         newPostsCnt:
           type: integer
           example: 5
+        visitCnt:
+          type: integer
+          format: int64
+          example: 1
+        publishedDateTime:
+          type: string
+          format: date-time
+          example: 2023-12-12T10:15:30
 
     AuthMessageResponse:
       type: object
