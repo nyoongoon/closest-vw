@@ -68,7 +68,7 @@ openApiGenerate {
     outputDir = "${projectDir}/src/main"
     configFile = "${projectDir}/src/main/api-spec/config.json"
     configOptions = [
-            "dateLibrary"          : "spring",
+            "dateLibrary"          : "java8-localdatetime",
             "useSpringBoot3"       : "true",
             "openApiNullable"      : "false",
             "sourceFolder"         : "openapi-generated",

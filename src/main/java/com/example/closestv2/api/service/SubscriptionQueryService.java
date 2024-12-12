@@ -46,6 +46,8 @@ public class SubscriptionQueryService implements SubscriptionQueryUsecase {
                             .uri(uri)
                             .nickName(subscriptionRoot.getSubscriptionInfo().getSubscriptionNickName())
                             .newPostsCnt(subscriptionRoot.getSubscriptionBlog().getNewPostCount())
+                            .visitCnt(subscriptionRoot.getSubscriptionInfo().getSubscriptionVisitCount())
+                            .publishedDateTime(subscriptionRoot.getSubscriptionBlog().getPublishedDateTime())
             );
         }
         return responses;

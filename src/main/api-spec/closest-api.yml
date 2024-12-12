@@ -253,6 +253,14 @@ components:
         newPostsCnt:
           type: integer
           example: 5
+        visitCnt:
+          type: integer
+          format: int64
+          example: 1
+        publishedDateTime:
+          type: string
+          format: date-time
+          example: 2023-12-12T10:15:30
 
     AuthMessageResponse:
       type: object

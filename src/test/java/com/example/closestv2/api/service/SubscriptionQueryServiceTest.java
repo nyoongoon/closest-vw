@@ -30,31 +30,27 @@ class SubscriptionQueryServiceTest {
     @Mock
     private SubscriptionQueryRepository subscriptionQueryRepository;
 
-    SubscriptionQueryServiceTest() throws MalformedURLException {
-    }
-
     @BeforeEach
     void setUp() throws MalformedURLException {
         MockitoAnnotations.openMocks(this);
-        List<SubscriptionRoot> cloests = new ArrayList<>();
-        LocalDateTime publishedDateTime = LocalDateTime.of(2020, 02, 20, 20, 20, 20);
-        int visitCount = 100;
-        for (int i = 1; i <= 20; i++) {
-            SubscriptionRoot subscriptionRoot = SubscriptionRoot.create(ANY_MEMBER_ID_1, URI.create(ANY_BLOG_LINK + i).toURL(), ANY_BLOG_TITLE, ANY_PUBLISHED_DATE_TIME);
-            subscriptionRoot.putRecentBlogInfo(publishedDateTime.minusSeconds(i), visitCount - i);
-            cloests.addLast(subscriptionRoot);
-        }
-        List<SubscriptionRoot> paging = new ArrayList<>();
-        for (int i = 1; i <= 10; i++) {
-            paging.add(
-                    SubscriptionRoot.create(ANY_MEMBER_ID_1, URI.create(ANY_BLOG_LINK + i).toURL(), ANY_BLOG_TITLE, ANY_PUBLISHED_DATE_TIME)
-            );
-        }
+//        List<SubscriptionRoot> cloests = new ArrayList<>();
+//        int visitCount = 100;
+//        for (int i = 1; i <= 20; i++) {
+//            SubscriptionRoot subscriptionRoot = SubscriptionRoot.create(ANY_MEMBER_ID_1, URI.create(ANY_BLOG_LINK + i).toURL(), ANY_BLOG_TITLE, ANY_PUBLISHED_DATE_TIME);
+//            subscriptionRoot.putRecentBlogInfo(ANY_PUBLISHED_DATE_TIME.plusSeconds(i), visitCount - i);
+//            cloests.addLast(subscriptionRoot);
+//        }
+//        List<SubscriptionRoot> paging = new ArrayList<>();
+//        for (int i = 1; i <= 10; i++) {
+//            paging.add(
+//                    SubscriptionRoot.create(ANY_MEMBER_ID_1, URI.create(ANY_BLOG_LINK + i).toURL(), ANY_BLOG_TITLE, ANY_PUBLISHED_DATE_TIME)
+//            );
+//        }
 
-        when(subscriptionQueryRepository.findByMemberIdVisitCountDesc(ANY_MEMBER_ID_1, 0, 20)).thenReturn(cloests);
-        when(subscriptionQueryRepository.findByMemberIdVisitCountDesc(ANY_MEMBER_ID_1, 0, 10)).thenReturn(paging);
-        when(subscriptionQueryRepository.findByMemberIdVisitCountDesc(ANY_MEMBER_ID_2, 0, 20)).thenReturn(new ArrayList<>());
-        when(subscriptionQueryRepository.findByMemberIdVisitCountDesc(ANY_MEMBER_ID_2, 0, 10)).thenReturn(new ArrayList<>());
+
+//        when(subscriptionQueryRepository.findByMemberIdVisitCountDesc(ANY_MEMBER_ID_1, 0, 10)).thenReturn(paging);
+//        when(subscriptionQueryRepository.findByMemberIdVisitCountDesc(ANY_MEMBER_ID_2, 0, 20)).thenReturn(new ArrayList<>());
+//        when(subscriptionQueryRepository.findByMemberIdVisitCountDesc(ANY_MEMBER_ID_2, 0, 10)).thenReturn(new ArrayList<>());
 
         sut = new SubscriptionQueryService(subscriptionQueryRepository);
     }
@@ -62,36 +58,60 @@ class SubscriptionQueryServiceTest {
 
     @Test
     @DisplayName("전달받은 memberId로 구독된 블로그에서 방문횟수가 높은 20개 구독 정보를 방문횟수 내림차순으로 조회힌다.")
-    void getCloseSubscriptionListHighest20SubscriptionByVisitCount() {
+    void getCloseSubscriptionListHighest20SubscriptionByVisitCount() throws MalformedURLException {
         //given
+        List<SubscriptionRoot> cloests = new ArrayList<>();
+        // 제목 순서대로 visitcount 순서
+        for (int i = 1; i <= 20; i++) {
+            SubscriptionRoot subscriptionRoot = SubscriptionRoot.create(ANY_MEMBER_ID_1, URI.create(ANY_BLOG_LINK + i).toURL(), ANY_BLOG_TITLE, ANY_PUBLISHED_DATE_TIME);
+            subscriptionRoot.putRecentBlogInfo(ANY_PUBLISHED_DATE_TIME, i);
+            cloests.addLast(subscriptionRoot);
+        }
+        when(subscriptionQueryRepository.findByMemberIdVisitCountDesc(ANY_MEMBER_ID_1, 0, 20)).thenReturn(cloests);
         //when
         List<SubscriptionResponse> closeSubscriptions = sut.getCloseSubscriptions(ANY_MEMBER_ID_1);
         //then
-        assertThat(closeSubscriptions).hasSize(20);
+        assertThat(closeSubscriptions).hasSize(20)
+                .isSortedAccordingTo((x, y) -> y.getVisitCnt().compareTo(x.getVisitCnt()));
     }
 
     @Test
     @DisplayName("조회 결과 구독 블로그의 개수가 0개여도 에러가 발생하지 않는다.")
     void getSubscriptionZeroNoError() {
         //given
+        when(subscriptionQueryRepository.findByMemberIdVisitCountDesc(ANY_MEMBER_ID_1, 0, 20)).thenReturn(new ArrayList<>());
         //when
+        List<SubscriptionResponse> closeSubscriptions = sut.getCloseSubscriptions(ANY_MEMBER_ID_1);
         //then
+        assertThat(closeSubscriptions).hasSize(0);
     }
 
     @Test
-    @DisplayName("전달받은 memberId와 페이징 정보와 블로그 제목을 오름차순한 구독 정보 페이징하여 조회힌다.")
-    void getCloseSubscriptionListByPaging() {
+    @DisplayName("전달받은 memberId와 페이징 정보와 발행시간을 오름차순한 구독 정보 페이징하여 조회힌다.")
+    void getCloseSubscriptionListByPaging() throws MalformedURLException {
         //given
+        List<SubscriptionRoot> paging = new ArrayList<>();
+        for (int i = 1; i <= 3; i++) {
+            paging.add(
+                    SubscriptionRoot.create(ANY_MEMBER_ID_1, URI.create(ANY_BLOG_LINK + i).toURL(), ANY_BLOG_TITLE, ANY_PUBLISHED_DATE_TIME.minusSeconds(i))
+            );
+        }
+        when(subscriptionQueryRepository.findByMemberIdPublishedDateTimeDesc(ANY_MEMBER_ID_1, 1, 13)).thenReturn(paging);
         //when
+        List<SubscriptionResponse> subscriptions = sut.getRecentPublishedSubscriptions(ANY_MEMBER_ID_1, 1, 13);
         //then
-        throw new IllegalStateException();
+        assertThat(subscriptions).hasSize(3)
+                .isSortedAccordingTo((x, y) -> y.getPublishedDateTime().compareTo(x.getPublishedDateTime()));
     }
 
     @Test
-    @DisplayName("페이징 조회 결과 구독 블로그 개수가 0개여도 에러가 발생하지 않는다.")
+    @DisplayName("발행시간 페이징 조회 결과 구독 블로그 개수가 0개여도 에러가 발생하지 않는다.")
     void getSubscriptionPagingZeroNoError() {
         //given
+        when(subscriptionQueryRepository.findByMemberIdPublishedDateTimeDesc(ANY_MEMBER_ID_1, 0, 20)).thenReturn(new ArrayList<>());
         //when
+        List<SubscriptionResponse> closeSubscriptions = sut.getCloseSubscriptions(ANY_MEMBER_ID_1);
         //then
+        assertThat(closeSubscriptions).hasSize(0);
     }
 }
