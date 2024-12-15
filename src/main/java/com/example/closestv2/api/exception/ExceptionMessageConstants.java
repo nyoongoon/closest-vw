@@ -54,13 +54,24 @@ public final class ExceptionMessageConstants {
     public static final String NEW_POST_COUNT_IS_REQUIRED = "구독의 새 포스트 개수는 필수값입니다.";
     public static final String SUBSCRIPTION_PUBLISHED_DATETIME_IS_REQUIRED = "구독 발생 시간은 필수값입니다.";
     public static final String RECENT_PUBLISHED_DATETIME_IS_PAST = "구독의 최근 발행 시각은 현재 값보다 과거일 수 없습니다.";
+    public static final String NOT_FOUND_SUBSCRIPTION = "해당 구독정보를 찾을 수 없습니다.";
     /* 블로그 인증 */
     public static final String FAIL_BLOG_AUTHENTICATE = "블로그 인증에 실패하였습니다.";
 
+
+    /* 유탈 */
+    public static final String CANNOT_INSTANTIATE = "인스턴스화 할 수 없습니다.";
+
     /* RSS 클라이언트 에러 */
     public static final String RSS_CLIENT_ERROR = "RSS 조회 중 에러가 발생하였습니다.";
+
+    /* 권한 부족 */
+    public static final String ACCESS_DENIED_BY_MEMBER_ID = "권한이 부족합니다 - memberId가 일치하지 않음";
+
+
     /* 미식별 에러 */
     public static final String SERVER_ERROR = "서버 에러가 발생했습니다.";
+
     private ExceptionMessageConstants() {
         throw new IllegalStateException();
     }

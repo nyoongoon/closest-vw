@@ -14,8 +14,12 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.net.URL;
+import org.springframework.security.access.AccessDeniedException;
 import java.time.LocalDateTime;
 import java.util.Optional;
+
+import static com.example.closestv2.api.exception.ExceptionMessageConstants.ACCESS_DENIED_BY_MEMBER_ID;
+import static com.example.closestv2.api.exception.ExceptionMessageConstants.NOT_FOUND_SUBSCRIPTION;
 
 @Service
 @RequiredArgsConstructor
@@ -48,6 +52,14 @@ public class SubscriptionRegisterService implements SubscriptionRegisterUsecase 
 
     @Override
     public void unregisterSubscription(long memberId, long subscriptionId) {
+        SubscriptionRoot subscriptionRoot = subscriptionRepository.findById(subscriptionId)
+                .orElseThrow(() -> new IllegalArgumentException(NOT_FOUND_SUBSCRIPTION));
 
+        long foundMemberId = subscriptionRoot.getSubscriptionInfo().getMemberId();
+        if (memberId != foundMemberId) {
+            throw new AccessDeniedException(ACCESS_DENIED_BY_MEMBER_ID);
+        }
+
+        subscriptionRepository.delete(subscriptionRoot);
     }
 }
