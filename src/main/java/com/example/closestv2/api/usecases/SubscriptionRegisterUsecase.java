@@ -5,5 +5,5 @@ import com.example.closestv2.api.service.model.request.SubscriptionsPostServiceR
 
 public interface SubscriptionRegisterUsecase {
     void registerSubscription(SubscriptionsPostServiceRequest serviceRequest);
-    void unregisterSubscription(SubscriptionsPostServiceRequest serviceRequest);
+    void unregisterSubscription(long memberId, long subscriptionId);
 }

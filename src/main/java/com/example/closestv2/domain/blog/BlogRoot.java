@@ -7,9 +7,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
 import org.hibernate.proxy.HibernateProxy;
-import org.springframework.util.Assert;
 
 import java.net.URL;
 import java.time.Instant;
@@ -54,12 +52,28 @@ public class BlogRoot {
             String author
     ) {
         LocalDateTime epochTime = LocalDateTime.ofInstant(Instant.EPOCH, ZoneId.of("Asia/Seoul"));
+        return create(
+                rssUrl,
+                blogUrl,
+                blogTitle,
+                author,
+                epochTime
+        );
+    }
+
+    public static BlogRoot create(
+            URL rssUrl,
+            URL blogUrl,
+            String blogTitle,
+            String author,
+            LocalDateTime publishedDateTime
+    ) {
         BlogInfo blogInfo = BlogInfo.builder()
                 .rssUrl(rssUrl)
                 .blogUrl(blogUrl)
                 .blogTitle(blogTitle)
                 .author(author)
-                .publishedDateTime(epochTime)
+                .publishedDateTime(publishedDateTime)
                 .blogVisitCount(0L)
                 .build();
         return BlogRoot.builder()
@@ -98,10 +112,10 @@ public class BlogRoot {
     ) {
         BlogInfo comparedBlogInfo = comparedBlogRoot.blogInfo;
 
-        if (blogInfo.getBlogTitle() != comparedBlogInfo.getBlogTitle()) {
+        if (!blogInfo.getBlogTitle().equals(comparedBlogInfo.getBlogTitle())) {
             return true;
         }
-        if (blogInfo.getAuthor() != comparedBlogInfo.getAuthor()) {
+        if (!blogInfo.getAuthor().equals(comparedBlogInfo.getAuthor())) {
             return true;
         }
         if (blogInfo.getPublishedDateTime().isBefore(comparedBlogInfo.getPublishedDateTime())) {

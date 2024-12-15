@@ -4,5 +4,5 @@ import java.net.MalformedURLException;
 import java.net.URL;
 
 public interface FeedClient {
-    Feed getFeed(URL rssUrl) throws MalformedURLException;
+    Feed getFeed(URL rssUrl);
 }

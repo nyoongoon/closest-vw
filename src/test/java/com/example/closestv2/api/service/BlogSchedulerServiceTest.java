@@ -76,7 +76,7 @@ class BlogSchedulerServiceTest extends IntegrationTestSupport {
     @DisplayName("업데이트 된 블로그를 확인 후 블로그 정보를 업데이트한다.")
     void pollingUpdatedBlogs() throws MalformedURLException {
         //given
-        BlogRoot blogRoot = BlogRoot.create(ANY_RSS_URL, URI.create(ANY_LINK).toURL(), ANY_BLOG_TITLE, ANY_AUTHOR);
+        BlogRoot blogRoot = BlogRoot.create(ANY_RSS_URL, URI.create(ANY_LINK).toURL(), ANY_BLOG_TITLE, ANY_AUTHOR, ANY_PUBLISHED_DATE_TIME);
         blogRepository.save(blogRoot);
 
         //when

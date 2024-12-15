@@ -11,6 +11,7 @@ import org.mockito.MockitoAnnotations;
 import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URL;
+import java.time.LocalDateTime;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.*;
@@ -23,6 +24,7 @@ class BlogEditServiceTest {
     private final String ANY_TITLE = "제목";
     private final String ANY_AUTHOR = "작가";
     private final String ANY_STATUS_MESSAGE = "변경된 상태 메시지";
+    private final LocalDateTime ANY_PUBLISHED_TIME = LocalDateTime.of(2023, 01, 01, 01, 10, 55);
 
     private BlogEditService blogEditService;
     @Mock
@@ -73,7 +75,7 @@ class BlogEditServiceTest {
     }
 
     private void saveBlogRoot(URL url){
-        BlogRoot blogRoot = BlogRoot.create(ANY_RSS_URL, url, ANY_TITLE, ANY_AUTHOR);
+        BlogRoot blogRoot = BlogRoot.create(ANY_RSS_URL, url, ANY_TITLE, ANY_AUTHOR, ANY_PUBLISHED_TIME);
         when(blogRepository.findByBlogInfoBlogUrl(ANY_BLOG_URL1)).thenReturn(Optional.of(blogRoot));
     }
 }

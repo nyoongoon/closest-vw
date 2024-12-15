@@ -21,18 +21,20 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import static com.example.closestv2.api.exception.ExceptionMessageConstants.WRONG_RSS_URL_FORMAT;
+
 @Slf4j
 @Component
 public class RssFeedClient implements FeedClient {
     @Override
-    public Feed getFeed(URL rssUrl) throws MalformedURLException {
+    public Feed getFeed(URL rssUrl) {
         SyndFeed syndFeed = getSyndFeed(rssUrl);
 
         List<SyndEntry> entries = syndFeed.getEntries();
         List<FeedItem> feedItems = new ArrayList<>();
         for (SyndEntry entry : entries) {
             FeedItem feedItem = FeedItem.create(
-                    URI.create(entry.getLink()).toURL(),
+                    extractUrl(entry.getLink()),
                     entry.getTitle(),
                     toLocalDateTime(entry.getPublishedDate())
             );
@@ -41,7 +43,7 @@ public class RssFeedClient implements FeedClient {
 
         Feed feed = Feed.create(
                 rssUrl,
-                URI.create(syndFeed.getLink()).toURL(),
+                extractUrl(syndFeed.getLink()),
                 syndFeed.getTitle(),
                 syndFeed.getAuthor(),
                 feedItems
@@ -60,6 +62,16 @@ public class RssFeedClient implements FeedClient {
         } finally {
             log.info("getSyndFeed() - rssUrl : {}", rssUrl);
         }
+    }
+
+    private URL extractUrl(String entry) {
+        URL url;
+        try {
+             url = URI.create(entry).toURL();
+        }catch (MalformedURLException e){
+            throw new IllegalStateException(WRONG_RSS_URL_FORMAT);
+        }
+        return url;
     }
 
     private LocalDateTime toLocalDateTime(Date date) {
