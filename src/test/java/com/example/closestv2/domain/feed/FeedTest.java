@@ -28,8 +28,6 @@ class FeedTest {
     private final String ANY_POST_TITLE = "포스트 제목";
     private final LocalDateTime ANY_PUBLISHED_DATE_TIME = LocalDateTime.of(2030, 1, 1, 12, 3, 31);
 
-    private final LocalDateTime EPOCH_LOCAL_DATE_TIME =  LocalDateTime.ofInstant(Instant.EPOCH, ZoneId.of("Asia/Seoul"));
-
     FeedTest() throws MalformedURLException {
     }
 

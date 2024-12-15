@@ -8,26 +8,30 @@ import com.example.closestv2.domain.blog.BlogRoot;
 import com.example.closestv2.domain.feed.Feed;
 import com.example.closestv2.domain.feed.FeedClient;
 import com.example.closestv2.domain.subscription.SubscriptionRepository;
+import com.example.closestv2.domain.subscription.SubscriptionRoot;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.net.URL;
 import java.time.LocalDateTime;
 import java.util.Optional;
 
 @Service
+@RequiredArgsConstructor
 public class SubscriptionRegisterService implements SubscriptionRegisterUsecase {
-    private FeedClient feedClient;
-    private BlogRepository blogRepository;
-    private SubscriptionRepository subscriptionRepository;
+    private final FeedClient feedClient;
+    private final BlogRepository blogRepository;
+    private final SubscriptionRepository subscriptionRepository;
 
     @Override
+    @Transactional
     public void registerSubscription(SubscriptionsPostServiceRequest serviceRequest) {
         long memberId = serviceRequest.getMemberId();
         URL rssUrl = serviceRequest.getRssUrl();
 
         BlogRoot blogRoot;
         Optional<BlogRoot> blogRootOptional = blogRepository.findByBlogInfoRssUrl(rssUrl);
-
         if (blogRootOptional.isPresent()) {
             blogRoot = blogRootOptional.get();
         } else {
@@ -35,15 +39,11 @@ public class SubscriptionRegisterService implements SubscriptionRegisterUsecase 
             blogRoot = feed.toBlogRoot();
         }
 
-
-        //TODO Feed가 Blog로 변환될 때 FeedItem의 최신 publishedDateTime이 Feed의 publishedDateTime이 된다..
-        //TODO FeedItem없는 경우 에포크타임으로
-        //TODO BlogRoot의 로직과 겹치는거 같은데...
-        //TODO BlogRoot의 publishedDateTime 생성 로직을 Feed로 옮기기??
+        URL blogUrl = blogRoot.getBlogInfo().getBlogUrl();
+        String blogTitle = blogRoot.getBlogInfo().getBlogTitle();
         LocalDateTime publishedDateTime = blogRoot.getBlogInfo().getPublishedDateTime();
-//        SubscriptionRoot.create(memberId, rssUrl,  feed.getBlogTitle(), feed);
-
-
+        SubscriptionRoot subscriptionRoot = SubscriptionRoot.create(memberId, blogUrl, blogTitle, publishedDateTime);
+        subscriptionRepository.save(subscriptionRoot);
     }
 
     @Override

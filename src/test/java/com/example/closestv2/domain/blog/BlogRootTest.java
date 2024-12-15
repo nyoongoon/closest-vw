@@ -1,5 +1,6 @@
 package com.example.closestv2.domain.blog;
 
+import com.example.closestv2.util.constant.SpecificDate;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -40,7 +41,7 @@ class BlogRootTest {
         //when
         LocalDateTime publishedDateTime = blogRoot.getBlogInfo().getPublishedDateTime();
         //then
-        assertThat(publishedDateTime).isEqualTo(LocalDateTime.ofInstant(Instant.EPOCH, ZoneId.of("Asia/Seoul")));
+        assertThat(publishedDateTime).isEqualTo(SpecificDate.EPOCH_TIME.getLocalDateTime());
     }
 
     @Test

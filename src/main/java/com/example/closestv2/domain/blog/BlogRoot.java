@@ -1,5 +1,6 @@
 package com.example.closestv2.domain.blog;
 
+import com.example.closestv2.util.constant.SpecificDate;
 import jakarta.persistence.*;
 import jakarta.validation.Valid;
 import lombok.AccessLevel;
@@ -51,7 +52,7 @@ public class BlogRoot {
             String blogTitle,
             String author
     ) {
-        LocalDateTime epochTime = LocalDateTime.ofInstant(Instant.EPOCH, ZoneId.of("Asia/Seoul"));
+        LocalDateTime epochTime = SpecificDate.EPOCH_TIME.getLocalDateTime();
         return create(
                 rssUrl,
                 blogUrl,

@@ -4,6 +4,7 @@ import com.example.closestv2.domain.blog.BlogRoot;
 import com.example.closestv2.domain.blog.Post;
 import com.example.closestv2.domain.feed.Feed;
 import com.example.closestv2.infrastructure.domain.feed.RssFeedClient;
+import com.example.closestv2.util.constant.SpecificDate;
 import com.example.closestv2.util.file.FileUtil;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -91,7 +92,7 @@ class RssFeedClientTest {
         //given
         BlogRoot blogRoot = feed.toBlogRoot();
         //then
-        assertThat(blogRoot.getBlogInfo().getPublishedDateTime()).isEqualTo(LocalDateTime.ofInstant(Instant.EPOCH, ZoneId.of("Asia/Seoul")));
+        assertThat(blogRoot.getBlogInfo().getPublishedDateTime()).isEqualTo(SpecificDate.EPOCH_TIME.getLocalDateTime());
     }
 
     @Test

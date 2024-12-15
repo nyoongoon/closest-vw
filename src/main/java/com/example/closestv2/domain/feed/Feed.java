@@ -2,6 +2,7 @@ package com.example.closestv2.domain.feed;
 
 import com.example.closestv2.domain.blog.BlogRoot;
 import com.example.closestv2.domain.blog.Post;
+import com.example.closestv2.util.constant.SpecificDate;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
@@ -26,8 +27,6 @@ public class Feed {
     private LocalDateTime publishedDateTime;
     private List<FeedItem> feedItems;
 
-    private static final LocalDateTime EPOCH_LOCAL_DATE_TIME =  LocalDateTime.ofInstant(Instant.EPOCH, ZoneId.of("Asia/Seoul"));
-
     public static Feed create(
             URL rssUrl,
             URL blogUrl,
@@ -36,7 +35,7 @@ public class Feed {
             List<FeedItem> feedItems
     ) {
         //publishedDateTime 초기값은 에포크 타임
-        LocalDateTime publishedDateTime = EPOCH_LOCAL_DATE_TIME;
+        LocalDateTime publishedDateTime = SpecificDate.EPOCH_TIME.getLocalDateTime();
 
         if (CollectionUtils.isEmpty(feedItems)) {
             feedItems = new ArrayList<>();
@@ -55,7 +54,7 @@ public class Feed {
     }
 
     private static LocalDateTime extractRecentPublishedDateTime(List<FeedItem> feedItems) {
-        LocalDateTime recentPublishedDateTime = EPOCH_LOCAL_DATE_TIME;
+        LocalDateTime recentPublishedDateTime = SpecificDate.EPOCH_TIME.getLocalDateTime();
         for (FeedItem feedItem : feedItems) {
             LocalDateTime publishedDateTime = feedItem.getPublishedDateTime();
             if(recentPublishedDateTime.isBefore(publishedDateTime)){
