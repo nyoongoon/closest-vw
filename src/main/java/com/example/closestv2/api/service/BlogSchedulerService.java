@@ -1,12 +1,9 @@
 package com.example.closestv2.api.service;
 
-import com.example.closestv2.domain.feed.Feed;
-import com.example.closestv2.domain.feed.FeedClient;
-import com.example.closestv2.infrastructure.domain.feed.RssFeedClient;
-import com.example.closestv2.domain.blog.BlogFactory;
 import com.example.closestv2.domain.blog.BlogRepository;
 import com.example.closestv2.domain.blog.BlogRoot;
-import com.rometools.rome.feed.synd.SyndFeed;
+import com.example.closestv2.domain.feed.Feed;
+import com.example.closestv2.domain.feed.FeedClient;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -28,7 +25,7 @@ import static com.example.closestv2.api.exception.ExceptionMessageConstants.NOT_
 @RequiredArgsConstructor
 public class BlogSchedulerService {
     private static final int PAGE_SIZE = 100;
-//    private final BlogFactory blogFactory;
+    //    private final BlogFactory blogFactory;
     private final BlogRepository blogRepository;
     private final FeedClient rssFeedClient;
 
@@ -47,24 +44,19 @@ public class BlogSchedulerService {
 
                 // 비동기 처리
                 List<CompletableFuture<Void>> futures = blogRoots.stream()
-                        .map(blogRoot -> CompletableFuture.supplyAsync(
-                                // 비동기 호출
-//                                () -> rssFeedClient.getSyndFeed(blogRoot.getBlogInfo().getRssUrl())
-                                ()-> {
-                                    try {
-                                        return rssFeedClient.getFeed(blogRoot.getBlogInfo().getRssUrl());
-                                    } catch (MalformedURLException e) { //TODO
-                                        throw new RuntimeException(e);
-                                    }
-                                }
-                        ).thenAccept(feed -> {
-                            try {
-                                // 콜백
-                                updateBlogBySyndFeed(blogRoot.getId(), feed);
-                            } catch (MalformedURLException | URISyntaxException e) {
-                                log.error("BlogSchedulerService#pollingUpdatedBlogs : {} - {}", e.getClass(), e.getMessage());
-                            }
-                        }))
+                        .map(blogRoot ->
+                                CompletableFuture
+                                        .supplyAsync(
+                                                // 비동기 호출
+                                                () -> rssFeedClient.getFeed(blogRoot.getBlogInfo().getRssUrl()))
+                                        .thenAccept(feed -> {
+                                            try {
+                                                // 콜백
+                                                updateBlogBySyndFeed(blogRoot.getId(), feed);
+                                            } catch (MalformedURLException | URISyntaxException e) {
+                                                log.error("BlogSchedulerService#pollingUpdatedBlogs : {} - {}", e.getClass(), e.getMessage());
+                                            }
+                                        }))
                         .toList();
 
                 // 모든 CompletableFuture가 끝날 때까지 기다림

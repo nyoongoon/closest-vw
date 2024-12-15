@@ -54,8 +54,6 @@ public class BlogAuthService implements BlogAuthUsecase {
         Feed feed;
         try {
             feed = feedClient.getFeed(rssUrl);
-        } catch (MalformedURLException e) {
-            throw new IllegalArgumentException(WRONG_RSS_URL_FORMAT);
         } catch (IllegalStateException e) {
             log.error("BlogAuthService#verifyBlogAuthMessage() :{} ", e.getMessage());
             throw new IllegalStateException(RSS_CLIENT_ERROR);

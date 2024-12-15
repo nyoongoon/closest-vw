@@ -31,27 +31,8 @@ class SubscriptionQueryServiceTest {
     private SubscriptionQueryRepository subscriptionQueryRepository;
 
     @BeforeEach
-    void setUp() throws MalformedURLException {
+    void setUp() {
         MockitoAnnotations.openMocks(this);
-//        List<SubscriptionRoot> cloests = new ArrayList<>();
-//        int visitCount = 100;
-//        for (int i = 1; i <= 20; i++) {
-//            SubscriptionRoot subscriptionRoot = SubscriptionRoot.create(ANY_MEMBER_ID_1, URI.create(ANY_BLOG_LINK + i).toURL(), ANY_BLOG_TITLE, ANY_PUBLISHED_DATE_TIME);
-//            subscriptionRoot.putRecentBlogInfo(ANY_PUBLISHED_DATE_TIME.plusSeconds(i), visitCount - i);
-//            cloests.addLast(subscriptionRoot);
-//        }
-//        List<SubscriptionRoot> paging = new ArrayList<>();
-//        for (int i = 1; i <= 10; i++) {
-//            paging.add(
-//                    SubscriptionRoot.create(ANY_MEMBER_ID_1, URI.create(ANY_BLOG_LINK + i).toURL(), ANY_BLOG_TITLE, ANY_PUBLISHED_DATE_TIME)
-//            );
-//        }
-
-
-//        when(subscriptionQueryRepository.findByMemberIdVisitCountDesc(ANY_MEMBER_ID_1, 0, 10)).thenReturn(paging);
-//        when(subscriptionQueryRepository.findByMemberIdVisitCountDesc(ANY_MEMBER_ID_2, 0, 20)).thenReturn(new ArrayList<>());
-//        when(subscriptionQueryRepository.findByMemberIdVisitCountDesc(ANY_MEMBER_ID_2, 0, 10)).thenReturn(new ArrayList<>());
-
         sut = new SubscriptionQueryService(subscriptionQueryRepository);
     }
 
