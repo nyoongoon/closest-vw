@@ -4,16 +4,12 @@ import com.example.closestv2.api.SubscriptionRegisterApi;
 import com.example.closestv2.api.service.model.request.SubscriptionsPostServiceRequest;
 import com.example.closestv2.api.usecases.SubscriptionRegisterUsecase;
 import com.example.closestv2.models.SubscriptionsPostRequest;
+import com.example.closestv2.util.url.UrlUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.RestController;
-
-import java.net.MalformedURLException;
-import java.net.URL;
-
-import static com.example.closestv2.api.exception.ExceptionMessageConstants.WRONG_RSS_URL_FORMAT;
 
 @RestController
 @RequiredArgsConstructor
@@ -29,17 +25,10 @@ public class SubscriptionRegisterController implements SubscriptionRegisterApi {
         return ResponseEntity.ok().build();
     }
 
-    private SubscriptionsPostServiceRequest toServiceRequest(long memberId, SubscriptionsPostRequest subscriptionsPostRequest) {
-        URL rssUrl;
-        try {
-            rssUrl = subscriptionsPostRequest.getRssUri().toURL();
-        } catch (MalformedURLException e) {
-            throw new IllegalArgumentException(WRONG_RSS_URL_FORMAT);
-        }
-
+    private SubscriptionsPostServiceRequest toServiceRequest(long memberId, SubscriptionsPostRequest request) {
         return SubscriptionsPostServiceRequest.builder()
                 .memberId(memberId)
-                .rssUrl(rssUrl)
+                .rssUrl(UrlUtils.from(request.getRssUri()))
                 .build();
     }
 

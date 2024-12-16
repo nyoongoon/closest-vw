@@ -8,8 +8,12 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.apache.commons.lang3.ObjectUtils;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
 
 import java.net.URL;
+import java.util.Collection;
+import java.util.List;
 
 import static com.example.closestv2.api.exception.ExceptionMessageConstants.ALREADY_EXISTS_MY_BLOG;
 import static com.example.closestv2.api.exception.ExceptionMessageConstants.NOT_EXISTS_MY_BLOG;
@@ -18,7 +22,7 @@ import static com.example.closestv2.api.exception.ExceptionMessageConstants.NOT_
 @Entity
 @Table(name = "member")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class MemberRoot {
+public class MemberRoot implements UserDetails {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "member_id")
@@ -105,5 +109,20 @@ public class MemberRoot {
                 .build();
 
         return new StatusMessageEditEvent(blogUrl, statusMessage);
+    }
+
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        return List.of();
+    }
+
+    @Override
+    public String getPassword() {
+        return memberInfo.getPassword();
+    }
+
+    @Override
+    public String getUsername() {
+        return memberInfo.getUserEmail();
     }
 }
