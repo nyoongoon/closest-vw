@@ -26,7 +26,7 @@ class BlogRepositoryTest extends RepositoryTestSupport {
     }
 
     @Test
-    @DisplayName("URL타입 blogUrl로 BlogRoot를 조회한다. ")
+    @DisplayName("URL타입 blogUrl로 BlogRoot를 조회한다.")
     void findByBlogUrl() {
         //given
         blogRepository.save(BlogRoot.create(ANY_RSS_URL, ANY_BLOG_URL, ANY_TITLE, ANY_AUTHOR, ANY_PUBLISHED_DATE_TIME));

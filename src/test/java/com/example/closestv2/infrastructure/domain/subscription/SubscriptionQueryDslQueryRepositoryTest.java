@@ -32,13 +32,13 @@ class SubscriptionQueryDslQueryRepositoryTest extends RepositoryTestSupport {
     void findByMemberIdVisitCountDesc() throws MalformedURLException {
         //given
         SubscriptionRoot subscriptionRoot1 = SubscriptionRoot.create(1L, URI.create(ANY_BLOG_LINK + 1).toURL(), ANY_BLOG_TITLE, ANY_PUBLISHED_DATE_TIME.minusSeconds(1));
-        subscriptionRoot1.increaseVisitCount();
         subscriptionRepository.save(subscriptionRoot1);
+        subscriptionRoot1.increaseVisitCount();
         SubscriptionRoot subscriptionRoot2 = SubscriptionRoot.create(1L, URI.create(ANY_BLOG_LINK + 2).toURL(), ANY_BLOG_TITLE, ANY_PUBLISHED_DATE_TIME.minusSeconds(2));
+        subscriptionRepository.save(subscriptionRoot2);
         for (int i = 0; i < 3; i++) {
             subscriptionRoot2.increaseVisitCount();
         }
-        subscriptionRepository.save(subscriptionRoot2);
         SubscriptionRoot subscriptionRoot3 = SubscriptionRoot.create(1L, URI.create(ANY_BLOG_LINK + 3).toURL(), ANY_BLOG_TITLE, ANY_PUBLISHED_DATE_TIME.minusSeconds(3));
         for (int i = 0; i < 2; i++) {
             subscriptionRoot3.increaseVisitCount();
@@ -58,8 +58,8 @@ class SubscriptionQueryDslQueryRepositoryTest extends RepositoryTestSupport {
         //given
         for (int i = 0; i < 17; i++) {
             SubscriptionRoot subscriptionRoot1 = SubscriptionRoot.create(1L, URI.create(ANY_BLOG_LINK + i).toURL(), ANY_BLOG_TITLE, ANY_PUBLISHED_DATE_TIME);
-            subscriptionRoot1.increaseVisitCount();
             subscriptionRepository.save(subscriptionRoot1);
+            subscriptionRoot1.increaseVisitCount();
         }
         //when
         List<SubscriptionRoot> subscriptionRoots = sut.findByMemberIdVisitCountDesc(1L, 1, 10);

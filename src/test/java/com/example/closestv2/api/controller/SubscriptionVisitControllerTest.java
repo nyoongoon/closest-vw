@@ -35,7 +35,6 @@ class SubscriptionVisitControllerTest extends ControllerTestSupport {
                 .andDo(print())
                 .andExpect(status().isMovedPermanently()) // HTTP 302 상태 코드 검증
                 .andExpect(header().string("Location", ANY_URL.toURI().toString())) // 리다이렉트 URL 검증
-
         ;
     }
 }

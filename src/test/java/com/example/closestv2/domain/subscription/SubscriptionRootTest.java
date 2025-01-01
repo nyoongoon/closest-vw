@@ -1,7 +1,10 @@
 package com.example.closestv2.domain.subscription;
 
+import com.example.closestv2.domain.subscription.event.SubscriptionsBlogVisitEvent;
+import org.assertj.core.api.recursive.comparison.RecursiveComparisonConfiguration;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.springframework.test.util.ReflectionTestUtils;
 
 import java.net.MalformedURLException;
 import java.net.URI;
@@ -25,11 +28,24 @@ class SubscriptionRootTest {
     void increaseVisitCount() {
         //given
         SubscriptionRoot sut = SubscriptionRoot.create(ANY_MEMBER_ID, ANY_BLOG_URL, ANY_BLOG_TITLE, ANY_PUBLISHED_DATE_TIME);
+        ReflectionTestUtils.setField(sut, "id", 1L);
         //when
         sut.increaseVisitCount();
         sut.increaseVisitCount(); // 두번 방문
         //then
         assertThat(sut.getSubscriptionInfo().getSubscriptionVisitCount()).isEqualTo(2L);
+    }
+
+    @Test
+    @DisplayName("구독을 방문하면 구독 블로그 방문 이벤트를 리턴한다.")
+    void increaseVisitCountReturnEvent() {
+        //given
+        SubscriptionRoot sut = SubscriptionRoot.create(ANY_MEMBER_ID, ANY_BLOG_URL, ANY_BLOG_TITLE, ANY_PUBLISHED_DATE_TIME);
+        ReflectionTestUtils.setField(sut, "id", 1L);
+        //when
+        SubscriptionsBlogVisitEvent event = sut.increaseVisitCount();
+        //then
+        assertThat(event.blogUrl()).isEqualTo(ANY_BLOG_URL);
     }
 
     @Test

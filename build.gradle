@@ -23,6 +23,8 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-web'
     implementation 'org.springframework.boot:spring-boot-starter-security:3.4.0'
     implementation 'org.springframework.boot:spring-boot-starter-cache:3.4.0'
+    /* p6spy */
+    implementation 'com.github.gavlyukovskiy:p6spy-spring-boot-starter:1.9.0'
 
     /* utils */
     implementation 'org.apache.commons:commons-lang3:3.17.0'
@@ -46,6 +48,7 @@ dependencies {
     /* test */
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     testImplementation 'org.springframework.security:spring-security-test'
+    testImplementation 'org.assertj:assertj-core'
 
     /* mock server */
     testImplementation("org.mock-server:mockserver-client-java:5.15.0")

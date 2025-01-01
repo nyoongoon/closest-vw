@@ -59,7 +59,7 @@ public final class ExceptionMessageConstants {
     public static final String FAIL_BLOG_AUTHENTICATE = "블로그 인증에 실패하였습니다.";
 
 
-    /* 유탈 */
+    /* 유틸 */
     public static final String CANNOT_INSTANTIATE = "인스턴스화 할 수 없습니다.";
 
     /* RSS 클라이언트 에러 */

@@ -12,6 +12,11 @@ public final class UrlUtils {
         throw new IllegalStateException(CANNOT_INSTANTIATE);
     }
 
+    public static URL from(String uriStr) {
+        URI uri = URI.create(uriStr);
+        return from(uri);
+    }
+
     public static URL from(URI uri) {
         URL url;
         try {
