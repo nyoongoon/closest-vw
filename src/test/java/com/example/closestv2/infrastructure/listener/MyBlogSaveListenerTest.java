@@ -1,6 +1,5 @@
-package com.example.closestv2.infrastructure.event;
+package com.example.closestv2.infrastructure.listener;
 
-import com.example.closestv2.api.service.BlogEditService;
 import com.example.closestv2.api.service.MyBlogSaveService;
 import com.example.closestv2.domain.blog.event.MyBlogSaveEvent;
 import com.example.closestv2.util.url.UrlUtils;
@@ -13,7 +12,6 @@ import org.mockito.MockitoAnnotations;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 
-import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URL;
 

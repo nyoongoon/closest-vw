@@ -29,7 +29,7 @@ public class SubscriptionVisitService implements SubscriptionVisitUsecase {
      * @param subscriptionsId
      * @return
      * @see SubscriptionsBlogVisitEvent
-     * @see BlogVisitService#visitBlog()
+     * @see BlogVisitService#visitBlog(URL)
      */
     @Override
     public VisitSubscriptionResponse visitSubscription(long subscriptionsId) {
@@ -49,7 +49,7 @@ public class SubscriptionVisitService implements SubscriptionVisitUsecase {
      * @param postUrl
      * @return
      * @see SubscriptionsPostVisitEvent
-     * @see BlogVisitService#visitPost()
+     * @see BlogVisitService#visitPost(URL, URL)
      */
     @Override
     public VisitSubscriptionResponse visitSubscription(long subscriptionsId, URL postUrl) {

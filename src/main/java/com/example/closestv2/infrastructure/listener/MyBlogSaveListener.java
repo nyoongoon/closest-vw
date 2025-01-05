@@ -1,4 +1,4 @@
-package com.example.closestv2.infrastructure.event;
+package com.example.closestv2.infrastructure.listener;
 
 import com.example.closestv2.api.service.MyBlogSaveService;
 import com.example.closestv2.domain.blog.event.MyBlogSaveEvent;
