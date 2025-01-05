@@ -2,9 +2,9 @@ package com.example.closestv2.api.service;
 
 import com.example.closestv2.api.service.model.response.VisitSubscriptionResponse;
 import com.example.closestv2.api.usecases.SubscriptionVisitUsecase;
-import com.example.closestv2.domain.subscription.event.SubscriptionsBlogVisitEvent;
 import com.example.closestv2.domain.subscription.SubscriptionRepository;
 import com.example.closestv2.domain.subscription.SubscriptionRoot;
+import com.example.closestv2.domain.subscription.event.SubscriptionsBlogVisitEvent;
 import com.example.closestv2.domain.subscription.event.SubscriptionsPostVisitEvent;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.ApplicationEventPublisher;
@@ -24,10 +24,12 @@ public class SubscriptionVisitService implements SubscriptionVisitUsecase {
     //todo blog 방문 이벤트 -> subscription, blog visitCount 증가
 
     /**
+     * blog 방문 이벤트 -> subscription, blog visitCount 증가
      *
      * @param subscriptionsId
      * @return
      * @see SubscriptionsBlogVisitEvent
+     * @see BlogVisitService#visitBlog()
      */
     @Override
     public VisitSubscriptionResponse visitSubscription(long subscriptionsId) {
@@ -40,7 +42,15 @@ public class SubscriptionVisitService implements SubscriptionVisitUsecase {
         return new VisitSubscriptionResponse(blogUrl);
     }
 
-    //todo post 방문 이벤트 -> subscription, blog, post visitCount 증가
+    /**
+     * post 방문 이벤트 -> subscription, blog, post visitCount 증가
+     *
+     * @param subscriptionsId
+     * @param postUrl
+     * @return
+     * @see SubscriptionsPostVisitEvent
+     * @see BlogVisitService#visitPost()
+     */
     @Override
     public VisitSubscriptionResponse visitSubscription(long subscriptionsId, URL postUrl) {
         SubscriptionRoot subscriptionRoot = subscriptionRepository.findById(subscriptionsId)

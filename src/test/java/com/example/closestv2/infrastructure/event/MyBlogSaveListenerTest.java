@@ -3,6 +3,7 @@ package com.example.closestv2.infrastructure.event;
 import com.example.closestv2.api.service.BlogEditService;
 import com.example.closestv2.api.service.MyBlogSaveService;
 import com.example.closestv2.domain.blog.event.MyBlogSaveEvent;
+import com.example.closestv2.util.url.UrlUtils;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -22,15 +23,12 @@ import static org.mockito.Mockito.verify;
 
 class MyBlogSaveListenerTest {
     private final Long ANY_MEMBER_ID = 1L;
-    private final URL ANY_BLOG_URI = URI.create("http://www.example.com").toURL();
+    private final URL ANY_BLOG_URI = UrlUtils.from(URI.create("http://www.example.com"));
 
     @Mock
     private MyBlogSaveService myBlogSaveService;
 
     private ApplicationEventPublisher eventPublisher;
-
-    MyBlogSaveListenerTest() throws MalformedURLException {
-    }
 
     @BeforeEach
     void setUp() {
@@ -38,7 +36,6 @@ class MyBlogSaveListenerTest {
 
         // Spring 컨텍스트 설정
         AnnotationConfigApplicationContext context = new AnnotationConfigApplicationContext();
-        context.registerBean(MyBlogSaveService.class, () -> myBlogSaveService); // Mock 주입
         context.registerBean(MyBlogSaveListener.class, () -> new MyBlogSaveListener(myBlogSaveService));
         context.refresh();
         eventPublisher = context;
