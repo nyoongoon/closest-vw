@@ -40,10 +40,10 @@ class SubscriptionQueryDslQueryRepositoryTest extends RepositoryTestSupport {
             subscriptionRoot2.increaseVisitCount();
         }
         SubscriptionRoot subscriptionRoot3 = SubscriptionRoot.create(1L, URI.create(ANY_BLOG_LINK + 3).toURL(), ANY_BLOG_TITLE, ANY_PUBLISHED_DATE_TIME.minusSeconds(3));
+        subscriptionRepository.save(subscriptionRoot3);
         for (int i = 0; i < 2; i++) {
             subscriptionRoot3.increaseVisitCount();
         }
-        subscriptionRepository.save(subscriptionRoot3);
 
         //when
         List<SubscriptionRoot> subscriptionRoots = sut.findByMemberIdVisitCountDesc(1L, 0, 10);

@@ -1,6 +1,7 @@
 package com.example.closestv2.domain.subscription;
 
 import com.example.closestv2.domain.subscription.event.SubscriptionsBlogVisitEvent;
+import com.example.closestv2.domain.subscription.event.SubscriptionsPostVisitEvent;
 import org.assertj.core.api.recursive.comparison.RecursiveComparisonConfiguration;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -17,6 +18,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 class SubscriptionRootTest {
     private final long ANY_MEMBER_ID = 1L;
     private final URL ANY_BLOG_URL = URI.create("https://example.com/blog123").toURL();
+    private final URL ANY_POST_URL = URI.create("https://example.com/blog123/1").toURL();
     private final String ANY_BLOG_TITLE = "블로그 제목";
     private final LocalDateTime ANY_PUBLISHED_DATE_TIME = LocalDateTime.of(2022, 1, 1, 12, 3, 31);
 
@@ -46,6 +48,31 @@ class SubscriptionRootTest {
         SubscriptionsBlogVisitEvent event = sut.increaseVisitCount();
         //then
         assertThat(event.blogUrl()).isEqualTo(ANY_BLOG_URL);
+    }
+
+    @Test
+    @DisplayName("구독-포스트을 방문하면 구독 방문 횟수가 증가한다.")
+    void increasePostVisitCount() {
+        //given
+        SubscriptionRoot sut = SubscriptionRoot.create(ANY_MEMBER_ID, ANY_BLOG_URL, ANY_BLOG_TITLE, ANY_PUBLISHED_DATE_TIME);
+        ReflectionTestUtils.setField(sut, "id", 1L);
+        //when
+        sut.increasePostVisitCount(ANY_POST_URL);
+        //then
+        assertThat(sut.getSubscriptionInfo().getSubscriptionVisitCount()).isEqualTo(1L);
+    }
+
+    @Test
+    @DisplayName("구독-포스트를 방문하면 구독-포스트 블로그 방문 이벤트를 리턴한다.")
+    void increasePostVisitCountReturnEvent() {
+        //given
+        SubscriptionRoot sut = SubscriptionRoot.create(ANY_MEMBER_ID, ANY_BLOG_URL, ANY_BLOG_TITLE, ANY_PUBLISHED_DATE_TIME);
+        ReflectionTestUtils.setField(sut, "id", 1L);
+        //when
+        SubscriptionsPostVisitEvent event = sut.increasePostVisitCount(ANY_POST_URL);
+        //then
+        assertThat(event.blogUrl()).isEqualTo(ANY_BLOG_URL);
+        assertThat(event.postUrl()).isEqualTo(ANY_POST_URL);
     }
 
     @Test

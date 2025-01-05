@@ -1,6 +1,7 @@
 package com.example.closestv2.domain.subscription;
 
 import com.example.closestv2.domain.subscription.event.SubscriptionsBlogVisitEvent;
+import com.example.closestv2.domain.subscription.event.SubscriptionsPostVisitEvent;
 import jakarta.persistence.*;
 import jakarta.validation.Valid;
 import lombok.AccessLevel;
@@ -72,6 +73,17 @@ public class SubscriptionRoot {
                 .subscriptionVisitCount(plusedVisitCount)
                 .build();
         return new SubscriptionsBlogVisitEvent(id, subscriptionBlog.getBlogUrl());
+    }
+
+    // TODO 구독 방문 이벤트 발생 !
+    public SubscriptionsPostVisitEvent increasePostVisitCount(URL postUrl) {
+        long plusedVisitCount = subscriptionInfo.getSubscriptionVisitCount() + 1;
+
+        subscriptionInfo = SubscriptionInfo.builder()
+                .memberId(subscriptionInfo.getMemberId())
+                .subscriptionVisitCount(plusedVisitCount)
+                .build();
+        return new SubscriptionsPostVisitEvent(id, subscriptionBlog.getBlogUrl(), postUrl);
     }
 
     public void putRecentBlogInfo(LocalDateTime publishedDateTime, int newPostCount) {
