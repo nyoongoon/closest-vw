@@ -264,6 +264,17 @@ class BlogRootTest {
     }
 
     @Test
+    @DisplayName("BlogRoot의 visit()을 호출하면 blogInfo의 blogVisitCount가 1 증가한다.")
+    void visit(){
+        //given
+        BlogRoot sut = BlogRoot.create(ANY_RSS_URL, ANY_BLOG_URL, ANY_BLOG_TITLE, ANY_AUTHOR, ANY_PUBLISHED_DATE_TIME);
+        //when
+        sut.visit();
+        //then
+        assertThat(sut.getBlogInfo().getBlogVisitCount()).isEqualTo(1L);
+    }
+
+    @Test
     @DisplayName("visitPost을 호출할 때 존재하지 않은 postUrl로 호출하면 에러가 발생한다.")
     void visitPostByNotExistsPostUrl() throws MalformedURLException {
         //given
@@ -272,7 +283,7 @@ class BlogRootTest {
         Post post = sut.createPost(ANY_POST_URL, "포스트 제목1 변경", ANY_PUBLISHED_DATE_TIME.plusSeconds(2));
         posts.put(URI.create("https://example.com/blog123/XXX").toURL(), post);
         //expected
-        assertThatThrownBy(() -> sut.visitPost(ANY_POST_URL)).isInstanceOf(IllegalStateException.class);
+        assertThatThrownBy(() -> sut.visitPost(ANY_POST_URL)).isInstanceOf(IllegalArgumentException.class);
     }
 
     @Test

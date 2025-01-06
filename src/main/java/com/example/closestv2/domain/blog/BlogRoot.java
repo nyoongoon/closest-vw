@@ -11,9 +11,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.hibernate.proxy.HibernateProxy;
 
 import java.net.URL;
-import java.time.Instant;
 import java.time.LocalDateTime;
-import java.time.ZoneId;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
@@ -216,9 +214,21 @@ public class BlogRoot {
         }
     }
 
+    public void visit(){
+        blogInfo = BlogInfo.builder()
+                .rssUrl(blogInfo.getRssUrl())
+                .blogUrl(blogInfo.getBlogUrl())
+                .blogTitle(blogInfo.getBlogTitle())
+                .author(blogInfo.getAuthor())
+                .publishedDateTime(blogInfo.getPublishedDateTime())
+                .blogVisitCount(blogInfo.getBlogVisitCount() + 1)
+                .statusMessage(blogInfo.getStatusMessage())
+                .build();
+    }
+
     public void visitPost(URL postUrl) {
         if (!posts.containsKey(postUrl)) {
-            throw new IllegalStateException(NOT_EXISTS_POST_URL);
+            throw new IllegalArgumentException(NOT_EXISTS_POST_URL);
         }
 
         Post post = posts.get(postUrl);
