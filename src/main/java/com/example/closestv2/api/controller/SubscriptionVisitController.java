@@ -10,13 +10,13 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.net.URI;
+
 @RestController
 @RequiredArgsConstructor
 public class SubscriptionVisitController implements SubscriptionVisitApi {
     private final SubscriptionVisitUsecase subscriptionVisitUsecase;
 
-    //todo ResponseEntity redirect 설정
-    //todo blog 방문 이벤트 -> subscription, blog visitCount 증가
     @Override
     public ResponseEntity<Void> subscriptionsSubscriptionsIdVisitGet(Integer subscriptionsId) {
         VisitSubscriptionResponse response = subscriptionVisitUsecase.visitSubscription(subscriptionsId);
@@ -25,7 +25,11 @@ public class SubscriptionVisitController implements SubscriptionVisitApi {
         return new ResponseEntity<>(httpHeaders, HttpStatus.MOVED_PERMANENTLY);
     }
 
-
-    //todo post 방문 이벤트 -> subscription, blog, post visitCount 증가
-    //인자로 postId 받기?
+    @Override
+    public ResponseEntity<Void> subscriptionsSubscriptionsIdVisitPostUrlGet(Integer subscriptionsId, URI postUrl) {
+        VisitSubscriptionResponse response = subscriptionVisitUsecase.visitSubscription(subscriptionsId, UrlUtils.from(postUrl));
+        HttpHeaders httpHeaders = new HttpHeaders();
+        httpHeaders.setLocation(UrlUtils.toUri(response.getRedirectUrl()));
+        return new ResponseEntity<>(httpHeaders, HttpStatus.MOVED_PERMANENTLY);
+    }
 }

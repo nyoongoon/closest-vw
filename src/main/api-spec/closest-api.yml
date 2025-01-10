@@ -150,6 +150,36 @@ paths:
           $ref: '#/components/responses/NotFound'
         "500":
           $ref: '#/components/responses/InternalServerError'
+  /subscriptions/{subscriptionsId}/visit/{postUrl}:
+    get:
+      tags:
+        - subscriptionVisit
+      summary: 구독한 블로그의 포스트 방문 및 조회수 증가
+      description: 구독한 블로그의 포스트는 새창으로 띄우고 해당 구독 정보에 조회수를 1 증가시킨다
+      parameters:
+        - in: path
+          name: subscriptionsId
+          required: true
+          schema:
+            type: integer
+        - in: path
+          name: postUrl
+          required: true
+          schema:
+            type: string
+            format: uri
+            example: "https://example.com/post123"
+            description: 구독한 블로그의 포스팅의 URI
+
+      responses:
+        "200":
+          description: 블로그 방문 성공 및 조회수 증가
+        "403":
+          $ref: '#/components/responses/Forbidden'
+        "404":
+          $ref: '#/components/responses/NotFound'
+        "500":
+          $ref: '#/components/responses/InternalServerError'
 
   /my-blog/status:
     patch:
