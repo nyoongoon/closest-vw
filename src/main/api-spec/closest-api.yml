@@ -19,6 +19,8 @@ tags:
     description: 포스트 관리
   - name: blogAuth
     description: 블로그 인증 관리
+  - name: memberAuth
+    description: 회원 인증 관리
 paths:
   /subscriptions/blogs/close:
     get:
@@ -262,6 +264,66 @@ paths:
           description: 인증 요청 성공
         "401":
           $ref: '#/components/responses/Unauthorized'
+        "500":
+          $ref: '#/components/responses/InternalServerError'
+
+
+  /member/auth/signup:
+    post:
+      tags:
+        - memberAuth
+      summary: 멤버 회원가입
+      description: 이메일 비밀번호, 확인 비밀번호롤 회원가입을 한다
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                  format: email
+                password:
+                  type: string
+                conform_Password:
+                  type: string
+              required:
+                - email
+                - password
+                - conform_Password
+      responses:
+        "200":
+          description: 회원가입 성공
+        "500":
+          $ref: '#/components/responses/InternalServerError'
+
+  /member/auth/signin:
+    post:
+      tags:
+        - memberAuth
+      summary: 멤버 로그인
+      description: 이메일 비밀번호로 로그인한다
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                  format: email
+                password:
+                  type: string
+              required:
+                - email
+                - password
+      responses:
+        "200":
+          description: 로그인 성공
+        "400":
+          $ref: '#/components/responses/NotFound'
         "500":
           $ref: '#/components/responses/InternalServerError'
 

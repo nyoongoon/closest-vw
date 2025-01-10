@@ -316,6 +316,9 @@ export default defineComponent({
             // router.replace({name: "example"}) //뒤로가기 못하게 수정
             alert("회원가입이 완료되었습니다.");
             showSignupModal.value = false;
+          })
+          .catch((error)=>{
+            alert(error);
           });
     };
 

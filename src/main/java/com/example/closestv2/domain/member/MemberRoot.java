@@ -45,6 +45,13 @@ public class MemberRoot implements UserDetails {
 
     public static MemberRoot create(
             String userEmail,
+            String password
+    ) {
+       return create(userEmail, password, null);
+    }
+
+    public static MemberRoot create(
+            String userEmail,
             String password,
             String nickName
     ) {

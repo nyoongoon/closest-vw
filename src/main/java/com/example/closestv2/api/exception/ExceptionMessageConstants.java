@@ -10,15 +10,15 @@ public final class ExceptionMessageConstants {
     /* 비밀번호 */
     public static final String PASSWORD_IS_REQUIRED = "비밀번호는 필수값입니다.";
     public static final String CONFIRM_PASSWORD_IS_REQUIRED = "확인 비밀번호는 필수값입니다.";
-    public static final String NOT_VALID_PASSWORD = "비밀번호는 대소문자와 특수문자가 하나 이상 씩 포함되어야합니다.";
+    public static final String NOT_VALID_PASSWORD_FORM = "비밀번호는 대소문자와 특수문자가 하나 이상 씩 포함되어야합니다.";
     public static final String NOT_VALID_CONFIRM_PASSWORD_FORM = "확인 비밀번호는 대소문자와 특수문자가 하나 이상 씩 포함되어야합니다.";
     public static final String NOT_VALID_PASSWORD_SIZE = "비밀번호는 최소 8자 이상 최대 64자 이하입니다";
     public static final String NOT_VALID_CONFIRM_PASSWORD_SIZE = "확인 비밀번호는 최소 8자 이상 최대 64자 이하입니다";
     public static final String NOT_EQUAL_PASSWORDS = "비밀번호와 확인 비밀번호가 다릅니다.";
     public static final String WRONG_PASSWORD = "비밀번호가 일치하지 않습니다.";
-    /* 아이디 */
-    public static final String DUPLICATED_ID = "이미 사용 중인 아이디입니다.";
     /* 회원 */
+    public static final String DUPLICATED_EMAIL = "이미 사용 중인 이메일입니다.";
+    public static final String INVALID_MEMBER = "유효하지 않은 회원 정보입니다.";
     public static final String MEMBER_NOT_FOUND = "존재하지 않는 회원입니다.";
     public static final String MEMBER_ID_IS_REQUIRED = "회원 아이디는 필수값입니다.";
     public static final String NICK_NAME_IS_REQUIRED = "닉네임은 필수값입니다.";
